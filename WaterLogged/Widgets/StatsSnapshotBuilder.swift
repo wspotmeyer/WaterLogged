@@ -39,16 +39,16 @@ enum StatsSnapshotBuilder {
 		let units = UnitFormatter(system: unitSystem)
 
 		let deepest: String
-		if let maxMeters = dives.map(\.maxDepthMeters).max() {
+		if let maxMeters = deepestDepthMeters(of: dives) {
 			deepest = units.depthString(maxMeters)
 		} else {
 			deepest = "—"
 		}
 
-		let totalSeconds = priorHistory.totalBottomTimeSeconds(logged: dives.reduce(0) { $0 + $1.durationSeconds })
+		let totalSeconds = priorHistory.totalBottomTimeSeconds(logged: loggedBottomTimeSeconds(of: dives))
 
-		let countries = Set(dives.compactMap { $0.site?.country }.filter { !$0.isEmpty }).count
-		let sites = Set(dives.compactMap { $0.site?.externalId }).count
+		let countries = countriesVisited(in: dives)
+		let sites = diveSitesVisited(in: dives)
 
 		return StatsSnapshot(
 			totalDives: priorHistory.totalDives(logged: dives.count),
@@ -61,9 +61,34 @@ enum StatsSnapshotBuilder {
 		)
 	}
 
-	/// Formats a total number of seconds as `"Hh"` once it reaches an hour (the
-	/// compact form used by `StatsView`'s summary grid), or `"Mm"` when under an
-	/// hour.
+	// MARK: - Logbook-wide counts
+	//
+	// Shared by the widget snapshot, `StatsView` and the home screen's
+	// `StatisticsBar` so all three always agree.
+
+	/// The deepest maximum depth among `dives`, in meters; `nil` with no dives.
+	static func deepestDepthMeters(of dives: [Dive]) -> Double? {
+		dives.map(\.maxDepthMeters).max()
+	}
+
+	/// Total bottom time of the logged dives, in seconds (prior history excluded).
+	static func loggedBottomTimeSeconds(of dives: [Dive]) -> Int {
+		dives.reduce(0) { $0 + $1.durationSeconds }
+	}
+
+	/// Number of distinct, non-empty site countries among `dives`.
+	static func countriesVisited(in dives: [Dive]) -> Int {
+		Set(dives.compactMap { $0.site?.country }.filter { !$0.isEmpty }).count
+	}
+
+	/// Number of distinct dive sites among `dives`.
+	static func diveSitesVisited(in dives: [Dive]) -> Int {
+		Set(dives.compactMap { $0.site?.externalId }).count
+	}
+
+	/// Formats a total number of seconds as `"Hh"` once it reaches an hour, or
+	/// `"Mm"` when under an hour — the compact form used by the widgets and the
+	/// home screen's statistics bar. (`StatsView` shows the longer `"Hh Mm"`.)
 	static func formatBottomTime(_ seconds: Int) -> String {
 		let hours = seconds / 3600
 		let minutes = (seconds % 3600) / 60

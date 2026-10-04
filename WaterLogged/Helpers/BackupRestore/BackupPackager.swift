@@ -179,17 +179,9 @@ struct BackupPackager {
 		let photos = try context.fetch(FetchDescriptor<Photo>())
 		let owner = try? LogbookOwner.fetchOrCreate(in: context)
 
-		// SwiftData relationship faulting workaround: optional properties on
-		// DepthSample return nil when accessed through dive.diveProfile. Fetching
-		// samples directly and grouping by dive preserves the stored values.
-		// See matching workaround in UDDFExporter.exportString(from:selecting:).
-		let allSamples = try context.fetch(FetchDescriptor<DepthSample>())
-		var samplesByDive: [PersistentIdentifier: [DepthSample]] = [:]
-		for sample in allSamples {
-			if let dive = sample.dive {
-				samplesByDive[dive.persistentModelID, default: []].append(sample)
-			}
-		}
+		// Samples are fetched directly rather than through `dive.diveProfile` —
+		// see the faulting workaround described on `DepthSample.groupedByDive(in:)`.
+		let samplesByDive = try DepthSample.groupedByDive(in: context)
 
 		var xml = XMLBuilder()
 		xml.rawLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")

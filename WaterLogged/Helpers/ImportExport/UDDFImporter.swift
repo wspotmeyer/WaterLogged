@@ -202,6 +202,16 @@ struct UDDFImporter {
 		var importedCount = 0
 		var divesByRef: [String: Dive] = [:]
 
+		// Gas mix ref → index lookup for switchmix resolution. It depends only on
+		// the file's gas definitions, so it's built once for every dive.
+		let mixRefToIndex: [String: Int] = {
+			var map: [String: Int] = [:]
+			for (index, key) in result.gases.keys.sorted().enumerated() {
+				map[key] = index
+			}
+			return map
+		}()
+
 		for parsedDive in result.dives {
 			let dive = mapDive(parsedDive, sites: result.sites, gases: result.gases, buddies: result.buddies, context: context)
 
@@ -249,15 +259,6 @@ struct UDDFImporter {
 			if let id = parsedDive.id {
 				divesByRef[id] = dive
 			}
-
-			// Build gas mix ref → index lookup for switchmix resolution
-			let mixRefToIndex: [String: Int] = {
-				var map: [String: Int] = [:]
-				for (index, key) in result.gases.keys.sorted().enumerated() {
-					map[key] = index
-				}
-				return map
-			}()
 
 			// Insert depth profile samples
 			for sample in parsedDive.waypoints {
@@ -323,11 +324,7 @@ struct UDDFImporter {
 		let duration = parsed.diveDuration ?? Int(parsed.waypoints.map(\.divetime).max() ?? 0)
 
 		// Water temperature from informationafterdive or average of waypoint temps
-		let waterTemp: Double? = parsed.lowestTempCelsius ?? {
-			let temps = parsed.waypoints.compactMap(\.temperatureCelsius)
-			guard !temps.isEmpty else { return nil }
-			return temps.reduce(0, +) / Double(temps.count)
-		}()
+		let waterTemp: Double? = parsed.lowestTempCelsius ?? parsed.waypoints.compactMap(\.temperatureCelsius).mean
 
 		let dive = Dive(
 			diveNumber: parsed.diveNumber ?? 0,
@@ -434,11 +431,10 @@ struct UDDFImporter {
 
 		// Match by name and country to avoid duplicates
 		if !name.isEmpty {
-			var descriptor = FetchDescriptor<DiveSite>(
+			let descriptor = FetchDescriptor<DiveSite>(
 				predicate: #Predicate<DiveSite> { $0.name == name && $0.country == country }
 			)
-			descriptor.fetchLimit = 1
-			if let existing = try? context.fetch(descriptor).first {
+			if let existing = try? context.fetchFirst(descriptor) {
 				return existing
 			}
 		}
@@ -460,13 +456,12 @@ struct UDDFImporter {
 		let givenName = parsed.firstName
 		let familyName = parsed.lastName
 
-		var descriptor = FetchDescriptor<Buddy>(
+		let descriptor = FetchDescriptor<Buddy>(
 			predicate: #Predicate<Buddy> {
 				$0.givenName == givenName && $0.familyName == familyName
 			}
 		)
-		descriptor.fetchLimit = 1
-		if let existing = try? context.fetch(descriptor).first {
+		if let existing = try? context.fetchFirst(descriptor) {
 			return existing
 		}
 
@@ -492,11 +487,10 @@ struct UDDFImporter {
 		let name = parsed.name
 
 		if !name.isEmpty {
-			var descriptor = FetchDescriptor<Trip>(
+			let descriptor = FetchDescriptor<Trip>(
 				predicate: #Predicate<Trip> { $0.name == name }
 			)
-			descriptor.fetchLimit = 1
-			if let existing = try? context.fetch(descriptor).first {
+			if let existing = try? context.fetchFirst(descriptor) {
 				return existing
 			}
 		}
@@ -520,20 +514,18 @@ struct UDDFImporter {
 
 		// Match by serial number if available, otherwise by name + manufacturer
 		if !serialNumber.isEmpty {
-			var descriptor = FetchDescriptor<Equipment>(
+			let descriptor = FetchDescriptor<Equipment>(
 				predicate: #Predicate<Equipment> { $0.serialNumber == serialNumber }
 			)
-			descriptor.fetchLimit = 1
-			if let existing = try? context.fetch(descriptor).first {
+			if let existing = try? context.fetchFirst(descriptor) {
 				return existing
 			}
 		} else if !name.isEmpty {
 			let manufacturer = parsed.manufacturer
-			var descriptor = FetchDescriptor<Equipment>(
+			let descriptor = FetchDescriptor<Equipment>(
 				predicate: #Predicate<Equipment> { $0.name == name && $0.manufacturer == manufacturer }
 			)
-			descriptor.fetchLimit = 1
-			if let existing = try? context.fetch(descriptor).first {
+			if let existing = try? context.fetchFirst(descriptor) {
 				return existing
 			}
 		}
@@ -578,16 +570,10 @@ struct UDDFImporter {
 		return cert
 	}
 
+	/// UDDF stores gas fractions (0.32), so they're truncated to whole percentages
+	/// before labelling — a trace of helium under 1 % doesn't make the mix trimix.
 	private static func gasLabel(o2: Double, he: Double) -> String {
-		let o2Pct = Int(o2 * 100)
-		let hePct = Int(he * 100)
-		if hePct > 0 {
-			return "Trimix \(o2Pct)/\(hePct)"
-		} else if o2Pct == 21 {
-			return "Air"
-		} else {
-			return "EAN\(o2Pct)"
-		}
+		GasLabel.forMix(oxygenPercent: Double(Int(o2 * 100)), heliumPercent: Double(Int(he * 100)))
 	}
 }
 
@@ -857,10 +843,10 @@ private final class UDDFParser: NSObject, XMLParserDelegate {
 
 			case "dateoftrip":
 				if let start = attributeDict["startdate"] {
-					currentTrip.startDate = parseUDDFDate(start)
+					currentTrip.startDate = ISO8601DateParser.date(from: start)
 				}
 				if let end = attributeDict["enddate"] {
-					currentTrip.endDate = parseUDDFDate(end)
+					currentTrip.endDate = ISO8601DateParser.date(from: end)
 				}
 
 			case "tankdata":
@@ -1000,14 +986,14 @@ private final class UDDFParser: NSObject, XMLParserDelegate {
 			case "organisation" where insideCertification:
 				currentCertification.organisation = text
 			case "datetime" where parent == "issuedate" && insideCertification:
-				currentCertification.issueDate = parseUDDFDate(text)
+				currentCertification.issueDate = ISO8601DateParser.date(from: text)
 			case "certification" where insideCertification:
 				result.certifications.append(currentCertification)
 				insideCertification = false
 
 				// Information before dive
 			case "datetime" where parent == "informationbeforedive":
-				currentDive.dateTime = parseUDDFDate(text)
+				currentDive.dateTime = ISO8601DateParser.date(from: text)
 			case "divenumber" where parent == "informationbeforedive":
 				currentDive.diveNumber = Int(text)
 			case "passedtime" where parent == "surfaceintervalbeforedive":
@@ -1252,11 +1238,11 @@ private final class UDDFParser: NSObject, XMLParserDelegate {
 			case "serialnumber" where currentEquipmentTag != nil && isInsideEquipmentPiece():
 				currentEquipment?.serialNumber = text
 			case "datetime" where parent == "purchase" && currentEquipmentTag != nil && isInsideEquipmentPiece():
-				currentEquipment?.purchaseDate = parseUDDFDate(text)
+				currentEquipment?.purchaseDate = ISO8601DateParser.date(from: text)
 			case "price" where parent == "purchase" && currentEquipmentTag != nil && isInsideEquipmentPiece():
 				currentEquipment?.purchasePrice = Double(text)
 			case "datetime" where parent == "nextservicedate" && currentEquipmentTag != nil && isInsideEquipmentPiece():
-				currentEquipment?.nextServiceDate = parseUDDFDate(text)
+				currentEquipment?.nextServiceDate = ISO8601DateParser.date(from: text)
 			case "serviceinterval" where currentEquipmentTag != nil && isInsideEquipmentPiece():
 				currentEquipment?.serviceIntervalDays = Int(Double(text) ?? 0)
 
@@ -1364,33 +1350,4 @@ private final class UDDFParser: NSObject, XMLParserDelegate {
 		return k - 273.15
 	}
 
-	private func parseUDDFDate(_ string: String) -> Date? {
-		// UDDF uses ISO 8601: "2006-04-28T08:15:00" or "2006-04-28T08:15"
-		// If an explicit timezone is present (e.g. "Z" or "+05:00"), respect it.
-		let formatter = ISO8601DateFormatter()
-		formatter.formatOptions = [.withInternetDateTime]
-		if let date = formatter.date(from: string) {
-			return date
-		}
-		// No timezone in the string — interpret as local time at the dive site.
-		// Most UDDF exporters write the dive computer's local time without a
-		// timezone indicator, so we parse in the user's current timezone to
-		// preserve the original wall-clock time on display.
-		formatter.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
-		formatter.timeZone = .current
-		if let date = formatter.date(from: string) {
-			return date
-		}
-		// Fallback: manual parsing for "YYYY-MM-DDThh:mm" format
-		let df = DateFormatter()
-		df.locale = Locale(identifier: "en_US_POSIX")
-		df.timeZone = .current
-		for format in ["yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm", "yyyy-MM-dd"] {
-			df.dateFormat = format
-			if let date = df.date(from: string) {
-				return date
-			}
-		}
-		return nil
-	}
 }

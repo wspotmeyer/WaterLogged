@@ -33,18 +33,7 @@ struct ImportedDiveMatcherTests {
 	private let reference = Date(timeIntervalSinceReferenceDate: 800_000_000)
 
 	private func dive(at date: Date) -> ParsedDiveData {
-		ParsedDiveData(
-			dateTime: date,
-			durationSeconds: 2_400,
-			maxDepthMeters: 18,
-			avgDepthMeters: 12,
-			waterTempCelsius: 24,
-			samples: [],
-			gasMixes: [],
-			diveNumber: nil,
-			computerModel: "Oceanic Pro Plus X",
-			serialNumber: nil
-		)
+		.fixture(dateTime: date, computerModel: "Oceanic Pro Plus X")
 	}
 
 	// MARK: - Matching

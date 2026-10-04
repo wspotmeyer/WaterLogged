@@ -26,7 +26,7 @@ import SwiftData
 ///
 /// This importer takes the `ParsedDiveData` produced by `LibDCDeviceHandler` and
 /// creates the corresponding `Dive`, `DepthSample`, and `GasMix` SwiftData models.
-struct DiveComputerImporter {
+enum DiveComputerImporter {
 
 	/// Import an array of parsed dives into the given model context.
 	///
@@ -39,11 +39,10 @@ struct DiveComputerImporter {
 		into context: ModelContext
 	) throws -> Int {
 		// Find the current maximum dive number in the database
-		var descriptor = FetchDescriptor<Dive>(
+		let descriptor = FetchDescriptor<Dive>(
 			sortBy: [SortDescriptor(\.diveNumber, order: .reverse)]
 		)
-		descriptor.fetchLimit = 1
-		let maxExisting = (try? context.fetch(descriptor))?.first?.diveNumber ?? 0
+		let maxExisting = (try? context.fetchFirst(descriptor))?.diveNumber ?? 0
 
 		// Sort imported dives by date so numbering follows chronological order
 		let sorted = parsedDives.sorted { $0.dateTime < $1.dateTime }
@@ -127,11 +126,7 @@ struct DiveComputerImporter {
 		diveNumber: Int
 	) -> Dive {
 		// Water temperature from the dive computer or average of sample temps
-		let waterTemp: Double? = parsed.waterTempCelsius ?? {
-			let temps = parsed.samples.compactMap(\.waterTempCelsius)
-			guard !temps.isEmpty else { return nil }
-			return temps.reduce(0, +) / Double(temps.count)
-		}()
+		let waterTemp: Double? = parsed.waterTempCelsius ?? parsed.samples.compactMap(\.waterTempCelsius).mean
 
 		let dive = Dive(
 			diveNumber: diveNumber,
@@ -148,12 +143,6 @@ struct DiveComputerImporter {
 	}
 
 	private static func gasLabel(o2: Double, he: Double) -> String {
-		if he > 0 {
-			return "Trimix \(Int(o2))/\(Int(he))"
-		} else if Int(o2) == 21 {
-			return "Air"
-		} else {
-			return "EAN\(Int(o2))"
-		}
+		GasLabel.forMix(oxygenPercent: o2, heliumPercent: he)
 	}
 }

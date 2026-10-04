@@ -88,9 +88,8 @@ struct DiveSiteListView: View {
 		.searchable(text: $searchText, placement: .sidebar, prompt: "Search sites")
 		.onChange(of: NavigationRouter.shared.pending, initial: true) { _, pending in
 			guard case let .diveSite(externalId) = pending else { return }
-			var descriptor = FetchDescriptor<DiveSite>(predicate: #Predicate { $0.externalId == externalId })
-			descriptor.fetchLimit = 1
-			if let site = try? modelContext.fetch(descriptor).first {
+			let descriptor = FetchDescriptor<DiveSite>(predicate: #Predicate { $0.externalId == externalId })
+			if let site = try? modelContext.fetchFirst(descriptor) {
 				selectedSite = site
 			}
 			NavigationRouter.shared.pending = nil

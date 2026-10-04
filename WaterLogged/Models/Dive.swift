@@ -57,12 +57,11 @@ final class Dive {
 		guard let context = modelContext else { return 0 }
 		let currentDate = date
 		let predicate = #Predicate<Dive> { $0.date < currentDate }
-		var descriptor = FetchDescriptor<Dive>(
+		let descriptor = FetchDescriptor<Dive>(
 			predicate: predicate,
 			sortBy: [SortDescriptor(\Dive.date, order: .reverse)]
 		)
-		descriptor.fetchLimit = 1
-		guard let previousDive = (try? context.fetch(descriptor))?.first else { return 0 }
+		guard let previousDive = (try? context.fetchFirst(descriptor)) else { return 0 }
 		let previousEndDate = previousDive.date.addingTimeInterval(Double(previousDive.durationSeconds))
 		let gap = Int(currentDate.timeIntervalSince(previousEndDate))
 		let twentyFourHours = 24 * 3600

@@ -91,9 +91,8 @@ struct TripListView: View {
 		.searchable(text: $searchText, placement: .sidebar, prompt: "Search trips")
 		.onChange(of: NavigationRouter.shared.pending, initial: true) { _, pending in
 			guard case let .trip(externalId) = pending else { return }
-			var descriptor = FetchDescriptor<Trip>(predicate: #Predicate { $0.externalId == externalId })
-			descriptor.fetchLimit = 1
-			if let trip = try? modelContext.fetch(descriptor).first {
+			let descriptor = FetchDescriptor<Trip>(predicate: #Predicate { $0.externalId == externalId })
+			if let trip = try? modelContext.fetchFirst(descriptor) {
 				selectedTrip = trip
 			}
 			NavigationRouter.shared.pending = nil

@@ -44,18 +44,7 @@ struct DiveComputerTankFilterTests {
 		gasMixes: [ParsedGasMixData],
 		samples: [ParsedSampleData]
 	) -> ParsedDiveData {
-		ParsedDiveData(
-			dateTime: .now,
-			durationSeconds: 2_400,
-			maxDepthMeters: 18,
-			avgDepthMeters: 12,
-			waterTempCelsius: 24,
-			samples: samples,
-			gasMixes: gasMixes,
-			diveNumber: nil,
-			computerModel: "Oceanic Test",
-			serialNumber: nil
-		)
+		.fixture(samples: samples, gasMixes: gasMixes)
 	}
 
 	private func sample(

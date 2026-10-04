@@ -110,8 +110,7 @@ struct BackupPackagerTests {
 			try ZipReader.extractArchive(at: zipURL, to: out)
 
 			let extrasURL = try #require(
-				FileManager.default.enumerator(at: out, includingPropertiesForKeys: nil)?
-					.compactMap { $0 as? URL }
+				fileURLs(under: out)
 					.first { $0.lastPathComponent == "extras.xml" }
 			)
 			let extras = try String(contentsOf: extrasURL, encoding: .utf8)
@@ -123,8 +122,7 @@ struct BackupPackagerTests {
 			#expect(extras.contains("<equipmentused>") == false)
 
 			let logbookURL = try #require(
-				FileManager.default.enumerator(at: out, includingPropertiesForKeys: nil)?
-					.compactMap { $0 as? URL }
+				fileURLs(under: out)
 					.first { $0.lastPathComponent == "logbook.uddf" }
 			)
 			let uddf = try String(contentsOf: logbookURL, encoding: .utf8)
@@ -156,8 +154,7 @@ struct BackupPackagerTests {
 			try ZipReader.extractArchive(at: zipURL, to: out)
 
 			let extrasURL = try #require(
-				FileManager.default.enumerator(at: out, includingPropertiesForKeys: nil)?
-					.compactMap { $0 as? URL }
+				fileURLs(under: out)
 					.first { $0.lastPathComponent == "extras.xml" }
 			)
 			let extras = try String(contentsOf: extrasURL, encoding: .utf8)
@@ -168,8 +165,7 @@ struct BackupPackagerTests {
 			// The UDDF file itself has no <tankdata> for this tank: no starting
 			// pressure means the schema can't represent it there.
 			let logbookURL = try #require(
-				FileManager.default.enumerator(at: out, includingPropertiesForKeys: nil)?
-					.compactMap { $0 as? URL }
+				fileURLs(under: out)
 					.first { $0.lastPathComponent == "logbook.uddf" }
 			)
 			let uddf = try String(contentsOf: logbookURL, encoding: .utf8)

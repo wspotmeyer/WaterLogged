@@ -409,8 +409,8 @@ nonisolated enum LibDCDeviceHandler {
 		dateComponents.minute = Int(dt.minute)
 		dateComponents.second = Int(dt.second)
 		// dc_datetime_t.timezone is an offset in seconds, matching tm_gmtoff.
-			if dt.timezone != dc_timezone_none() {
-				dateComponents.timeZone = TimeZone(
+		if dt.timezone != dc_timezone_none() {
+			dateComponents.timeZone = TimeZone(
 				secondsFromGMT: Int(dt.timezone)
 			)
 		}
@@ -495,13 +495,7 @@ nonisolated enum LibDCDeviceHandler {
 	// MARK: - Helpers
 
 	private static func gasLabel(o2: Double, he: Double) -> String {
-		if he > 0 {
-			"Trimix \(Int(o2))/\(Int(he))"
-		} else if Int(o2) == 21 {
-			"Air"
-		} else {
-			"EAN\(Int(o2))"
-		}
+		GasLabel.forMix(oxygenPercent: o2, heliumPercent: he)
 	}
 
 	/// Convert a dc_deco_type_t value to a `DecoType`. An unrecognized value

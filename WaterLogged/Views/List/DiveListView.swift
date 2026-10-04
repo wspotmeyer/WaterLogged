@@ -109,9 +109,8 @@ struct DiveListView: View {
 		.searchable(text: $searchText, placement: .sidebar, prompt: "Search dives")
 		.onChange(of: NavigationRouter.shared.pending, initial: true) { _, pending in
 			guard case let .dive(externalId) = pending else { return }
-			var descriptor = FetchDescriptor<Dive>(predicate: #Predicate { $0.externalId == externalId })
-			descriptor.fetchLimit = 1
-			if let dive = try? modelContext.fetch(descriptor).first {
+			let descriptor = FetchDescriptor<Dive>(predicate: #Predicate { $0.externalId == externalId })
+			if let dive = try? modelContext.fetchFirst(descriptor) {
 				selectedDive = dive
 			}
 			NavigationRouter.shared.pending = nil

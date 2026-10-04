@@ -83,9 +83,8 @@ struct BuddyListView: View {
 		.searchable(text: $searchText, placement: .sidebar, prompt: "Search buddies")
 		.onChange(of: NavigationRouter.shared.pending, initial: true) { _, pending in
 			guard case let .buddy(externalId) = pending else { return }
-			var descriptor = FetchDescriptor<Buddy>(predicate: #Predicate { $0.externalId == externalId })
-			descriptor.fetchLimit = 1
-			if let buddy = try? modelContext.fetch(descriptor).first {
+			let descriptor = FetchDescriptor<Buddy>(predicate: #Predicate { $0.externalId == externalId })
+			if let buddy = try? modelContext.fetchFirst(descriptor) {
 				selectedBuddy = buddy
 			}
 			NavigationRouter.shared.pending = nil

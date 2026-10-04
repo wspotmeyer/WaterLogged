@@ -128,11 +128,10 @@ final class GasMix {
 		in context: ModelContext
 	) -> GasMix {
 		if let uddfId {
-			var idDescriptor = FetchDescriptor<GasMix>(
+			let idDescriptor = FetchDescriptor<GasMix>(
 				predicate: #Predicate<GasMix> { $0.externalId == uddfId }
 			)
-			idDescriptor.fetchLimit = 1
-			if let existing = try? context.fetch(idDescriptor).first {
+			if let existing = try? context.fetchFirst(idDescriptor) {
 				return existing
 			}
 		}
@@ -141,7 +140,7 @@ final class GasMix {
 		let he = heliumPercent
 		let ar = argonPercent
 		let h2 = hydrogenPercent
-		var descriptor = FetchDescriptor<GasMix>(
+		let descriptor = FetchDescriptor<GasMix>(
 			predicate: #Predicate<GasMix> {
 				$0.oxygenPercent == o2
 				&& $0.heliumPercent == he
@@ -149,9 +148,8 @@ final class GasMix {
 				&& $0.hydrogenPercent == h2
 			}
 		)
-		descriptor.fetchLimit = 1
 
-		if let existing = try? context.fetch(descriptor).first {
+		if let existing = try? context.fetchFirst(descriptor) {
 			return existing
 		}
 

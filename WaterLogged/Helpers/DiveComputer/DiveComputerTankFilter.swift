@@ -38,7 +38,7 @@ import Foundation
 /// If nothing qualifies — the common case for a computer without an air
 /// integration transmitter — the first slot is kept so the dive still records
 /// one tank with its gas mix.
-struct DiveComputerTankFilter {
+enum DiveComputerTankFilter {
 
 	/// Indices into `parsed.gasMixes` that should each become a `Tank`,
 	/// in ascending order.

@@ -117,20 +117,9 @@ struct UDDFExporter {
 		// Gas array-index → XML id map for switchmix resolution in waypoints
 		for (i, gas) in gases.enumerated() { ids.gasIndex[i] = UDDFIdentifier.xmlID(for: gas.externalId) }
 
-		// SwiftData relationship faulting workaround: when DepthSample objects are
-		// accessed through `dive.diveProfile`, their optional properties (ppo2Bar,
-		// cnsPercent, decoType, tankPressureBar, etc.) return nil even when values
-		// exist in the store. Fetching all samples directly via FetchDescriptor and
-		// grouping by dive avoids the lazy-loading path and preserves the data.
-		var samplesByDive: [PersistentIdentifier: [DepthSample]] = [:]
-		if !dives.isEmpty {
-			let allSamples = try context.fetch(FetchDescriptor<DepthSample>())
-			for sample in allSamples {
-				if let dive = sample.dive {
-					samplesByDive[dive.persistentModelID, default: []].append(sample)
-				}
-			}
-		}
+		// Samples are fetched directly rather than through `dive.diveProfile` —
+		// see the faulting workaround described on `DepthSample.groupedByDive(in:)`.
+		let samplesByDive = dives.isEmpty ? [:] : try DepthSample.groupedByDive(in: context)
 
 		var xml = XMLBuilder()
 		xml.rawLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
@@ -631,13 +620,7 @@ struct UDDFExporter {
 			xml.element("ratingvalue", value: "\(dive.rating)")
 			xml.close("rating")
 		}
-		if !dive.notes.isEmpty {
-			xml.open("notes")
-			for paragraph in splitNotesPreservingBlankLines(dive.notes) {
-				xml.element("para", value: paragraph)
-			}
-			xml.close("notes")
-		}
+		writeNotes(&xml, dive.notes)
 		xml.close("informationafterdive")
 	}
 
@@ -686,13 +669,7 @@ struct UDDFExporter {
 				xml.close("relateddives")
 			}
 
-			if !trip.notes.isEmpty {
-				xml.open("notes")
-				for paragraph in splitNotesPreservingBlankLines(trip.notes) {
-					xml.element("para", value: paragraph)
-				}
-				xml.close("notes")
-			}
+			writeNotes(&xml, trip.notes)
 
 			xml.close("trippart")
 			xml.close("trip")
@@ -712,6 +689,16 @@ struct UDDFExporter {
 	}
 
 	// MARK: - Notes
+
+	/// Writes `<notes>` with one `<para>` per paragraph; writes nothing for empty notes.
+	private static func writeNotes(_ xml: inout XMLBuilder, _ notes: String) {
+		guard !notes.isEmpty else { return }
+		xml.open("notes")
+		for paragraph in splitNotesPreservingBlankLines(notes) {
+			xml.element("para", value: paragraph)
+		}
+		xml.close("notes")
+	}
 
 	/// Splits a free-text notes field into paragraphs while preserving every
 	/// blank line. Normalizes CRLF/CR to LF first because Swift treats `\r\n`

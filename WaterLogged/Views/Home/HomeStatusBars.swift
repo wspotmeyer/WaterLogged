@@ -86,17 +86,17 @@ struct StatisticsBar: View {
 	}
 
 	private var countriesVisited: Int {
-		Set(dives.compactMap { $0.site?.country }.filter { !$0.isEmpty }).count
+		StatsSnapshotBuilder.countriesVisited(in: dives)
 	}
 
 	private var deepestDepth: String {
-		guard let maxMeters = dives.map(\.maxDepthMeters).max() else { return "—" }
+		guard let maxMeters = StatsSnapshotBuilder.deepestDepthMeters(of: dives) else { return "—" }
 		return units.depthString(maxMeters)
 	}
 
 	private var totalBottomTime: String {
 		StatsSnapshotBuilder.formatBottomTime(
-			priorHistory.totalBottomTimeSeconds(logged: dives.reduce(0) { $0 + $1.durationSeconds })
+			priorHistory.totalBottomTimeSeconds(logged: StatsSnapshotBuilder.loggedBottomTimeSeconds(of: dives))
 		)
 	}
 

@@ -208,16 +208,15 @@ struct RestorePackager {
 		// Dive extras
 		if !extras.dives.isEmpty {
 			let allDives = try context.fetch(FetchDescriptor<Dive>())
-			let divesByID = Dictionary(allDives.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let divesByID = allDives.keyedByFirst(\.externalId)
 
 			let needsCertLookup = extras.dives.values.contains { $0.certificationExternalId != nil }
 			var certsByID: [String: Certification] = [:]
 			var certsByMatchKey: [String: Certification] = [:]
 			if needsCertLookup {
 				let allCerts = try context.fetch(FetchDescriptor<Certification>())
-				certsByID = Dictionary(allCerts.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
-				certsByMatchKey = Dictionary(allCerts.map { ($0.backupMatchKey, $0) },
-											 uniquingKeysWith: { a, _ in a })
+				certsByID = allCerts.keyedByFirst(\.externalId)
+				certsByMatchKey = allCerts.keyedByFirst(\.backupMatchKey)
 			}
 
 			let needsEquipmentLookup = extras.dives.values.contains {
@@ -226,7 +225,7 @@ struct RestorePackager {
 			let equipmentByID: [String: Equipment]
 			if needsEquipmentLookup {
 				let allEquipment = try context.fetch(FetchDescriptor<Equipment>())
-				equipmentByID = Dictionary(allEquipment.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+				equipmentByID = allEquipment.keyedByFirst(\.externalId)
 			} else {
 				equipmentByID = [:]
 			}
@@ -307,7 +306,7 @@ struct RestorePackager {
 		// Equipment extras
 		if !extras.equipment.isEmpty {
 			let allEquipment = try context.fetch(FetchDescriptor<Equipment>())
-			let equipmentByID = Dictionary(allEquipment.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let equipmentByID = allEquipment.keyedByFirst(\.externalId)
 
 			for (id, extra) in extras.equipment {
 				guard let item = equipmentByID[id] else { continue }
@@ -335,7 +334,7 @@ struct RestorePackager {
 		// Buddy extras
 		if !extras.buddies.isEmpty {
 			let allBuddies = try context.fetch(FetchDescriptor<Buddy>())
-			let buddiesByID = Dictionary(allBuddies.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let buddiesByID = allBuddies.keyedByFirst(\.externalId)
 
 			for (id, extra) in extras.buddies {
 				guard let buddy = buddiesByID[id] else { continue }
@@ -347,9 +346,8 @@ struct RestorePackager {
 		// Certification extras
 		if !extras.certifications.isEmpty {
 			let allCerts = try context.fetch(FetchDescriptor<Certification>())
-			let certsByID = Dictionary(allCerts.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
-			let certsByMatchKey = Dictionary(allCerts.map { ($0.backupMatchKey, $0) },
-											 uniquingKeysWith: { a, _ in a })
+			let certsByID = allCerts.keyedByFirst(\.externalId)
+			let certsByMatchKey = allCerts.keyedByFirst(\.backupMatchKey)
 
 			for (id, extra) in extras.certifications {
 				guard let cert = extra.matchKey.flatMap({ certsByMatchKey[$0] }) ?? certsByID[id] else { continue }
@@ -367,7 +365,7 @@ struct RestorePackager {
 		// Site extras
 		if !extras.sites.isEmpty {
 			let allSites = try context.fetch(FetchDescriptor<DiveSite>())
-			let sitesByID = Dictionary(allSites.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let sitesByID = allSites.keyedByFirst(\.externalId)
 
 			for (id, extra) in extras.sites {
 				guard let site = sitesByID[id] else { continue }
@@ -378,7 +376,7 @@ struct RestorePackager {
 		// Trip extras
 		if !extras.trips.isEmpty {
 			let allTrips = try context.fetch(FetchDescriptor<Trip>())
-			let tripsByID = Dictionary(allTrips.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let tripsByID = allTrips.keyedByFirst(\.externalId)
 
 			for (id, extra) in extras.trips {
 				guard let trip = tripsByID[id] else { continue }
@@ -397,11 +395,11 @@ struct RestorePackager {
 		// Photo manifest — create Photo model instances and link to parents
 		if !extras.photos.isEmpty {
 			let allDives = try context.fetch(FetchDescriptor<Dive>())
-			let divesByID = Dictionary(allDives.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let divesByID = allDives.keyedByFirst(\.externalId)
 			let allSites = try context.fetch(FetchDescriptor<DiveSite>())
-			let sitesByID = Dictionary(allSites.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let sitesByID = allSites.keyedByFirst(\.externalId)
 			let allTrips = try context.fetch(FetchDescriptor<Trip>())
-			let tripsByID = Dictionary(allTrips.map { ($0.externalId, $0) }, uniquingKeysWith: { a, _ in a })
+			let tripsByID = allTrips.keyedByFirst(\.externalId)
 
 			for entry in extras.photos {
 				guard let imageData = readMedia(entry.file) else { continue }
@@ -699,7 +697,7 @@ private final class ExtrasParser: NSObject, XMLParserDelegate {
 				var entry = RestorePhotoEntry(file: attrs["file"] ?? "")
 				entry.caption = attrs["caption"] ?? ""
 				entry.sortOrder = attrs["sortorder"].flatMap(Int.init) ?? 0
-				entry.dateAdded = attrs["dateadded"].flatMap(parseISO8601Date)
+				entry.dateAdded = attrs["dateadded"].flatMap(ISO8601DateParser.date(from:))
 				entry.originalFilename = attrs["originalfilename"] ?? ""
 				currentPhotoEntry = entry
 
@@ -797,7 +795,7 @@ private final class ExtrasParser: NSObject, XMLParserDelegate {
 			case "autoaddtodives":
 				currentEquipmentExtras.autoAddToDives = text == "true"
 			case "date" where parent == "record":
-				currentServiceDate = parseISO8601Date(text)
+				currentServiceDate = ISO8601DateParser.date(from: text)
 			case "servicedby":
 				currentServiceBy = text
 			case "notes" where parent == "record":
@@ -880,22 +878,4 @@ private final class ExtrasParser: NSObject, XMLParserDelegate {
 
 	// MARK: - Helpers
 
-	private func parseISO8601Date(_ string: String) -> Date? {
-		let formatter = ISO8601DateFormatter()
-		formatter.formatOptions = [.withInternetDateTime]
-		if let date = formatter.date(from: string) { return date }
-
-		formatter.formatOptions = [.withFullDate, .withTime, .withDashSeparatorInDate, .withColonSeparatorInTime]
-		formatter.timeZone = .current
-		if let date = formatter.date(from: string) { return date }
-
-		let df = DateFormatter()
-		df.locale = Locale(identifier: "en_US_POSIX")
-		df.timeZone = .current
-		for format in ["yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd'T'HH:mm", "yyyy-MM-dd"] {
-			df.dateFormat = format
-			if let date = df.date(from: string) { return date }
-		}
-		return nil
-	}
 }

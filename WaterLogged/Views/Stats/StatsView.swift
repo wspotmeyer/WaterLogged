@@ -123,7 +123,7 @@ struct StatsView: View {
 	}
 
 	private var totalBottomTime: String {
-		let total = priorHistory.totalBottomTimeSeconds(logged: dives.reduce(0) { $0 + $1.durationSeconds })
+		let total = priorHistory.totalBottomTimeSeconds(logged: StatsSnapshotBuilder.loggedBottomTimeSeconds(of: dives))
 		let hours = total / 3600
 		let minutes = (total % 3600) / 60
 		if hours > 0 {
@@ -133,15 +133,15 @@ struct StatsView: View {
 	}
 
 	private var countriesVisited: Int {
-		Set(dives.compactMap { $0.site?.country }.filter { !$0.isEmpty }).count
+		StatsSnapshotBuilder.countriesVisited(in: dives)
 	}
 
 	private var diveSitesVisited: Int {
-		Set(dives.compactMap { $0.site?.externalId }).count
+		StatsSnapshotBuilder.diveSitesVisited(in: dives)
 	}
 
 	private var maxDepthText: String {
-		guard let max = dives.map(\.maxDepthMeters).max() else { return "—" }
+		guard let max = StatsSnapshotBuilder.deepestDepthMeters(of: dives) else { return "—" }
 		return units.depthString(max)
 	}
 

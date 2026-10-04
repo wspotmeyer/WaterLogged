@@ -33,7 +33,7 @@ import Foundation
 /// the original entry, so times within `dateTolerance` count as the same dive. Two
 /// distinct dives can't begin that close together, and being slightly too eager to
 /// offer a dive is far better than silently hiding one.
-struct ImportedDiveMatcher {
+enum ImportedDiveMatcher {
 
 	/// Start times this close together describe the same dive.
 	static let dateTolerance: TimeInterval = 120

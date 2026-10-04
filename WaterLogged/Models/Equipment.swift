@@ -129,31 +129,14 @@ enum EquipmentType: String, Codable, CaseIterable, Identifiable {
 		}
 	}
 
-	/// Maps a UDDF equipment XML tag name to an `EquipmentType`. `tank` is
-	/// deliberately absent: UDDF tanks are imported as `Tank` records, not equipment.
+	/// Maps a UDDF equipment XML tag name to an `EquipmentType` — the inverse of
+	/// `uddfTag`. `tank` is deliberately excluded: UDDF tanks are imported as
+	/// `Tank` records, not equipment.
 	init?(uddfTag: String) {
-		switch uddfTag {
-			case "boots": self = .boots
-			case "buoyancycontroldevice": self = .buoyancyControlDevice
-			case "camera": self = .camera
-			case "compass": self = .compass
-			case "compressor": self = .compressor
-			case "divecomputer": self = .diveComputer
-			case "fins": self = .fins
-			case "gloves": self = .gloves
-			case "knife": self = .knife
-			case "lead": self = .lead
-			case "light": self = .light
-			case "mask": self = .mask
-			case "rebreather": self = .rebreather
-			case "regulator": self = .regulator
-			case "scooter": self = .scooter
-			case "suit": self = .suit
-			case "variouspieces": self = .miscellaneous
-			case "videocamera": self = .videoCamera
-			case "watch": self = .watch
-			default: return nil
-		}
+		guard uddfTag != EquipmentType.tank.uddfTag,
+			  let match = EquipmentType.allCases.first(where: { $0.uddfTag == uddfTag })
+		else { return nil }
+		self = match
 	}
 }
 

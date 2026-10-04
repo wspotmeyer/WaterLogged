@@ -1,5 +1,5 @@
 //
-//  DiveComputerProtocol.swift
+//  DiveComputerTypes.swift
 //  WaterLogged
 //
 //  Created by John Meyer on 2/23/26.
