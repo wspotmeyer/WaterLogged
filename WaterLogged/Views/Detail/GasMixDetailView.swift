@@ -117,21 +117,7 @@ struct GasMixDetailView: View {
 						if isDivesExpanded {
 							VStack(spacing: 0) {
 								ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-									NavigationLink {
-										DiveDetailView(dive: dive)
-									} label: {
-										HStack {
-											Text(LocalizedStringKey(dive.displayTitle))
-												.lineLimit(1)
-											Spacer()
-											Text(dive.date.formatted(date: .abbreviated, time: .omitted))
-												.lineLimit(1)
-											Image(systemName: "chevron.right")
-												.font(.caption)
-										}
-										.padding(.top, 12)
-									}
-									.buttonStyle(.plain)
+									DiveLinkRow(dive: dive)
 								}
 							}
 						}
@@ -140,22 +126,9 @@ struct GasMixDetailView: View {
 							Text("Dives")
 								.font(.title2.bold())
 							Spacer()
-							if dives.count > 0 {
-								TimeCount(seconds: gasMix.totalDiveTimeSeconds, font: .headline)
-								DiveCount(count: dives.count, font: .headline)
-								Button {
-									withAnimation(.smooth) {
-										isDivesExpanded.toggle()
-									}
-								} label: {
-									Image(systemName: isDivesExpanded ? "chevron.down" : "chevron.right")
-										.imageScale(.small)
-										.frame(width: 32, height: 32)
-										.contentShape(.rect)
-								}
-								.buttonStyle(.plain)
-								.font(.subheadline)
-							}
+							TimeCount(seconds: gasMix.totalDiveTimeSeconds, font: .headline)
+							DiveCount(count: dives.count, font: .headline)
+							DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
 						}
 					}
 					.tileBackgroundStyle()

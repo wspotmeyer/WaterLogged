@@ -22,7 +22,6 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
-import UniformTypeIdentifiers
 
 struct EquipmentEntryView: View {
 	@Environment(\.modelContext) private var modelContext
@@ -49,8 +48,6 @@ struct EquipmentEntryView: View {
 	@State private var autoAddToDives = false
 
 	private var isEditing: Bool { equipment != nil }
-
-	private static let allowedImageTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
 
 	@State private var showingDeleteConfirmation = false
 
@@ -124,37 +121,19 @@ struct EquipmentEntryView: View {
 					}
 
 					Section {
-						ZStack(alignment: .topLeading) {
-							if warranty.isEmpty {
-								Text("Warranty Information")
-									.foregroundStyle(.tertiary)
-									.padding(.top, 8)
-									.padding(.leading, 4)
-							}
-							TextEditor(text: $warranty)
-								.frame(minHeight: 100)
-						}
+						PlaceholderTextEditor(placeholder: "Warranty Information", text: $warranty)
 					} header: {
 						Text("Warranty Information")
 					} footer: {
-						Text("You can use text formatting (bold, italics, links, etc.) using inline Markdown syntax.")
+						Text(PlaceholderTextEditor.markdownHint)
 					}
 
 					Section {
-						ZStack(alignment: .topLeading) {
-							if notes.isEmpty {
-								Text("Notes")
-									.foregroundStyle(.tertiary)
-									.padding(.top, 8)
-									.padding(.leading, 4)
-							}
-							TextEditor(text: $notes)
-								.frame(minHeight: 100)
-						}
+						PlaceholderTextEditor(placeholder: "Notes", text: $notes)
 					} header: {
 						Text("Notes")
 					} footer: {
-						Text("You can use text formatting (bold, italics, links, etc.) using inline Markdown syntax.")
+						Text(PlaceholderTextEditor.markdownHint)
 					}
 
 					Section {
@@ -166,34 +145,20 @@ struct EquipmentEntryView: View {
 						Text("Retired equipment will not be shown in the list of equipment to add to a dive. Auto-add will add the equipment to any new dives you create.")
 					}
 					if isEditing {
-						Section {
-							Button("Delete This Equipment", role: .destructive) {
-								showingDeleteConfirmation = true
-							}
-						}
+						DeleteItemSection(title: "Delete This Equipment", isConfirming: $showingDeleteConfirmation)
 					}
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(isEditing ? "Edit Equipment" : "New Equipment")
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-					.disabled(name.isEmpty)
-				}
-			}
+			.entryFormChrome(
+				isEditing ? "Edit Equipment" : "New Equipment",
+				canSave: !name.isEmpty,
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				if let equipment {
 					name = equipment.name
@@ -215,27 +180,24 @@ struct EquipmentEntryView: View {
 				}
 			}
 			.onChange(of: photoItem) { _, newItem in
-				Task {
-					photoData = try? await newItem?.loadTransferable(type: Data.self)
-				}
+				Task { photoData = await ImageFileHelper.loadData(from: newItem) }
 			}
 			.fileImporter(
 				isPresented: $showingFileImporter,
-				allowedContentTypes: Self.allowedImageTypes
+				allowedContentTypes: ImageFileHelper.importableTypes
 			) { result in
 				guard let url = try? result.get() else { return }
 				guard url.startAccessingSecurityScopedResource() else { return }
 				defer { url.stopAccessingSecurityScopedResource() }
 				photoData = try? Data(contentsOf: url)
 			}
-			.alert("Delete This Equipment?", isPresented: $showingDeleteConfirmation) {
-				Button("Delete", role: .destructive) {
-					dismiss()
-					onDelete?()
-				}
-				Button("Cancel", role: .cancel) { }
-			} message: {
-				Text("This will permanently delete this equipment and all its service records.")
+			.deleteConfirmation(
+				"Delete This Equipment?",
+				isPresented: $showingDeleteConfirmation,
+				message: "This will permanently delete this equipment and all its service records."
+			) {
+				dismiss()
+				onDelete?()
 			}
 		}
 #if os(macOS)
@@ -292,7 +254,7 @@ private struct EquipmentPhotoSection: View {
 
 	var body: some View {
 		Section("Photo") {
-			if let photoData, let image = makeImage(from: photoData) {
+			if let photoData, let image = makeDisplayImage(from: photoData) {
 				image
 					.resizable()
 					.scaledToFit()
@@ -311,16 +273,6 @@ private struct EquipmentPhotoSection: View {
 				}
 			}
 		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
 	}
 }
 

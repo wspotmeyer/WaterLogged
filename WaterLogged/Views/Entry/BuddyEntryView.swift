@@ -23,7 +23,6 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import Contacts
-import UniformTypeIdentifiers
 
 struct BuddyEntryView: View {
 	@Environment(\.modelContext) private var modelContext
@@ -52,8 +51,6 @@ struct BuddyEntryView: View {
 
 	private var isEditing: Bool { buddy != nil }
 
-	private static let allowedImageTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
-
 	@State private var showingDeleteConfirmation = false
 
 	var body: some View {
@@ -71,7 +68,7 @@ struct BuddyEntryView: View {
 #endif
 
 					Section("Photo") {
-						BuddyPhotoPicker(
+						CircularPhotoPicker(
 							photoData: $photoData,
 							photoItem: $photoItem,
 							showingFileImporter: $showingFileImporter
@@ -115,43 +112,29 @@ struct BuddyEntryView: View {
 							.autocorrectionDisabled()
 					}
 					if isEditing {
-						Section {
-							Button("Delete This Buddy", role: .destructive) {
-								showingDeleteConfirmation = true
-							}
-						}
+						DeleteItemSection(title: "Delete This Buddy", isConfirming: $showingDeleteConfirmation)
 					}
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(isEditing ? "Edit Buddy" : "New Buddy")
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-					.disabled(givenName.isEmpty && familyName.isEmpty)
-				}
-			}
+			.entryFormChrome(
+				isEditing ? "Edit Buddy" : "New Buddy",
+				canSave: !(givenName.isEmpty && familyName.isEmpty),
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear { loadBuddy() }
 			.onChange(of: photoItem) { _, newItem in
-				Task { photoData = await loadImageData(from: newItem) }
+				Task { photoData = await ImageFileHelper.loadData(from: newItem) }
 			}
 			.fileImporter(
 				isPresented: $showingFileImporter,
-				allowedContentTypes: Self.allowedImageTypes
+				allowedContentTypes: ImageFileHelper.importableTypes
 			) { result in
-				photoData = loadImageData(from: result)
+				photoData = ImageFileHelper.loadData(from: result)
 			}
 #if canImport(UIKit)
 			.sheet(isPresented: $showingContactPicker) {
@@ -167,14 +150,13 @@ struct BuddyEntryView: View {
 					.frame(width: 0, height: 0)
 			)
 #endif
-			.alert("Delete This Buddy?", isPresented: $showingDeleteConfirmation) {
-				Button("Delete", role: .destructive) {
-					dismiss()
-					onDelete?()
-				}
-				Button("Cancel", role: .cancel) { }
-			} message: {
-				Text("This will permanently delete this buddy. The buddy will be removed from any associated dives.")
+			.deleteConfirmation(
+				"Delete This Buddy?",
+				isPresented: $showingDeleteConfirmation,
+				message: "This will permanently delete this buddy. The buddy will be removed from any associated dives."
+			) {
+				dismiss()
+				onDelete?()
 			}
 		}
 #if os(macOS)
@@ -202,57 +184,20 @@ struct BuddyEntryView: View {
 	}
 
 	private func populateFromContact(_ contact: CNContact) {
-		if contact.isKeyAvailable(CNContactGivenNameKey) {
-			givenName = contact.givenName
-		}
-		if contact.isKeyAvailable(CNContactFamilyNameKey) {
-			familyName = contact.familyName
-		}
-
-		if contact.isKeyAvailable(CNContactPostalAddressesKey),
-		   let address = contact.postalAddresses.first?.value {
+		let details = ContactDetails(contact)
+		if let value = details.givenName { givenName = value }
+		if let value = details.familyName { familyName = value }
+		if let address = details.address {
 			street = address.street
 			city = address.city
 			state = address.state
 			postalCode = address.postalCode
 			country = address.country
 		}
-
-		if contact.isKeyAvailable(CNContactPhoneNumbersKey),
-		   let phone = contact.phoneNumbers.first?.value {
-			telephone = phone.stringValue
-		}
-
-		if contact.isKeyAvailable(CNContactEmailAddressesKey),
-		   let emailValue = contact.emailAddresses.first?.value {
-			email = emailValue as String
-		}
-
-		if contact.isKeyAvailable(CNContactUrlAddressesKey),
-		   let urlValue = contact.urlAddresses.first?.value {
-			webPage = urlValue as String
-		}
-
-		if contact.isKeyAvailable(CNContactImageDataKey), let imageData = contact.imageData {
-			photoData = imageData
-		} else if contact.isKeyAvailable(CNContactThumbnailImageDataKey),
-				  let thumbData = contact.thumbnailImageData {
-			photoData = thumbData
-		}
-	}
-
-	// MARK: - Image Loading
-
-	private func loadImageData(from item: PhotosPickerItem?) async -> Data? {
-		guard let item else { return nil }
-		return try? await item.loadTransferable(type: Data.self)
-	}
-
-	private func loadImageData(from result: Result<URL, Error>) -> Data? {
-		guard let url = try? result.get() else { return nil }
-		guard url.startAccessingSecurityScopedResource() else { return nil }
-		defer { url.stopAccessingSecurityScopedResource() }
-		return try? Data(contentsOf: url)
+		if let value = details.telephone { telephone = value }
+		if let value = details.email { email = value }
+		if let value = details.webPage { webPage = value }
+		if let value = details.photoData { photoData = value }
 	}
 
 	// MARK: - Save
@@ -290,49 +235,6 @@ struct BuddyEntryView: View {
 			)
 			modelContext.insert(newBuddy)
 		}
-	}
-}
-
-// MARK: - Photo Picker
-
-private struct BuddyPhotoPicker: View {
-	@Binding var photoData: Data?
-	@Binding var photoItem: PhotosPickerItem?
-	@Binding var showingFileImporter: Bool
-
-	var body: some View {
-		if let photoData, let image = makeImage(from: photoData) {
-			HStack {
-				Spacer()
-				image
-					.resizable()
-					.scaledToFill()
-					.frame(width: 100, height: 100)
-					.clipShape(.circle)
-				Spacer()
-			}
-			Button("Remove Photo", systemImage: "trash", role: .destructive) {
-				self.photoData = nil
-				photoItem = nil
-			}
-		} else {
-			PhotosPicker(selection: $photoItem, matching: .images) {
-				Label("Choose from Photos", systemImage: "photo.on.rectangle")
-			}
-			Button("Choose from Files", systemImage: "folder") {
-				showingFileImporter = true
-			}
-		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
 	}
 }
 

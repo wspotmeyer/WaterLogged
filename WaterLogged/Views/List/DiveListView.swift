@@ -97,21 +97,12 @@ struct DiveListView: View {
 					}
 				}
 			} else {
-				AllSitesMapView {
-					ContentUnavailableView(
-						"Select a Dive",
-						systemImage: "list.bullet.clipboard",
-						description: Text("Choose a dive from the list to view its details.")
-					)
-				}
-				.overlay(alignment: .bottom) {
-					Text("Choose a dive from the list to view its details")
-						.font(.headline)
-						.padding(.horizontal)
-						.padding(.vertical, 8)
-						.glassEffect()
-						.padding(.bottom)
-				}
+				ListDetailPlaceholder(
+					title: "Select a Dive",
+					systemImage: "list.bullet.clipboard",
+					description: "Choose a dive from the list to view its details.",
+					caption: "Choose a dive from the list to view its details"
+				)
 			}
 		}
 		.ignoresSafeArea(edges: .top)

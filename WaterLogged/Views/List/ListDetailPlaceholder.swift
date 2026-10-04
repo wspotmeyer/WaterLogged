@@ -1,8 +1,8 @@
 //
-//  BuddyPhoto.swift
+//  ListDetailPlaceholder.swift
 //  WaterLogged
 //
-//  Created by John Meyer on 2/23/26.
+//  Created by John Meyer on 10/4/26.
 //
 //  Copyright © 2026 John Meyer.
 //
@@ -21,23 +21,31 @@
 
 import SwiftUI
 
-struct BuddyPhoto: View {
-	let photoData: Data?
-	var size: CGFloat = 32
+/// The detail column of a list's `NavigationSplitView` before anything is
+/// selected: the all-sites map with a glass caption asking for a selection.
+/// `title`, `systemImage` and `description` describe the fallback shown when
+/// there are no sites to map.
+struct ListDetailPlaceholder: View {
+	let title: LocalizedStringKey
+	let systemImage: String
+	let description: LocalizedStringKey
+	let caption: LocalizedStringKey
 
 	var body: some View {
-		if let photoData, let image = makeDisplayImage(from: photoData) {
-			image
-				.resizable()
-				.scaledToFill()
-				.frame(width: size, height: size)
-				.clipShape(.circle)
-		} else {
-			Image(systemName: "person.circle.fill")
-				.resizable()
-				.scaledToFit()
-				.frame(width: size, height: size)
-				.foregroundStyle(.secondary)
+		AllSitesMapView {
+			ContentUnavailableView(
+				title,
+				systemImage: systemImage,
+				description: Text(description)
+			)
+		}
+		.overlay(alignment: .bottom) {
+			Text(caption)
+				.font(.headline)
+				.padding(.horizontal)
+				.padding(.vertical, 8)
+				.glassEffect()
+				.padding(.bottom)
 		}
 	}
 }

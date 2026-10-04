@@ -21,7 +21,6 @@
 
 import SwiftUI
 import PhotosUI
-import UniformTypeIdentifiers
 
 /// A sheet for managing a collection of photos: add (from the photo library or files),
 /// drag-to-reorder, and delete.
@@ -44,8 +43,6 @@ struct PhotoEditSheet: View {
 	@State private var showingFileImporter = false
 
 	private let columns = [GridItem(.adaptive(minimum: 120), spacing: 12)]
-	private static let allowedImageTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
-
 	var body: some View {
 		NavigationStack {
 			ScrollView {
@@ -117,7 +114,7 @@ struct PhotoEditSheet: View {
 		}
 		.fileImporter(
 			isPresented: $showingFileImporter,
-			allowedContentTypes: Self.allowedImageTypes,
+			allowedContentTypes: ImageFileHelper.importableTypes,
 			allowsMultipleSelection: true
 		) { result in
 			loadPhotoFiles(from: result)

@@ -34,30 +34,6 @@ struct ShareableUDDFExport: Transferable {
 	}
 }
 
-#if os(macOS)
-nonisolated struct UDDFDocument: FileDocument {
-	static let readableContentTypes: [UTType] = [.uddf]
-	static let writableContentTypes: [UTType] = [.uddf]
-
-	let sourceURL: URL
-
-	init(_ export: ShareableUDDFExport) {
-		self.sourceURL = export.url
-	}
-
-	init(configuration: ReadConfiguration) throws {
-		throw CocoaError(.featureUnsupported)
-	}
-
-	func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-		let data = try Data(contentsOf: sourceURL)
-		let wrapper = FileWrapper(regularFileWithContents: data)
-		wrapper.preferredFilename = sourceURL.lastPathComponent
-		return wrapper
-	}
-}
-#endif
-
 /// Exports a chosen selection of logbook data — dives, sites, buddies,
 /// equipment and so on — to a UDDF file, then lets the user share it
 /// (iOS/iPadOS) or save it via the file exporter (macOS).
@@ -190,7 +166,7 @@ struct UDDFExportToolView: View {
 #if os(macOS)
 			.fileExporter(
 				isPresented: $isPresentingSavePanel,
-				document: exportedFile.map(UDDFDocument.init),
+				document: exportedFile.map { ExportedFileDocument(url: $0.url) },
 				contentType: .uddf,
 				defaultFilename: exportedFile?.url.deletingPathExtension().lastPathComponent
 			) { result in

@@ -1,8 +1,8 @@
 //
-//  BuddyPhoto.swift
+//  CircularPhotoPicker.swift
 //  WaterLogged
 //
-//  Created by John Meyer on 2/23/26.
+//  Created by John Meyer on 10/4/26.
 //
 //  Copyright © 2026 John Meyer.
 //
@@ -20,24 +20,37 @@
 //  see <https://www.gnu.org/licenses/>.
 
 import SwiftUI
+import PhotosUI
 
-struct BuddyPhoto: View {
-	let photoData: Data?
-	var size: CGFloat = 32
+/// Photo controls for a person (buddy or logbook owner): a circular preview with
+/// a Remove button when a photo is set, otherwise Photos and Files pickers.
+struct CircularPhotoPicker: View {
+	@Binding var photoData: Data?
+	@Binding var photoItem: PhotosPickerItem?
+	@Binding var showingFileImporter: Bool
 
 	var body: some View {
 		if let photoData, let image = makeDisplayImage(from: photoData) {
-			image
-				.resizable()
-				.scaledToFill()
-				.frame(width: size, height: size)
-				.clipShape(.circle)
+			HStack {
+				Spacer()
+				image
+					.resizable()
+					.scaledToFill()
+					.frame(width: 100, height: 100)
+					.clipShape(.circle)
+				Spacer()
+			}
+			Button("Remove Photo", systemImage: "trash", role: .destructive) {
+				self.photoData = nil
+				photoItem = nil
+			}
 		} else {
-			Image(systemName: "person.circle.fill")
-				.resizable()
-				.scaledToFit()
-				.frame(width: size, height: size)
-				.foregroundStyle(.secondary)
+			PhotosPicker(selection: $photoItem, matching: .images) {
+				Label("Choose from Photos", systemImage: "photo.on.rectangle")
+			}
+			Button("Choose from Files", systemImage: "folder") {
+				showingFileImporter = true
+			}
 		}
 	}
 }

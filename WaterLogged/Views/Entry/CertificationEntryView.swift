@@ -22,7 +22,6 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
-import UniformTypeIdentifiers
 
 struct CertificationEntryView: View {
 	@Environment(\.modelContext) private var modelContext
@@ -51,8 +50,6 @@ struct CertificationEntryView: View {
 	@State private var activeCardImport: CardSide?
 
 	private var isEditing: Bool { certification != nil }
-
-	private static let allowedImageTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
 
 	@State private var showingDeleteConfirmation = false
 
@@ -100,25 +97,15 @@ struct CertificationEntryView: View {
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(isEditing ? "Edit Certification" : "New Certification")
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-					.disabled(name.isEmpty)
-				}
-			}
+			.entryFormChrome(
+				isEditing ? "Edit Certification" : "New Certification",
+				canSave: !name.isEmpty,
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				if let certification {
 					name = certification.name
@@ -133,19 +120,19 @@ struct CertificationEntryView: View {
 				}
 			}
 			.onChange(of: frontPhotoItem) { _, newItem in
-				Task { frontImageData = await loadImageData(from: newItem) }
+				Task { frontImageData = await ImageFileHelper.loadData(from: newItem) }
 			}
 			.onChange(of: backPhotoItem) { _, newItem in
-				Task { backImageData = await loadImageData(from: newItem) }
+				Task { backImageData = await ImageFileHelper.loadData(from: newItem) }
 			}
 			.fileImporter(
 				isPresented: Binding(
 					get: { activeCardImport != nil },
 					set: { if !$0 { activeCardImport = nil } }
 				),
-				allowedContentTypes: Self.allowedImageTypes
+				allowedContentTypes: ImageFileHelper.importableTypes
 			) { [activeCardImport] result in
-				let data = loadImageData(from: result)
+				let data = ImageFileHelper.loadData(from: result)
 				switch activeCardImport {
 					case .front: frontImageData = data
 					case .back: backImageData = data
@@ -174,20 +161,6 @@ struct CertificationEntryView: View {
 			get: { activeCardImport == side },
 			set: { activeCardImport = $0 ? side : nil }
 		)
-	}
-
-	// MARK: - Image Loading
-
-	private func loadImageData(from item: PhotosPickerItem?) async -> Data? {
-		guard let item else { return nil }
-		return try? await item.loadTransferable(type: Data.self)
-	}
-
-	private func loadImageData(from result: Result<URL, Error>) -> Data? {
-		guard let url = try? result.get() else { return nil }
-		guard url.startAccessingSecurityScopedResource() else { return nil }
-		defer { url.stopAccessingSecurityScopedResource() }
-		return try? Data(contentsOf: url)
 	}
 
 	// MARK: - Save
@@ -229,7 +202,7 @@ private struct CardImagePicker: View {
 	@Binding var showingFileImporter: Bool
 
 	var body: some View {
-		if let imageData, let image = makeImage(from: imageData) {
+		if let imageData, let image = makeDisplayImage(from: imageData) {
 			image
 				.resizable()
 				.scaledToFit()
@@ -247,16 +220,6 @@ private struct CardImagePicker: View {
 				showingFileImporter = true
 			}
 		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
 	}
 }
 

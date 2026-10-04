@@ -23,7 +23,6 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import Contacts
-import UniformTypeIdentifiers
 
 struct LogbookOwnerEntryView: View {
 	@Environment(\.modelContext) private var modelContext
@@ -52,8 +51,6 @@ struct LogbookOwnerEntryView: View {
 	@State private var certificationToEdit: Certification?
 	@State private var pendingDeleteCertification: Certification?
 
-	private static let allowedImageTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
-
 	var body: some View {
 		NavigationStack {
 			Form {
@@ -69,7 +66,7 @@ struct LogbookOwnerEntryView: View {
 #endif
 
 					Section("Photo") {
-						OwnerPhotoPicker(
+						CircularPhotoPicker(
 							photoData: $photoData,
 							photoItem: $photoItem,
 							showingFileImporter: $showingFileImporter
@@ -144,36 +141,26 @@ struct LogbookOwnerEntryView: View {
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle("Edit Owner")
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-				}
-			}
+			.entryFormChrome(
+				"Edit Owner",
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				owner = try? LogbookOwner.fetchOrCreate(in: modelContext)
 				loadOwner()
 			}
 			.onChange(of: photoItem) { _, newItem in
-				Task { photoData = await loadImageData(from: newItem) }
+				Task { photoData = await ImageFileHelper.loadData(from: newItem) }
 			}
 			.fileImporter(
 				isPresented: $showingFileImporter,
-				allowedContentTypes: Self.allowedImageTypes
+				allowedContentTypes: ImageFileHelper.importableTypes
 			) { result in
-				photoData = loadImageData(from: result)
+				photoData = ImageFileHelper.loadData(from: result)
 			}
 			.sheet(isPresented: $showingAddCertification) {
 				CertificationEntryView(certification: nil, owner: owner)
@@ -238,57 +225,20 @@ struct LogbookOwnerEntryView: View {
 	}
 
 	private func populateFromContact(_ contact: CNContact) {
-		if contact.isKeyAvailable(CNContactGivenNameKey) {
-			givenName = contact.givenName
-		}
-		if contact.isKeyAvailable(CNContactFamilyNameKey) {
-			familyName = contact.familyName
-		}
-
-		if contact.isKeyAvailable(CNContactPostalAddressesKey),
-		   let address = contact.postalAddresses.first?.value {
+		let details = ContactDetails(contact)
+		if let value = details.givenName { givenName = value }
+		if let value = details.familyName { familyName = value }
+		if let address = details.address {
 			street = address.street
 			city = address.city
 			state = address.state
 			postalCode = address.postalCode
 			country = address.country
 		}
-
-		if contact.isKeyAvailable(CNContactPhoneNumbersKey),
-		   let phone = contact.phoneNumbers.first?.value {
-			telephone = phone.stringValue
-		}
-
-		if contact.isKeyAvailable(CNContactEmailAddressesKey),
-		   let emailValue = contact.emailAddresses.first?.value {
-			email = emailValue as String
-		}
-
-		if contact.isKeyAvailable(CNContactUrlAddressesKey),
-		   let urlValue = contact.urlAddresses.first?.value {
-			webPage = urlValue as String
-		}
-
-		if contact.isKeyAvailable(CNContactImageDataKey), let imageData = contact.imageData {
-			photoData = imageData
-		} else if contact.isKeyAvailable(CNContactThumbnailImageDataKey),
-				  let thumbData = contact.thumbnailImageData {
-			photoData = thumbData
-		}
-	}
-
-	// MARK: - Image Loading
-
-	private func loadImageData(from item: PhotosPickerItem?) async -> Data? {
-		guard let item else { return nil }
-		return try? await item.loadTransferable(type: Data.self)
-	}
-
-	private func loadImageData(from result: Result<URL, Error>) -> Data? {
-		guard let url = try? result.get() else { return nil }
-		guard url.startAccessingSecurityScopedResource() else { return nil }
-		defer { url.stopAccessingSecurityScopedResource() }
-		return try? Data(contentsOf: url)
+		if let value = details.telephone { telephone = value }
+		if let value = details.email { email = value }
+		if let value = details.webPage { webPage = value }
+		if let value = details.photoData { photoData = value }
 	}
 
 	// MARK: - Save
@@ -307,49 +257,6 @@ struct LogbookOwnerEntryView: View {
 		owner.email = email
 		owner.webPage = webPage
 		owner.photoData = photoData
-	}
-}
-
-// MARK: - Photo Picker
-
-private struct OwnerPhotoPicker: View {
-	@Binding var photoData: Data?
-	@Binding var photoItem: PhotosPickerItem?
-	@Binding var showingFileImporter: Bool
-
-	var body: some View {
-		if let photoData, let image = makeImage(from: photoData) {
-			HStack {
-				Spacer()
-				image
-					.resizable()
-					.scaledToFill()
-					.frame(width: 100, height: 100)
-					.clipShape(.circle)
-				Spacer()
-			}
-			Button("Remove Photo", systemImage: "trash", role: .destructive) {
-				self.photoData = nil
-				photoItem = nil
-			}
-		} else {
-			PhotosPicker(selection: $photoItem, matching: .images) {
-				Label("Choose from Photos", systemImage: "photo.on.rectangle")
-			}
-			Button("Choose from Files", systemImage: "folder") {
-				showingFileImporter = true
-			}
-		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
 	}
 }
 

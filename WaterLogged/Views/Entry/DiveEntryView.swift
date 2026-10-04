@@ -25,7 +25,6 @@ import PhotosUI
 #if !os(macOS)
 import PencilKit
 #endif
-import UniformTypeIdentifiers
 
 struct DiveEntryView: View {
 	@Environment(\.modelContext) private var modelContext
@@ -104,8 +103,6 @@ struct DiveEntryView: View {
 	@State private var verificationSignatureData: Data?
 
 	@State private var showingLogbookFileImporter = false
-
-	private static let allowedImageTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
 
 	@State private var showingDeleteConfirmation = false
 
@@ -204,30 +201,16 @@ struct DiveEntryView: View {
 					}
 #endif
 					if isEditing {
-						Section {
-							Button("Delete This Dive", role: .destructive) {
-								showingDeleteConfirmation = true
-							}
-						}
+						DeleteItemSection(title: "Delete This Dive", isConfirming: $showingDeleteConfirmation)
 					}
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(isEditing ? "Edit Dive" : "Log Dive")
-#if os(iOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") { save() }
-						.buttonStyle(.borderedProminent)
-				}
-			}
+			.entryFormChrome(
+				isEditing ? "Edit Dive" : "Log Dive",
+				onSave: save,
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				populateIfEditing()
 				preselectAutoAddEquipment()
@@ -242,7 +225,7 @@ struct DiveEntryView: View {
 			}
 			.onChange(of: logbookPhotoItem) { _, newItem in
 				Task {
-					let data = await loadImageData(from: newItem)
+					let data = await ImageFileHelper.loadData(from: newItem)
 					logbookImageData = data
 					if let data {
 						logbookImageFilename = ImageFileHelper.defaultFilename(for: data)
@@ -251,7 +234,7 @@ struct DiveEntryView: View {
 			}
 			.fileImporter(
 				isPresented: $showingLogbookFileImporter,
-				allowedContentTypes: Self.allowedImageTypes,
+				allowedContentTypes: ImageFileHelper.importableTypes,
 				allowsMultipleSelection: false
 			) { (result: Result<[URL], any Error>) in
 				guard let url = try? result.get().first else { return }
@@ -260,14 +243,13 @@ struct DiveEntryView: View {
 				logbookImageData = try? Data(contentsOf: url)
 				logbookImageFilename = url.lastPathComponent
 			}
-			.alert("Delete This Dive?", isPresented: $showingDeleteConfirmation) {
-				Button("Delete", role: .destructive) {
-					dismiss()
-					onDelete?()
-				}
-				Button("Cancel", role: .cancel) { }
-			} message: {
-				Text("Are you sure you want to delete this dive? This cannot be undone.")
+			.deleteConfirmation(
+				"Delete This Dive?",
+				isPresented: $showingDeleteConfirmation,
+				message: "Are you sure you want to delete this dive? This cannot be undone."
+			) {
+				dismiss()
+				onDelete?()
 			}
 		}
 #if os(macOS)
@@ -338,13 +320,6 @@ struct DiveEntryView: View {
 		selectedEquipment.formUnion(EquipmentAutoAdd.preselection(from: allEquipment))
 	}
 
-	// MARK: - Image Loading
-
-	private func loadImageData(from item: PhotosPickerItem?) async -> Data? {
-		guard let item else { return nil }
-		return try? await item.loadTransferable(type: Data.self)
-	}
-
 	private func saveTanks(to dive: Dive) {
 		if let existing = dive.tanks {
 			for tank in existing {
@@ -377,10 +352,7 @@ struct DiveEntryView: View {
 		let totalSeconds = (durationMinutes * 60) + durationSeconds
 		let totalSurfaceInterval = (surfaceIntervalHours * 3600) + (surfaceIntervalMinutes * 60) + surfaceIntervalSeconds
 
-		let parsedTags = tags
-			.split(separator: ",")
-			.map { $0.trimmingCharacters(in: .whitespaces) }
-			.filter { !$0.isEmpty }
+		let parsedTags = tags.commaSeparatedTags
 
 		let waterTempMetric: Double? = Double(waterTemp).map { units.tempToMetric($0) }
 		let airTempMetric: Double? = Double(airTemp).map { units.tempToMetric($0) }
@@ -1010,16 +982,7 @@ private struct RatingNotesSection: View {
 			LabeledContent("Rating") {
 				StarRatingView(rating: rating, interactive: true) { rating = $0 }
 			}
-			ZStack(alignment: .topLeading) {
-				if notes.isEmpty {
-					Text("Notes")
-						.foregroundStyle(.tertiary)
-						.padding(.top, 8)
-						.padding(.leading, 4)
-				}
-				TextEditor(text: $notes)
-					.frame(minHeight: 200)
-			}
+			PlaceholderTextEditor(placeholder: "Notes", text: $notes, minHeight: 200)
 			TextField("Tags (comma-separated)", text: $tags)
 #if !os(macOS)
 				.textInputAutocapitalization(.never)
@@ -1027,7 +990,7 @@ private struct RatingNotesSection: View {
 		} header: {
 			Text("Rating & Notes")
 		} footer: {
-			Text("You can use text formatting (bold, italics, links, etc.) using inline Markdown syntax.")
+			Text(PlaceholderTextEditor.markdownHint)
 		}
 	}
 }
@@ -1039,7 +1002,7 @@ private struct LogbookImageSection: View {
 
 	var body: some View {
 		Section {
-			if let imageData, let image = makeImage(from: imageData) {
+			if let imageData, let image = makeDisplayImage(from: imageData) {
 				image
 					.resizable()
 					.scaledToFit()
@@ -1063,16 +1026,6 @@ private struct LogbookImageSection: View {
 			Text("Optionally upload an image of a written log book page.")
 		}
 	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
-	}
 }
 
 #if !os(macOS)
@@ -1082,7 +1035,7 @@ private struct VerificationSignatureSection: View {
 
 	var body: some View {
 		Section {
-			if let signatureData, let image = makeImage(from: signatureData) {
+			if let signatureData, let image = makeDisplayImage(from: signatureData) {
 				image
 					.renderingMode(.template)
 					.resizable()
@@ -1114,11 +1067,6 @@ private struct VerificationSignatureSection: View {
 			Text("Sign with your finger or Apple Pencil to verify this dive log entry.")
 		}
 	}
-
-	private func makeImage(from data: Data) -> Image? {
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-	}
 }
 #else
 /// macOS variant: displays an existing signature and lets the user clear it.
@@ -1128,7 +1076,7 @@ private struct VerificationSignatureSection: View {
 
 	var body: some View {
 		Section {
-			if let signatureData, let image = makeImage(from: signatureData) {
+			if let signatureData, let image = makeDisplayImage(from: signatureData) {
 				image
 					.renderingMode(.template)
 					.resizable()
@@ -1145,11 +1093,6 @@ private struct VerificationSignatureSection: View {
 		} footer: {
 			Text("Signatures can be added on iPhone or iPad.")
 		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
 	}
 }
 #endif

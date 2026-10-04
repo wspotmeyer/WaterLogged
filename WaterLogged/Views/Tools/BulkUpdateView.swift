@@ -825,10 +825,7 @@ extension BulkUpdateView {
 
 extension BulkUpdateView {
 	func applyUpdates() {
-		let parsedTags = tagsText
-			.split(separator: ",")
-			.map { $0.trimmingCharacters(in: .whitespaces) }
-			.filter { !$0.isEmpty }
+		let parsedTags = tagsText.commaSeparatedTags
 
 		for (offset, dive) in divesInRange.enumerated() {
 			if updateDiveNumber { dive.diveNumber = startingNumber + offset }

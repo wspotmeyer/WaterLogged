@@ -104,21 +104,7 @@ struct TripDetailView: View {
 					GroupBox {
 						if isDivesExpanded {
 							ForEach(sortedDives) { dive in
-								NavigationLink {
-									DiveDetailView(dive: dive)
-								} label: {
-									HStack {
-										Text(LocalizedStringKey(dive.displayTitle))
-											.lineLimit(1)
-										Spacer()
-										Text(dive.date.formatted(date: .abbreviated, time: .omitted))
-											.lineLimit(1)
-										Image(systemName: "chevron.right")
-											.font(.caption)
-									}
-									.padding(.top, 4)
-								}
-								.buttonStyle(.plain)
+								DiveLinkRow(dive: dive, topPadding: 4)
 							}
 						}
 					} label: {
@@ -126,22 +112,9 @@ struct TripDetailView: View {
 							Text("Dives")
 								.font(.title2.bold())
 							Spacer()
-							if sortedDives.count > 0 {
-								TimeCount(seconds: trip.totalDiveTimeSeconds, font: .headline)
-								DiveCount(count: sortedDives.count, font: .headline)
-								Button {
-									withAnimation(.smooth) {
-										isDivesExpanded.toggle()
-									}
-								} label: {
-									Image(systemName: isDivesExpanded ? "chevron.down" : "chevron.right")
-										.imageScale(.small)
-										.frame(width: 32, height: 32)
-										.contentShape(.rect)
-								}
-								.buttonStyle(.plain)
-								.font(.subheadline)
-							}
+							TimeCount(seconds: trip.totalDiveTimeSeconds, font: .headline)
+							DiveCount(count: sortedDives.count, font: .headline)
+							DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
 						}
 					}
 					.tileBackgroundStyle()
@@ -167,23 +140,9 @@ struct TripDetailView: View {
 		}
 		.sheet(isPresented: $showingPhotoEditor) {
 			PhotoEditSheet(existingPhotos: trip.photos ?? []) { entries in
-				savePhotos(entries)
+				Photo.replace(trip.photos, with: entries, in: modelContext) { $0.trip = trip }
 			}
 		}
-	}
-
-	private func savePhotos(_ entries: [PhotoEntry]) {
-		if let existing = trip.photos {
-			for photo in existing {
-				modelContext.delete(photo)
-			}
-		}
-		for (index, entry) in entries.enumerated() {
-			let photo = Photo(imageData: entry.imageData, caption: entry.caption, sortOrder: index, originalFilename: entry.originalFilename)
-			photo.trip = trip
-			modelContext.insert(photo)
-		}
-		try? modelContext.save()
 	}
 
 	private var hasDetails: Bool {

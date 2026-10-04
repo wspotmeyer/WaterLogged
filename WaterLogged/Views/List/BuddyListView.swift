@@ -71,21 +71,12 @@ struct BuddyListView: View {
 					}
 				}
 			} else {
-				AllSitesMapView {
-					ContentUnavailableView(
-						"Select a Buddy",
-						systemImage: "person.2",
-						description: Text("Choose a buddy from the list to view their details.")
-					)
-				}
-				.overlay(alignment: .bottom) {
-					Text("Choose a buddy from the list to view their details")
-						.font(.headline)
-						.padding(.horizontal)
-						.padding(.vertical, 8)
-						.glassEffect()
-						.padding(.bottom)
-				}
+				ListDetailPlaceholder(
+					title: "Select a Buddy",
+					systemImage: "person.2",
+					description: "Choose a buddy from the list to view their details.",
+					caption: "Choose a buddy from the list to view their details"
+				)
 			}
 		}
 		.ignoresSafeArea(edges: .top)
@@ -172,28 +163,14 @@ private struct BuddyListContent: View {
 				.appGradientScrollBackground()
 			}
 		}
-		.alert(
+		.deleteOffsetsConfirmation(
 			"Delete Buddy",
-			isPresented: Binding(
-				get: { pendingDeleteOffsets != nil },
-				set: { if !$0 { pendingDeleteOffsets = nil } }
-			)
-		) {
-			Button("Delete", role: .destructive) {
-				if let offsets = pendingDeleteOffsets {
-					deleteBuddies(at: offsets)
-				}
-				pendingDeleteOffsets = nil
-			}
-			Button("Cancel", role: .cancel) {
-				pendingDeleteOffsets = nil
-			}
-		} message: {
-			if let offsets = pendingDeleteOffsets {
-				let count = offsets.count
+			offsets: $pendingDeleteOffsets,
+			message: { count in
 				Text("Are you sure you want to delete \(count == 1 ? "this buddy" : "these \(count) buddies")? This cannot be undone.")
-			}
-		}
+			},
+			onDelete: deleteBuddies(at:)
+		)
 	}
 
 	private func deleteBuddies(at offsets: IndexSet) {

@@ -76,21 +76,12 @@ struct DiveSiteListView: View {
 					}
 				}
 			} else {
-				AllSitesMapView {
-					ContentUnavailableView(
-						"Select a Dive Site",
-						systemImage: "mappin.and.ellipse",
-						description: Text("Choose a dive site from the list to view its details.")
-					)
-				}
-				.overlay(alignment: .bottom) {
-					Text("Choose a dive site from the list to view its details")
-						.font(.headline)
-						.padding(.horizontal)
-						.padding(.vertical, 8)
-						.glassEffect()
-						.padding(.bottom)
-				}
+				ListDetailPlaceholder(
+					title: "Select a Dive Site",
+					systemImage: "mappin.and.ellipse",
+					description: "Choose a dive site from the list to view its details.",
+					caption: "Choose a dive site from the list to view its details"
+				)
 			}
 		}
 		.ignoresSafeArea(edges: .top)
@@ -223,28 +214,14 @@ private struct DiveSiteListContent: View {
 				}
 			}
 		}
-		.alert(
+		.deleteOffsetsConfirmation(
 			"Delete Dive Site",
-			isPresented: Binding(
-				get: { pendingDeleteOffsets != nil },
-				set: { if !$0 { pendingDeleteOffsets = nil } }
-			)
-		) {
-			Button("Delete", role: .destructive) {
-				if let offsets = pendingDeleteOffsets {
-					deleteSites(at: offsets)
-				}
-				pendingDeleteOffsets = nil
-			}
-			Button("Cancel", role: .cancel) {
-				pendingDeleteOffsets = nil
-			}
-		} message: {
-			if let offsets = pendingDeleteOffsets {
-				let count = offsets.count
+			offsets: $pendingDeleteOffsets,
+			message: { count in
 				Text("Are you sure you want to delete \(count == 1 ? "this dive site" : "these \(count) dive sites")? This cannot be undone.")
-			}
-		}
+			},
+			onDelete: deleteSites(at:)
+		)
 	}
 
 	private func deleteSites(at offsets: IndexSet) {

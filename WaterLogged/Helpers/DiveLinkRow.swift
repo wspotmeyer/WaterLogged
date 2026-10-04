@@ -1,8 +1,8 @@
 //
-//  StringExtensions.swift
+//  DiveLinkRow.swift
 //  WaterLogged
 //
-//  Created by John Meyer on 5/17/26.
+//  Created by John Meyer on 10/4/26.
 //
 //  Copyright © 2026 John Meyer.
 //
@@ -19,25 +19,29 @@
 //  You should have received a copy of the GNU General Public License along with WaterLogged. If not,
 //  see <https://www.gnu.org/licenses/>.
 
-import Foundation
+import SwiftUI
 
-extension String {
-	/// Inline Markdown punctuation removed so a value entered with formatting characters
-	/// (asterisks, underscores, etc.) sorts the same as the unformatted text.
-	var markdownStripped: String {
-		var result = self
-		result.removeAll { c in
-			c == "*" || c == "_" || c == "`" || c == "~" || c == "#"
-			|| c == "[" || c == "]" || c == "(" || c == ")" || c == "\\"
+/// One row in a detail view's expandable "Dives" list: the dive's title and
+/// date, linking to its `DiveDetailView`.
+struct DiveLinkRow: View {
+	let dive: Dive
+	var topPadding: CGFloat = 12
+
+	var body: some View {
+		NavigationLink {
+			DiveDetailView(dive: dive)
+		} label: {
+			HStack {
+				Text(LocalizedStringKey(dive.displayTitle))
+					.lineLimit(1)
+				Spacer()
+				Text(dive.date.formatted(date: .abbreviated, time: .omitted))
+					.lineLimit(1)
+				Image(systemName: "chevron.right")
+					.font(.caption)
+			}
+			.padding(.top, topPadding)
 		}
-		return result
-	}
-
-	/// Splits comma-separated tag input into trimmed, non-empty tags,
-	/// e.g. `"wreck, night,, deep "` → `["wreck", "night", "deep"]`.
-	var commaSeparatedTags: [String] {
-		split(separator: ",")
-			.map { $0.trimmingCharacters(in: .whitespaces) }
-			.filter { !$0.isEmpty }
+		.buttonStyle(.plain)
 	}
 }

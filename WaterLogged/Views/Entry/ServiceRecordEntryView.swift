@@ -48,38 +48,19 @@ struct ServiceRecordEntryView: View {
 						}
 					}
 					Section("Notes") {
-						ZStack(alignment: .topLeading) {
-							if notes.isEmpty {
-								Text("Notes")
-									.foregroundStyle(.tertiary)
-									.padding(.top, 8)
-									.padding(.leading, 4)
-							}
-							TextEditor(text: $notes)
-								.frame(minHeight: 100)
-						}
+						PlaceholderTextEditor(placeholder: "Notes", text: $notes)
 					}
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(isEditing ? "Edit Service Record" : "New Service Record")
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-				}
-			}
+			.entryFormChrome(
+				isEditing ? "Edit Service Record" : "New Service Record",
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				if let record {
 					serviceDate = record.serviceDate

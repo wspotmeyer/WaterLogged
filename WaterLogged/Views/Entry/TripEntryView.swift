@@ -95,20 +95,11 @@ struct TripEntryView: View {
 						Text("A URL to the trip's detailed information (for example, a [TripIt](https://www.tripit.com) link).")
 					}
 					Section {
-						ZStack(alignment: .topLeading) {
-							if notes.isEmpty {
-								Text("Notes")
-									.foregroundStyle(.tertiary)
-									.padding(.top, 8)
-									.padding(.leading, 4)
-							}
-							TextEditor(text: $notes)
-								.frame(minHeight: 100)
-						}
+						PlaceholderTextEditor(placeholder: "Notes", text: $notes)
 					} header: {
 						Text("Notes")
 					} footer: {
-						Text("You can use text formatting (bold, italics, links, etc.) using inline Markdown syntax.")
+						Text(PlaceholderTextEditor.markdownHint)
 					}
 					Section {
 						Toggle("Add Dives by Date", isOn: $autoAddDives)
@@ -116,34 +107,20 @@ struct TripEntryView: View {
 						Text("Automatically add all dives that fall within the trip dates.")
 					}
 					if isEditing {
-						Section {
-							Button("Delete This Trip", role: .destructive) {
-								showingDeleteConfirmation = true
-							}
-						}
+						DeleteItemSection(title: "Delete This Trip", isConfirming: $showingDeleteConfirmation)
 					}
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(isEditing ? "Edit Trip" : "New Trip")
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-					.disabled(name.isEmpty)
-				}
-			}
+			.entryFormChrome(
+				isEditing ? "Edit Trip" : "New Trip",
+				canSave: !name.isEmpty,
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				if let trip {
 					name = trip.name
@@ -161,14 +138,13 @@ struct TripEntryView: View {
 					notes = trip.notes
 				}
 			}
-			.alert("Delete This Trip?", isPresented: $showingDeleteConfirmation) {
-				Button("Delete", role: .destructive) {
-					dismiss()
-					onDelete?()
-				}
-				Button("Cancel", role: .cancel) { }
-			} message: {
-				Text("This will permanently delete this trip. Any dives on this trip will remain, but they will no longer have a trip assigned.")
+			.deleteConfirmation(
+				"Delete This Trip?",
+				isPresented: $showingDeleteConfirmation,
+				message: "This will permanently delete this trip. Any dives on this trip will remain, but they will no longer have a trip assigned."
+			) {
+				dismiss()
+				onDelete?()
 			}
 		}
 #if os(macOS)

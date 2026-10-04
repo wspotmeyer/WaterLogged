@@ -74,7 +74,7 @@ struct CertificationDetailView: View {
 
 					DetailSection(title: "Certification Card") {
 						if let frontData = certification.frontImageData,
-						   let frontImage = Self.makeImage(from: frontData) {
+						   let frontImage = makeDisplayImage(from: frontData) {
 							VStack(alignment: .leading, spacing: 4) {
 								Text("Front")
 									.font(.caption)
@@ -85,7 +85,7 @@ struct CertificationDetailView: View {
 							}
 						}
 						if let backData = certification.backImageData,
-						   let backImage = Self.makeImage(from: backData) {
+						   let backImage = makeDisplayImage(from: backData) {
 							VStack(alignment: .leading, spacing: 4) {
 								Text("Back")
 									.font(.caption)
@@ -124,16 +124,6 @@ struct CertificationDetailView: View {
 		!certification.instructorName.isEmpty
 		|| !certification.instructorNumber.isEmpty
 	}
-
-	private static func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
-	}
 }
 
 // MARK: - Dives Section
@@ -151,21 +141,7 @@ private struct CertificationDivesSection: View {
 				if isExpanded {
 					VStack(spacing: 0) {
 						ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-							NavigationLink {
-								DiveDetailView(dive: dive)
-							} label: {
-								HStack {
-									Text(LocalizedStringKey(dive.displayTitle))
-										.lineLimit(1)
-									Spacer()
-									Text(dive.date.formatted(date: .abbreviated, time: .omitted))
-										.lineLimit(1)
-									Image(systemName: "chevron.right")
-										.font(.caption)
-								}
-								.padding(.top, 12)
-							}
-							.buttonStyle(.plain)
+							DiveLinkRow(dive: dive)
 						}
 					}
 					.frame(maxWidth: .infinity, alignment: .leading)
@@ -175,22 +151,9 @@ private struct CertificationDivesSection: View {
 					Text("Dives")
 						.font(.title2.bold())
 					Spacer()
-					if dives.count > 0 {
-						TimeCount(seconds: certification.totalDiveTimeSeconds, font: .headline)
-						DiveCount(count: dives.count, font: .headline)
-						Button {
-							withAnimation(.smooth) {
-								isExpanded.toggle()
-							}
-						} label: {
-							Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-								.imageScale(.small)
-								.frame(width: 32, height: 32)
-								.contentShape(.rect)
-						}
-						.buttonStyle(.plain)
-						.font(.subheadline)
-					}
+					TimeCount(seconds: certification.totalDiveTimeSeconds, font: .headline)
+					DiveCount(count: dives.count, font: .headline)
+					DisclosureToggleButton(isExpanded: $isExpanded, subject: "Dives")
 				}
 			}
 			.tileBackgroundStyle()

@@ -1,8 +1,8 @@
 //
-//  StringExtensions.swift
-//  WaterLogged
+//  StringExtensionsTests.swift
+//  WaterLoggedTests
 //
-//  Created by John Meyer on 5/17/26.
+//  Created by John Meyer on 10/4/26.
 //
 //  Copyright © 2026 John Meyer.
 //
@@ -19,25 +19,22 @@
 //  You should have received a copy of the GNU General Public License along with WaterLogged. If not,
 //  see <https://www.gnu.org/licenses/>.
 
-import Foundation
+import Testing
+@testable import WaterLogged
 
-extension String {
-	/// Inline Markdown punctuation removed so a value entered with formatting characters
-	/// (asterisks, underscores, etc.) sorts the same as the unformatted text.
-	var markdownStripped: String {
-		var result = self
-		result.removeAll { c in
-			c == "*" || c == "_" || c == "`" || c == "~" || c == "#"
-			|| c == "[" || c == "]" || c == "(" || c == ")" || c == "\\"
-		}
-		return result
+struct StringExtensionsTests {
+
+	@Test("Comma-separated tags are trimmed and empty entries dropped", arguments: [
+		(input: "wreck, night,, deep ", expected: ["wreck", "night", "deep"]),
+		(input: "", expected: []),
+		(input: " , ,", expected: []),
+		(input: "single", expected: ["single"])
+	])
+	func commaSeparatedTags(input: String, expected: [String]) {
+		#expect(input.commaSeparatedTags == expected)
 	}
 
-	/// Splits comma-separated tag input into trimmed, non-empty tags,
-	/// e.g. `"wreck, night,, deep "` → `["wreck", "night", "deep"]`.
-	var commaSeparatedTags: [String] {
-		split(separator: ",")
-			.map { $0.trimmingCharacters(in: .whitespaces) }
-			.filter { !$0.isEmpty }
+	@Test func markdownStrippedRemovesFormattingCharacters() {
+		#expect("**Blue** _Hole_ [link](x)".markdownStripped == "Blue Hole linkx")
 	}
 }

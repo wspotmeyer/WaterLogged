@@ -21,9 +21,13 @@
 
 import Foundation
 import SwiftUI
+import PhotosUI
 import UniformTypeIdentifiers
 
 enum ImageFileHelper {
+	/// The image formats the app's file importers accept.
+	static let importableTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
+
 	static func fileExtension(for data: Data) -> String {
 		guard data.count >= 12 else { return "jpg" }
 		let bytes = [UInt8](data.prefix(12))
@@ -33,6 +37,22 @@ enum ImageFileHelper {
 		if (bytes[0] == 0x49 && bytes[1] == 0x49) || (bytes[0] == 0x4D && bytes[1] == 0x4D) { return "tiff" }
 		if bytes[4] == 0x66 && bytes[5] == 0x74 && bytes[6] == 0x79 && bytes[7] == 0x70 { return "heic" }
 		return "jpg"
+	}
+
+	/// Loads the raw image data behind a Photos picker selection, or `nil` when
+	/// there's no selection or it can't be loaded.
+	static func loadData(from item: PhotosPickerItem?) async -> Data? {
+		guard let item else { return nil }
+		return try? await item.loadTransferable(type: Data.self)
+	}
+
+	/// Reads the file chosen in a file importer, holding its security-scoped
+	/// access open for the read. `nil` if the pick failed or can't be read.
+	static func loadData(from result: Result<URL, Error>) -> Data? {
+		guard let url = try? result.get() else { return nil }
+		guard url.startAccessingSecurityScopedResource() else { return nil }
+		defer { url.stopAccessingSecurityScopedResource() }
+		return try? Data(contentsOf: url)
 	}
 
 	static func defaultFilename(for data: Data) -> String {

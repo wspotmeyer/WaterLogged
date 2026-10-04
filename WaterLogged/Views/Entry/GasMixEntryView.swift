@@ -99,34 +99,20 @@ struct GasMixEntryView: View {
 						Text("Nitrogen makes up the balance of the mix.")
 					}
 					if isEditing {
-						Section {
-							Button("Delete This Gas Mix", role: .destructive) {
-								showingDeleteConfirmation = true
-							}
-						}
+						DeleteItemSection(title: "Delete This Gas Mix", isConfirming: $showingDeleteConfirmation)
 					}
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(isEditing ? "Edit Gas Mix" : "New Gas Mix")
-#if os(iOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-					.disabled(name.isEmpty)
-				}
-			}
+			.entryFormChrome(
+				isEditing ? "Edit Gas Mix" : "New Gas Mix",
+				canSave: !name.isEmpty,
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				if let gasMix {
 					name = gasMix.name
@@ -136,14 +122,13 @@ struct GasMixEntryView: View {
 					hydrogenPct = gasMix.hydrogenPercent
 				}
 			}
-			.alert("Delete This Gas Mix?", isPresented: $showingDeleteConfirmation) {
-				Button("Delete", role: .destructive) {
-					dismiss()
-					onDelete?()
-				}
-				Button("Cancel", role: .cancel) { }
-			} message: {
-				Text("This will permanently delete this gas mix. Any dives using this mix will no longer have a gas mix assigned.")
+			.deleteConfirmation(
+				"Delete This Gas Mix?",
+				isPresented: $showingDeleteConfirmation,
+				message: "This will permanently delete this gas mix. Any dives using this mix will no longer have a gas mix assigned."
+			) {
+				dismiss()
+				onDelete?()
 			}
 		}
 #if os(macOS)

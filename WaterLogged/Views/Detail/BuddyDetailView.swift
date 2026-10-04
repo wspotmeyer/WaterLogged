@@ -52,7 +52,7 @@ struct BuddyDetailView: View {
 					AddressSection(buddy: buddy)
 				}
 
-				TripsSection(buddy: buddy)
+				TripsSection(dives: buddy.dives)
 
 				DivesSection(buddy: buddy)
 			}
@@ -153,79 +153,6 @@ private struct AddressSection: View {
 	}
 }
 
-// MARK: - Trips Section
-
-private struct TripsSection: View {
-	let buddy: Buddy
-
-	@State private var isExpanded = false
-
-	private var trips: [Trip] {
-		guard let dives = buddy.dives else { return [] }
-		var seenTripIDs: Set<PersistentIdentifier> = []
-		var result: [Trip] = []
-		for dive in dives.sorted(by: { $0.date < $1.date }) {
-			guard let trip = dive.trip, !seenTripIDs.contains(trip.persistentModelID) else { continue }
-			seenTripIDs.insert(trip.persistentModelID)
-			result.append(trip)
-		}
-		return result
-	}
-
-	var body: some View {
-		if !trips.isEmpty {
-			Divider()
-			GroupBox {
-				if isExpanded {
-					VStack(spacing: 0) {
-						ForEach(trips) { trip in
-							NavigationLink {
-								TripDetailView(trip: trip)
-							} label: {
-								HStack {
-									Text(LocalizedStringKey(trip.name))
-										.lineLimit(1)
-									Spacer()
-									Text(trip.dateRangeFormatted)
-										.lineLimit(1)
-									Image(systemName: "chevron.right")
-										.font(.caption)
-								}
-								.padding(.top, 12)
-							}
-							.buttonStyle(.plain)
-						}
-					}
-					.frame(maxWidth: .infinity, alignment: .leading)
-				}
-			} label: {
-				HStack {
-					Text("Trips")
-						.font(.title2.bold())
-					Spacer()
-					if trips.count > 0 {
-						TripCount(count: trips.count, font: .headline)
-						Button {
-							withAnimation(.smooth) {
-								isExpanded.toggle()
-							}
-						} label: {
-							Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-								.imageScale(.small)
-								.frame(width: 32, height: 32)
-								.contentShape(.rect)
-						}
-						.buttonStyle(.plain)
-						.font(.subheadline)
-					}
-				}
-			}
-			.tileBackgroundStyle()
-
-		}
-	}
-}
-
 // MARK: - Dives Section
 
 private struct DivesSection: View {
@@ -239,21 +166,7 @@ private struct DivesSection: View {
 				if isExpanded {
 					VStack(spacing: 0) {
 						ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-							NavigationLink {
-								DiveDetailView(dive: dive)
-							} label: {
-								HStack {
-									Text(LocalizedStringKey(dive.displayTitle))
-										.lineLimit(1)
-									Spacer()
-									Text(dive.date.formatted(date: .abbreviated, time: .omitted))
-										.lineLimit(1)
-									Image(systemName: "chevron.right")
-										.font(.caption)
-								}
-								.padding(.top, 12)
-							}
-							.buttonStyle(.plain)
+							DiveLinkRow(dive: dive)
 						}
 					}
 					.frame(maxWidth: .infinity, alignment: .leading)
@@ -263,22 +176,9 @@ private struct DivesSection: View {
 					Text("Dives")
 						.font(.title2.bold())
 					Spacer()
-					if dives.count > 0 {
-						TimeCount(seconds: buddy.totalDiveTimeSeconds, font: .headline)
-						DiveCount(count: dives.count, font: .headline)
-						Button {
-							withAnimation(.smooth) {
-								isExpanded.toggle()
-							}
-						} label: {
-							Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-								.imageScale(.small)
-								.frame(width: 32, height: 32)
-								.contentShape(.rect)
-						}
-						.buttonStyle(.plain)
-						.font(.subheadline)
-					}
+					TimeCount(seconds: buddy.totalDiveTimeSeconds, font: .headline)
+					DiveCount(count: dives.count, font: .headline)
+					DisclosureToggleButton(isExpanded: $isExpanded, subject: "Dives")
 				}
 			}
 			.tileBackgroundStyle()

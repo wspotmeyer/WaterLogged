@@ -79,21 +79,12 @@ struct TripListView: View {
 				}
 				.id(selectedTrip?.persistentModelID)
 			} else {
-				AllSitesMapView {
-					ContentUnavailableView(
-						"Select a Trip",
-						systemImage: "airplane.path.dotted",
-						description: Text("Choose a trip from the list to view its details.")
-					)
-				}
-				.overlay(alignment: .bottom) {
-					Text("Choose a trip from the list to view its details")
-						.font(.headline)
-						.padding(.horizontal)
-						.padding(.vertical, 8)
-						.glassEffect()
-						.padding(.bottom)
-				}
+				ListDetailPlaceholder(
+					title: "Select a Trip",
+					systemImage: "airplane.path.dotted",
+					description: "Choose a trip from the list to view its details.",
+					caption: "Choose a trip from the list to view its details"
+				)
 			}
 		}
 		.ignoresSafeArea(edges: .top)
@@ -190,28 +181,14 @@ private struct TripListContent: View {
 				}
 			}
 		}
-		.alert(
+		.deleteOffsetsConfirmation(
 			"Delete Trip",
-			isPresented: Binding(
-				get: { pendingDeleteOffsets != nil },
-				set: { if !$0 { pendingDeleteOffsets = nil } }
-			)
-		) {
-			Button("Delete", role: .destructive) {
-				if let offsets = pendingDeleteOffsets {
-					deleteTrips(at: offsets)
-				}
-				pendingDeleteOffsets = nil
-			}
-			Button("Cancel", role: .cancel) {
-				pendingDeleteOffsets = nil
-			}
-		} message: {
-			if let offsets = pendingDeleteOffsets {
-				let count = offsets.count
+			offsets: $pendingDeleteOffsets,
+			message: { count in
 				Text("Are you sure you want to delete \(count == 1 ? "this trip" : "these \(count) trips")? This cannot be undone.")
-			}
-		}
+			},
+			onDelete: deleteTrips(at:)
+		)
 	}
 
 	private func deleteTrips(at offsets: IndexSet) {

@@ -342,23 +342,9 @@ struct DiveDetailView: View {
 		}
 		.sheet(isPresented: $showingPhotoEditor) {
 			PhotoEditSheet(existingPhotos: dive.photos ?? []) { entries in
-				savePhotos(entries)
+				Photo.replace(dive.photos, with: entries, in: modelContext) { $0.dive = dive }
 			}
 		}
-	}
-
-	private func savePhotos(_ entries: [PhotoEntry]) {
-		if let existing = dive.photos {
-			for photo in existing {
-				modelContext.delete(photo)
-			}
-		}
-		for (index, entry) in entries.enumerated() {
-			let photo = Photo(imageData: entry.imageData, caption: entry.caption, sortOrder: index, originalFilename: entry.originalFilename)
-			photo.dive = dive
-			modelContext.insert(photo)
-		}
-		try? modelContext.save()
 	}
 }
 
@@ -612,18 +598,7 @@ private struct GearSummaryRow: View {
 					.monospacedDigit()
 			}
 			Spacer()
-			Button {
-				withAnimation(.smooth) {
-					isExpanded.toggle()
-				}
-			} label: {
-				Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-					.imageScale(.small)
-					.frame(width: 32, height: 32)
-					.contentShape(.rect)
-			}
-			.buttonStyle(.plain)
-			.font(.subheadline)
+			DisclosureToggleButton(isExpanded: $isExpanded, subject: "Gear")
 		}
 	}
 }
@@ -730,18 +705,7 @@ private struct BuddySummaryRow: View {
 					.monospacedDigit()
 			}
 			Spacer()
-			Button {
-				withAnimation(.smooth) {
-					isExpanded.toggle()
-				}
-			} label: {
-				Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-					.imageScale(.small)
-					.frame(width: 32, height: 32)
-					.contentShape(.rect)
-			}
-			.buttonStyle(.plain)
-			.font(.subheadline)
+			DisclosureToggleButton(isExpanded: $isExpanded, subject: "Buddies")
 		}
 	}
 }
@@ -870,7 +834,7 @@ private struct LogbookThumbnailView: View {
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Log Book Page")
 				.font(.title2.bold())
-			if let data = dive.logbookImageData, let image = makeImage(from: data) {
+			if let data = dive.logbookImageData, let image = makeDisplayImage(from: data) {
 				Button {
 					showingLogbookImage = true
 				} label: {
@@ -884,16 +848,6 @@ private struct LogbookThumbnailView: View {
 			}
 		}
 	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
-	}
 }
 
 private struct LogbookImageViewer: View {
@@ -903,7 +857,7 @@ private struct LogbookImageViewer: View {
 	var body: some View {
 		NavigationStack {
 			Group {
-				if let data = dive.logbookImageData, let image = makeImage(from: data) {
+				if let data = dive.logbookImageData, let image = makeDisplayImage(from: data) {
 					image
 						.resizable()
 						.scaledToFit()
@@ -922,7 +876,7 @@ private struct LogbookImageViewer: View {
 				ToolbarItem(placement: .cancellationAction) {
 					Button("Done", systemImage: "xmark") { dismiss() }
 				}
-				if let data = dive.logbookImageData, let image = makeImage(from: data) {
+				if let data = dive.logbookImageData, let image = makeDisplayImage(from: data) {
 					ToolbarItem(placement: .primaryAction) {
 						ShareLink(
 							item: ImageFileHelper.shareableFile(
@@ -936,16 +890,6 @@ private struct LogbookImageViewer: View {
 			}
 		}
 	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
-	}
 }
 
 private struct SignatureSectionView: View {
@@ -955,7 +899,7 @@ private struct SignatureSectionView: View {
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Verification Signature")
 				.font(.title2.bold())
-			if let data = dive.verificationSignatureData, let image = makeImage(from: data) {
+			if let data = dive.verificationSignatureData, let image = makeDisplayImage(from: data) {
 				image
 					.renderingMode(.template)
 					.resizable()
@@ -965,16 +909,6 @@ private struct SignatureSectionView: View {
 					.clipShape(.rect(cornerRadius: 8))
 			}
 		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
 	}
 }
 

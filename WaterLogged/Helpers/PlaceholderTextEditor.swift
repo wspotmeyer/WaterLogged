@@ -1,8 +1,8 @@
 //
-//  BuddyPhoto.swift
+//  PlaceholderTextEditor.swift
 //  WaterLogged
 //
-//  Created by John Meyer on 2/23/26.
+//  Created by John Meyer on 10/4/26.
 //
 //  Copyright © 2026 John Meyer.
 //
@@ -21,23 +21,26 @@
 
 import SwiftUI
 
-struct BuddyPhoto: View {
-	let photoData: Data?
-	var size: CGFloat = 32
+/// A multi-line `TextEditor` that shows a dimmed placeholder while empty,
+/// used for the notes and warranty fields in entry forms.
+struct PlaceholderTextEditor: View {
+	let placeholder: LocalizedStringKey
+	@Binding var text: String
+	var minHeight: CGFloat = 100
+
+	/// Footer shown under free-text fields whose contents render as Markdown.
+	static let markdownHint: LocalizedStringKey = "You can use text formatting (bold, italics, links, etc.) using inline Markdown syntax."
 
 	var body: some View {
-		if let photoData, let image = makeDisplayImage(from: photoData) {
-			image
-				.resizable()
-				.scaledToFill()
-				.frame(width: size, height: size)
-				.clipShape(.circle)
-		} else {
-			Image(systemName: "person.circle.fill")
-				.resizable()
-				.scaledToFit()
-				.frame(width: size, height: size)
-				.foregroundStyle(.secondary)
+		ZStack(alignment: .topLeading) {
+			if text.isEmpty {
+				Text(placeholder)
+					.foregroundStyle(.tertiary)
+					.padding(.top, 8)
+					.padding(.leading, 4)
+			}
+			TextEditor(text: $text)
+				.frame(minHeight: minHeight)
 		}
 	}
 }

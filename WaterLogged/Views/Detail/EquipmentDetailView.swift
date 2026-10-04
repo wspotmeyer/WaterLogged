@@ -126,21 +126,7 @@ struct EquipmentDetailView: View {
 						if isDivesExpanded {
 							VStack(spacing: 0) {
 								ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-									NavigationLink {
-										DiveDetailView(dive: dive)
-									} label: {
-										HStack {
-											Text(LocalizedStringKey(dive.displayTitle))
-												.lineLimit(1)
-											Spacer()
-											Text(dive.date.formatted(date: .abbreviated, time: .omitted))
-												.lineLimit(1)
-											Image(systemName: "chevron.right")
-												.font(.caption)
-										}
-										.padding(.top, 12)
-									}
-									.buttonStyle(.plain)
+									DiveLinkRow(dive: dive)
 								}
 							}
 							.frame(maxWidth: .infinity, alignment: .leading)
@@ -150,22 +136,9 @@ struct EquipmentDetailView: View {
 							Text("Dives")
 								.font(.title2.bold())
 							Spacer()
-							if dives.count > 0 {
-								TimeCount(seconds: equipment.totalDiveTimeSeconds, font: .headline)
-								DiveCount(count: dives.count, font: .headline)
-								Button {
-									withAnimation(.smooth) {
-										isDivesExpanded.toggle()
-									}
-								} label: {
-									Image(systemName: isDivesExpanded ? "chevron.down" : "chevron.right")
-										.imageScale(.small)
-										.frame(width: 32, height: 32)
-										.contentShape(.rect)
-								}
-								.buttonStyle(.plain)
-								.font(.subheadline)
-							}
+							TimeCount(seconds: equipment.totalDiveTimeSeconds, font: .headline)
+							DiveCount(count: dives.count, font: .headline)
+							DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
 						}
 					}
 					.tileBackgroundStyle()
@@ -261,7 +234,7 @@ private struct EquipmentPhotoThumbnail: View {
 	@Binding var showingFullScreen: Bool
 
 	var body: some View {
-		if let image = makeImage(from: photoData) {
+		if let image = makeDisplayImage(from: photoData) {
 			Button {
 				showingFullScreen = true
 			} label: {
@@ -276,16 +249,6 @@ private struct EquipmentPhotoThumbnail: View {
 			// Photo data that no longer decodes gets the same stand-in as no photo at all.
 			EquipmentTypePlaceholder(type: type)
 		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
 	}
 }
 
@@ -326,7 +289,7 @@ private struct EquipmentFullScreenPhoto: View {
 	var body: some View {
 		NavigationStack {
 			Group {
-				if let photoData, let image = makeImage(from: photoData) {
+				if let photoData, let image = makeDisplayImage(from: photoData) {
 					image
 						.resizable()
 						.scaledToFit()
@@ -342,7 +305,7 @@ private struct EquipmentFullScreenPhoto: View {
 				ToolbarItem(placement: .cancellationAction) {
 					Button("Done", systemImage: "xmark") { dismiss() }
 				}
-				if let photoData, let image = makeImage(from: photoData) {
+				if let photoData, let image = makeDisplayImage(from: photoData) {
 					ToolbarItem(placement: .primaryAction) {
 						ShareLink(
 							item: ImageFileHelper.shareableFile(
@@ -355,16 +318,6 @@ private struct EquipmentFullScreenPhoto: View {
 				}
 			}
 		}
-	}
-
-	private func makeImage(from data: Data) -> Image? {
-#if canImport(UIKit)
-		guard let uiImage = UIImage(data: data) else { return nil }
-		return Image(uiImage: uiImage)
-#elseif canImport(AppKit)
-		guard let nsImage = NSImage(data: data) else { return nil }
-		return Image(nsImage: nsImage)
-#endif
 	}
 }
 

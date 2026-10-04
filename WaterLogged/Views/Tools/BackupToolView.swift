@@ -33,30 +33,6 @@ struct ShareableExport: Transferable {
 	}
 }
 
-#if os(macOS)
-nonisolated struct BackupDocument: FileDocument {
-	static let readableContentTypes: [UTType] = [.zip]
-	static let writableContentTypes: [UTType] = [.zip]
-
-	let sourceURL: URL
-
-	init(_ shareableExport: ShareableExport) {
-		self.sourceURL = shareableExport.url
-	}
-
-	init(configuration: ReadConfiguration) throws {
-		throw CocoaError(.featureUnsupported)
-	}
-
-	func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-		let data = try Data(contentsOf: sourceURL)
-		let wrapper = FileWrapper(regularFileWithContents: data)
-		wrapper.preferredFilename = sourceURL.lastPathComponent
-		return wrapper
-	}
-}
-#endif
-
 struct BackupToolView: View {
 	/// How `BackupToolView` is being presented. Drives whether it shows a Home
 	/// button (embedded in the Tools tab) or a Cancel button (sheet).
@@ -156,7 +132,7 @@ struct BackupToolView: View {
 #if os(macOS)
 			.fileExporter(
 				isPresented: $isPresentingSavePanel,
-				document: exportedFile.map(BackupDocument.init),
+				document: exportedFile.map { ExportedFileDocument(url: $0.url) },
 				contentType: .zip,
 				defaultFilename: exportedFile?.url.deletingPathExtension().lastPathComponent
 			) { result in

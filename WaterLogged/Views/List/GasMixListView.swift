@@ -51,21 +51,12 @@ struct GasMixListView: View {
 					GasMixDetailView(gasMix: gasMix)
 				}
 			} else {
-				AllSitesMapView {
-					ContentUnavailableView(
-						"Select a Gas Mix",
-						systemImage: "aqi.medium",
-						description: Text("Choose a gas mix from the list to view its details.")
-					)
-				}
-				.overlay(alignment: .bottom) {
-					Text("Choose a gas mix from the list to view its details")
-						.font(.headline)
-						.padding(.horizontal)
-						.padding(.vertical, 8)
-						.glassEffect()
-						.padding(.bottom)
-				}
+				ListDetailPlaceholder(
+					title: "Select a Gas Mix",
+					systemImage: "aqi.medium",
+					description: "Choose a gas mix from the list to view its details.",
+					caption: "Choose a gas mix from the list to view its details"
+				)
 			}
 		}
 		.ignoresSafeArea(edges: .top)
@@ -128,28 +119,14 @@ private struct GasMixListContent: View {
 				.appGradientScrollBackground()
 			}
 		}
-		.alert(
+		.deleteOffsetsConfirmation(
 			"Delete Gas Mix",
-			isPresented: Binding(
-				get: { pendingDeleteOffsets != nil },
-				set: { if !$0 { pendingDeleteOffsets = nil } }
-			)
-		) {
-			Button("Delete", role: .destructive) {
-				if let offsets = pendingDeleteOffsets {
-					deleteGasMixes(at: offsets)
-				}
-				pendingDeleteOffsets = nil
-			}
-			Button("Cancel", role: .cancel) {
-				pendingDeleteOffsets = nil
-			}
-		} message: {
-			if let offsets = pendingDeleteOffsets {
-				let count = offsets.count
+			offsets: $pendingDeleteOffsets,
+			message: { count in
 				Text("Are you sure you want to delete \(count == 1 ? "this gas mix" : "these \(count) gas mixes")? This cannot be undone.")
-			}
-		}
+			},
+			onDelete: deleteGasMixes(at:)
+		)
 	}
 
 	private func deleteGasMixes(at offsets: IndexSet) {

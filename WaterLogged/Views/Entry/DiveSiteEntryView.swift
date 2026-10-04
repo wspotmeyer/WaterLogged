@@ -68,47 +68,24 @@ struct DiveSiteEntryView: View {
 								.multilineTextAlignment(.trailing)
 						}
 					}
-					Section(header: Text("Notes"), footer: Text("You can use text formatting (bold, italics, links, etc.) using inline Markdown syntax.")) {
-						ZStack(alignment: .topLeading) {
-							if notes.isEmpty {
-								Text("Notes")
-									.foregroundStyle(.tertiary)
-									.padding(.top, 8)
-									.padding(.leading, 4)
-							}
-							TextEditor(text: $notes)
-								.frame(minHeight: 100)
-						}
+					Section(header: Text("Notes"), footer: Text(PlaceholderTextEditor.markdownHint)) {
+						PlaceholderTextEditor(placeholder: "Notes", text: $notes)
 					}
 					if isEditing {
-						Section {
-							Button("Delete This Dive Site", role: .destructive) {
-								showingDeleteConfirmation = true
-							}
-						}
+						DeleteItemSection(title: "Delete This Dive Site", isConfirming: $showingDeleteConfirmation)
 					}
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
-			.appGradientScrollBackground()
-			.navigationTitle(site == nil ? "New Dive Site" : "Edit Dive Site")
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button("Cancel", systemImage: "xmark") { dismiss() }
-				}
-				ToolbarItem(placement: .confirmationAction) {
-					Button("Save", systemImage: "checkmark") {
-						save()
-						dismiss()
-					}
-					.buttonStyle(.borderedProminent)
-					.disabled(name.isEmpty)
-				}
-			}
+			.entryFormChrome(
+				site == nil ? "New Dive Site" : "Edit Dive Site",
+				canSave: !name.isEmpty,
+				onSave: {
+					save()
+					dismiss()
+				},
+				onCancel: { dismiss() }
+			)
 			.onAppear {
 				if let site {
 					name = site.name
@@ -119,14 +96,13 @@ struct DiveSiteEntryView: View {
 					notes = site.notes
 				}
 			}
-			.alert("Delete This Dive Site?", isPresented: $showingDeleteConfirmation) {
-				Button("Delete", role: .destructive) {
-					dismiss()
-					onDelete?()
-				}
-				Button("Cancel", role: .cancel) { }
-			} message: {
-				Text("This will permanently delete this dive site. Any dives at this site will no longer have a site assigned.")
+			.deleteConfirmation(
+				"Delete This Dive Site?",
+				isPresented: $showingDeleteConfirmation,
+				message: "This will permanently delete this dive site. Any dives at this site will no longer have a site assigned."
+			) {
+				dismiss()
+				onDelete?()
 			}
 		}
 #if os(macOS)
