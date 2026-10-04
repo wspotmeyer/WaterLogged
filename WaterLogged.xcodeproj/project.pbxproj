@@ -1,0 +1,835 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		522DE2BD2FF1A9E200B75852 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522DE2BC2FF1A9E200B75852 /* WidgetKit.framework */; };
+		522DE2BF2FF1A9E200B75852 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 522DE2BE2FF1A9E200B75852 /* SwiftUI.framework */; };
+		522DE2CA2FF1A9E200B75852 /* WaterLoggedWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 522DE2BA2FF1A9E200B75852 /* WaterLoggedWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		52AA5FAD2FDDEFB2000C3D77 /* WaterLogged App Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 52AA5FAC2FDDEFB2000C3D77 /* WaterLogged App Icon.icon */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		522DE2C82FF1A9E200B75852 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 527B799A2F4CB08A0028955B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 522DE2B92FF1A9E100B75852;
+			remoteInfo = WaterLoggedWidgetsExtension;
+		};
+		52922E6C3016936A0051DA46 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 527B799A2F4CB08A0028955B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 527B79A12F4CB08A0028955B;
+			remoteInfo = WaterLogged;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		522DE2CB2FF1A9E200B75852 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				522DE2CA2FF1A9E200B75852 /* WaterLoggedWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		522DE2BA2FF1A9E200B75852 /* WaterLoggedWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WaterLoggedWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		522DE2BC2FF1A9E200B75852 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
+		522DE2BE2FF1A9E200B75852 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = /System/Library/Frameworks/SwiftUI.framework; sourceTree = "<absolute>"; };
+		522DE2D72FF1ABBF00B75852 /* WaterLoggedWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WaterLoggedWidgetsExtension.entitlements; sourceTree = "<group>"; };
+		5277A8D52F549355000B3B0C /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		527B79A22F4CB08A0028955B /* WaterLogged.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WaterLogged.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		52922E683016936A0051DA46 /* WaterLoggedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WaterLoggedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		529A11462F9C254D002D9EC7 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		52AA5FAC2FDDEFB2000C3D77 /* WaterLogged App Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "WaterLogged App Icon.icon"; sourceTree = "<group>"; };
+		52DD8B94303A7A4600D58FBC /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		522DE2CE2FF1A9E200B75852 /* Exceptions for "WaterLoggedWidgets" folder in "WaterLoggedWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 522DE2B92FF1A9E100B75852 /* WaterLoggedWidgetsExtension */;
+		};
+		522DE2E62FF1AD2200B75852 /* Exceptions for "WaterLogged" folder in "WaterLoggedWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Widgets/StatsSnapshot.swift,
+			);
+			target = 522DE2B92FF1A9E100B75852 /* WaterLoggedWidgetsExtension */;
+		};
+		524E699230312DF400C79B06 /* Exceptions for "WaterLoggedTests" folder in "WaterLoggedTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WaterLogged.xctestplan,
+			);
+			target = 52922E673016936A0051DA46 /* WaterLoggedTests */;
+		};
+		52772B69304F4317005F93D4 /* Exceptions for "WaterLogged" folder in "WaterLogged" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Libraries/libdivecomputer/COPYING,
+				"Resources/Icon Sources/Old WaterLogged Icon.ai",
+				"Resources/Icon Sources/WaterLogged Icon.ai",
+			);
+			target = 527B79A12F4CB08A0028955B /* WaterLogged */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		522DE2C02FF1A9E200B75852 /* WaterLoggedWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				522DE2CE2FF1A9E200B75852 /* Exceptions for "WaterLoggedWidgets" folder in "WaterLoggedWidgetsExtension" target */,
+			);
+			path = WaterLoggedWidgets;
+			sourceTree = "<group>";
+		};
+		52772B65304F2DD1005F93D4 /* Scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Scripts;
+			sourceTree = "<group>";
+		};
+		527B79A42F4CB08A0028955B /* WaterLogged */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				52772B69304F4317005F93D4 /* Exceptions for "WaterLogged" folder in "WaterLogged" target */,
+				522DE2E62FF1AD2200B75852 /* Exceptions for "WaterLogged" folder in "WaterLoggedWidgetsExtension" target */,
+			);
+			path = WaterLogged;
+			sourceTree = "<group>";
+		};
+		527B79B42F4CB08B0028955B /* WaterLoggedTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				524E699230312DF400C79B06 /* Exceptions for "WaterLoggedTests" folder in "WaterLoggedTests" target */,
+			);
+			path = WaterLoggedTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		522DE2B72FF1A9E100B75852 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				522DE2BF2FF1A9E200B75852 /* SwiftUI.framework in Frameworks */,
+				522DE2BD2FF1A9E200B75852 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		527B799F2F4CB08A0028955B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		52922E653016936A0051DA46 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		522DE2BB2FF1A9E200B75852 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				522DE2BC2FF1A9E200B75852 /* WidgetKit.framework */,
+				522DE2BE2FF1A9E200B75852 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		527B79992F4CB08A0028955B = {
+			isa = PBXGroup;
+			children = (
+				522DE2D72FF1ABBF00B75852 /* WaterLoggedWidgetsExtension.entitlements */,
+				52DD8B94303A7A4600D58FBC /* README.md */,
+				529A11462F9C254D002D9EC7 /* LICENSE.md */,
+				5277A8D52F549355000B3B0C /* CLAUDE.md */,
+				52AA5FAC2FDDEFB2000C3D77 /* WaterLogged App Icon.icon */,
+				527B79A42F4CB08A0028955B /* WaterLogged */,
+				527B79B42F4CB08B0028955B /* WaterLoggedTests */,
+				522DE2C02FF1A9E200B75852 /* WaterLoggedWidgets */,
+				52772B65304F2DD1005F93D4 /* Scripts */,
+				522DE2BB2FF1A9E200B75852 /* Frameworks */,
+				527B79A32F4CB08A0028955B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		527B79A32F4CB08A0028955B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				527B79A22F4CB08A0028955B /* WaterLogged.app */,
+				522DE2BA2FF1A9E200B75852 /* WaterLoggedWidgetsExtension.appex */,
+				52922E683016936A0051DA46 /* WaterLoggedTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		522DE2B92FF1A9E100B75852 /* WaterLoggedWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 522DE2CF2FF1A9E200B75852 /* Build configuration list for PBXNativeTarget "WaterLoggedWidgetsExtension" */;
+			buildPhases = (
+				522DE2B62FF1A9E100B75852 /* Sources */,
+				522DE2B72FF1A9E100B75852 /* Frameworks */,
+				522DE2B82FF1A9E100B75852 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				522DE2C02FF1A9E200B75852 /* WaterLoggedWidgets */,
+			);
+			name = WaterLoggedWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = WaterLoggedWidgetsExtension;
+			productReference = 522DE2BA2FF1A9E200B75852 /* WaterLoggedWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		527B79A12F4CB08A0028955B /* WaterLogged */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 527B79C52F4CB08B0028955B /* Build configuration list for PBXNativeTarget "WaterLogged" */;
+			buildPhases = (
+				527B799E2F4CB08A0028955B /* Sources */,
+				527B799F2F4CB08A0028955B /* Frameworks */,
+				527B79A02F4CB08A0028955B /* Resources */,
+				522DE2CB2FF1A9E200B75852 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				522DE2C92FF1A9E200B75852 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				527B79A42F4CB08A0028955B /* WaterLogged */,
+			);
+			name = WaterLogged;
+			productName = WaterLogged;
+			productReference = 527B79A22F4CB08A0028955B /* WaterLogged.app */;
+			productType = "com.apple.product-type.application";
+		};
+		52922E673016936A0051DA46 /* WaterLoggedTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 52922E6E3016936A0051DA46 /* Build configuration list for PBXNativeTarget "WaterLoggedTests" */;
+			buildPhases = (
+				52922E643016936A0051DA46 /* Sources */,
+				52922E653016936A0051DA46 /* Frameworks */,
+				52922E663016936A0051DA46 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				52922E6D3016936A0051DA46 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				527B79B42F4CB08B0028955B /* WaterLoggedTests */,
+			);
+			name = WaterLoggedTests;
+			packageProductDependencies = (
+			);
+			productName = WaterLoggedTests;
+			productReference = 52922E683016936A0051DA46 /* WaterLoggedTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		527B799A2F4CB08A0028955B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					522DE2B92FF1A9E100B75852 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					527B79A12F4CB08A0028955B = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					52922E673016936A0051DA46 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 527B79A12F4CB08A0028955B;
+					};
+				};
+			};
+			buildConfigurationList = 527B799D2F4CB08A0028955B /* Build configuration list for PBXProject "WaterLogged" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 527B79992F4CB08A0028955B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 527B79A32F4CB08A0028955B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				527B79A12F4CB08A0028955B /* WaterLogged */,
+				522DE2B92FF1A9E100B75852 /* WaterLoggedWidgetsExtension */,
+				52922E673016936A0051DA46 /* WaterLoggedTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		522DE2B82FF1A9E100B75852 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		527B79A02F4CB08A0028955B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52AA5FAD2FDDEFB2000C3D77 /* WaterLogged App Icon.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		52922E663016936A0051DA46 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		522DE2B62FF1A9E100B75852 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		527B799E2F4CB08A0028955B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		52922E643016936A0051DA46 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		522DE2C92FF1A9E200B75852 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 522DE2B92FF1A9E100B75852 /* WaterLoggedWidgetsExtension */;
+			targetProxy = 522DE2C82FF1A9E200B75852 /* PBXContainerItemProxy */;
+		};
+		52922E6D3016936A0051DA46 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 527B79A12F4CB08A0028955B /* WaterLogged */;
+			targetProxy = 52922E6C3016936A0051DA46 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		522DE2CC2FF1A9E200B75852 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WaterLoggedWidgetsExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9L333CNF8K;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WaterLoggedWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WaterLoggedWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = net.wspot.WaterLogged.WaterLoggedWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		522DE2CD2FF1A9E200B75852 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WaterLoggedWidgetsExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9L333CNF8K;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WaterLoggedWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WaterLoggedWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = net.wspot.WaterLogged.WaterLoggedWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		527B79C32F4CB08B0028955B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9L333CNF8K;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		527B79C42F4CB08B0028955B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9L333CNF8K;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		527B79C62F4CB08B0028955B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "WaterLogged App Icon";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = WaterLogged/WaterLogged.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_DEBUG_DYLIB = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = YES;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = YES;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/include",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/src",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer",
+				);
+				"INFOPLIST_FILE[sdk=*]" = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WaterLogged;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
+				INFOPLIST_KEY_NSContactsUsageDescription = "WaterLogged uses Contacts to import buddy and owner details you select.";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 0.1;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DHAVE_CONFIG_H",
+					"-w",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.wspot.WaterLogged;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "WaterLogged/WaterLogged-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		527B79C72F4CB08B0028955B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "WaterLogged App Icon";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = WaterLogged/WaterLogged.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_DEBUG_DYLIB = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = YES;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = YES;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/include",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/src",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer",
+				);
+				"INFOPLIST_FILE[sdk=*]" = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WaterLogged;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
+				INFOPLIST_KEY_NSContactsUsageDescription = "WaterLogged uses Contacts to import buddy and owner details you select.";
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 0.1;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DHAVE_CONFIG_H",
+					"-w",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.wspot.WaterLogged;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "WaterLogged/WaterLogged-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		52922E6F3016936A0051DA46 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9L333CNF8K;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/include",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/src",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.wspot.WaterLoggedTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos macosx iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WaterLogged.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WaterLogged";
+			};
+			name = Debug;
+		};
+		52922E703016936A0051DA46 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9L333CNF8K;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/include",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer/src",
+					"$(SRCROOT)/WaterLogged/Libraries/libdivecomputer",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.wspot.WaterLoggedTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos macosx iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WaterLogged.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WaterLogged";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		522DE2CF2FF1A9E200B75852 /* Build configuration list for PBXNativeTarget "WaterLoggedWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				522DE2CC2FF1A9E200B75852 /* Debug */,
+				522DE2CD2FF1A9E200B75852 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		527B799D2F4CB08A0028955B /* Build configuration list for PBXProject "WaterLogged" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				527B79C32F4CB08B0028955B /* Debug */,
+				527B79C42F4CB08B0028955B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		527B79C52F4CB08B0028955B /* Build configuration list for PBXNativeTarget "WaterLogged" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				527B79C62F4CB08B0028955B /* Debug */,
+				527B79C72F4CB08B0028955B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		52922E6E3016936A0051DA46 /* Build configuration list for PBXNativeTarget "WaterLoggedTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				52922E6F3016936A0051DA46 /* Debug */,
+				52922E703016936A0051DA46 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 527B799A2F4CB08A0028955B /* Project object */;
+}

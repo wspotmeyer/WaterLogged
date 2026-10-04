@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/check-swiftdata-cloudkit.sh",
+            "timeout": 10,
+            "statusMessage": "Checking SwiftData CloudKit compatibility..."
+          },
+          {
+            "type": "command",
+            "command": ".claude/check-swiftlint.sh",
+            "timeout": 15,
+            "statusMessage": "Running SwiftLint..."
+          }
+        ]
+      }
+    ]
+  }
+}

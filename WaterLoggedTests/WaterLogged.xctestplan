@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "95444079-4FAE-419B-8BD4-B4133AFC48C8",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:WaterLogged.xcodeproj",
+        "identifier" : "52922E673016936A0051DA46",
+        "name" : "WaterLoggedTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="281.05 0 77.9 222.3000031">
+  <!-- Generator: Adobe Illustrator 30.8.1, SVG Export Plug-In . SVG Version: 2.1.4 Build 1)  -->
+  <path id="tank" d="M283.8999939,76.9499893c0-20.9000015,9.3099976-38,36.1000061-38s36.1000061,17.0999985,36.1000061,38v131.0999985c0,7.6000061-3.7999878,11.3999939-11.3999939,11.3999939h-49.3999939c-7.6000061,0-11.3999939-3.8000031-11.3999939-11.3999939V76.9499893h-.0000305Z" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 5.6999998px;"/>
+  <rect id="yoke" x="315.7077332" y="18.0499878" width="9.3777161" height="20.9000015" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 5.6999998px;"/>
+  <circle id="connector" cx="319.9999695" cy="10.4499876" r="7.600005" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 5.6999998px;"/>
+  <path id="knob" d="M325.6999817,23.7499866l19-5.6999989v19l-19-5.7000008v-7.6000004Z" style="fill: none; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 5.6999998px;"/>
+</svg>

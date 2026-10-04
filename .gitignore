@@ -1,0 +1,42 @@
+# With ideas from https://github.com/github/gitignore/
+
+# General
+.DS_Store
+.localized
+__MACOSX/
+.AppleDouble
+.LSOverride
+Icon[
+]
+
+# Resource forks
+._*
+
+## User settings
+xcuserdata/
+
+# Claude Code (project settings and hook scripts are committed; personal overrides are not)
+.claude/settings.local.json
+
+# GitHub Copilot
+.github/copilot-instructions.md
+
+# Obj-C/Swift specific
+*.hmap
+
+# App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+.build/
+DerivedData/
+build/
+
+# Python (Scripts/SymbolTemplate)
+__pycache__/
+*.pyc

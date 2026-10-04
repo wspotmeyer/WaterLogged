@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 30.5.1, SVG Export Plug-In . SVG Version: 9.03 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
+<g>
+</g>
+<g id="_x33___x2013__Layer">
+	<g id="Scuba_Flag">
+		<defs>
+			<rect id="Red_Background" x="327.1372986" y="464.5365601" width="365.903717" height="292.6651306"/>
+		</defs>
+		<use xlink:href="#Red_Background"  style="overflow:visible;fill:#D41D00;"/>
+		<clipPath id="Red_Background_00000134238915081685672490000008992690991351578003_">
+			<use xlink:href="#Red_Background"  style="overflow:visible;"/>
+		</clipPath>
+		
+			<polygon id="White_Stripe" style="clip-path:url(#Red_Background_00000134238915081685672490000008992690991351578003_);fill:#FFFFFF;" points="
+			680.8336182,783.2566528 312.9438782,496.6858215 341.1205444,436.2948914 709.0102539,722.8657227 		"/>
+	</g>
+</g>
+</svg>
