@@ -53,7 +53,7 @@ final class GasMix {
 		)
 	}
 
-	// Computed: SAC-friendly label
+	/// The name to show for this mix: its own name, or its oxygen percentage when unnamed.
 	var displayName: String {
 		if name.isEmpty {
 			return "O₂: \(Int(oxygenPercent))%"

@@ -176,7 +176,9 @@ nonisolated enum LibDCDeviceHandler {
 
 	// MARK: - Dive Download
 
-	/// Download all dives from a connected BLE dive computer.
+	/// Download dives from a connected BLE dive computer. When a `fingerprint` is
+	/// passed, the device stops at the first dive it has already sent, so only
+	/// newer dives are transferred; without one, the whole log is read.
 	///
 	/// This function:
 	/// 1. Sets up a BLEIOStreamBridge between CoreBluetooth and libdivecomputer
@@ -515,7 +517,7 @@ nonisolated enum LibDCDeviceHandler {
 	}
 
 	/// Convert a sample event to a human-readable description.
-	static func eventDescription(type: UInt32, flags: UInt32, value: UInt32) -> String {
+	static func eventDescription(type: UInt32, flags: UInt32) -> String {
 		let name: String
 		switch parser_sample_event_t(rawValue: type) {
 			case SAMPLE_EVENT_NONE:                 name = "None"
@@ -761,8 +763,7 @@ nonisolated private func sampleCallback(
 			let event = value.pointee.event
 			let description = LibDCDeviceHandler.eventDescription(
 				type: event.type,
-				flags: event.flags,
-				value: event.value
+				flags: event.flags
 			)
 			if !context.samples.isEmpty {
 				var existing = context.samples[context.samples.count - 1].events ?? []

@@ -111,20 +111,6 @@ final class Dive {
 		return dives.reduce(0) { $0 + $1.durationSeconds }
 	}
 
-	var cumulativeDiveTimeFormatted: String {
-		let total = cumulativeDiveTimeSeconds
-		let hours = total / 3600
-		let minutes = (total % 3600) / 60
-		let seconds = total % 60
-		if hours > 0 {
-			return "\(hours)h \(minutes)m \(seconds)s"
-		} else if minutes > 0 {
-			return "\(minutes)m \(seconds)s"
-		} else {
-			return "\(seconds)s"
-		}
-	}
-
 	// MARK: - Conditions
 	var waterTempCelsius: Double?
 	var airTempCelsius: Double?

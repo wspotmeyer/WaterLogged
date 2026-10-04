@@ -45,19 +45,6 @@ struct ToolsView: View {
 	@State private var showingUDDFImport = false
 	@State private var uddfImportResult: UDDFImportResult?
 
-	/// The outcome of a UDDF import, shown in an alert.
-	private enum UDDFImportResult: Identifiable {
-		case success(UDDFImporter.ImportSummary)
-		case failure(String)
-
-		var id: String {
-			switch self {
-				case .success(let summary): "success-\(summary.total)"
-				case .failure(let message): "failure-\(message)"
-			}
-		}
-	}
-
 	private let columns = [GridItem(.adaptive(minimum: 220), spacing: 16)]
 
 	var body: some View {
@@ -120,8 +107,8 @@ struct ToolsView: View {
 			switch result {
 				case .success(let url):
 					do {
-						let count = try UDDFImporter.importFile(at: url, into: modelContext)
-						uddfImportResult = .success(count)
+						let summary = try UDDFImporter.importFile(at: url, into: modelContext)
+						uddfImportResult = .success(summary)
 					} catch {
 						uddfImportResult = .failure(error.localizedDescription)
 					}
@@ -129,21 +116,10 @@ struct ToolsView: View {
 					uddfImportResult = .failure(error.localizedDescription)
 			}
 		}
-		.alert(item: $uddfImportResult) { result in
-			switch result {
-				case .success(let summary):
-					Alert(
-						title: Text("Import Complete"),
-						message: Text(summary.message),
-						dismissButton: .default(Text("OK"))
-					)
-				case .failure(let message):
-					Alert(
-						title: Text("Import Failed"),
-						message: Text(message),
-						dismissButton: .default(Text("OK"))
-					)
-			}
+		.alert(uddfImportResult?.title ?? "", item: $uddfImportResult) { _ in
+			Button("OK") { }
+		} message: { result in
+			Text(result.message)
 		}
 	}
 

@@ -33,27 +33,6 @@ enum DiveComputerPhase: Equatable {
 	case importing
 	case complete(importedCount: Int)
 	case error(message: String)
-
-	static func == (lhs: DiveComputerPhase, rhs: DiveComputerPhase) -> Bool {
-		switch (lhs, rhs) {
-			case (.idle, .idle),
-				(.scanning, .scanning),
-				(.importing, .importing):
-				true
-			case (.connecting(let a), .connecting(let b)):
-				a == b
-			case (.reviewing(let a), .reviewing(let b)):
-				a == b
-			case (.complete(let a), .complete(let b)):
-				a == b
-			case (.error(let a), .error(let b)):
-				a == b
-			case (.downloading(let a), .downloading(let b)):
-				a == b
-			default:
-				false
-		}
-	}
 }
 
 /// Manages the full lifecycle of importing dives from a BLE dive computer.
@@ -67,8 +46,6 @@ final class DiveComputerManager {
 	var phase: DiveComputerPhase = .idle
 	var discoveredDevices: [DiscoveredDevice] = []
 	var downloadedDives: [ParsedDiveData] = []
-	var transferProgress: TransferProgress = .connecting
-	var errorMessage: String?
 
 	/// Whether to skip dives the logbook already holds. Also controls whether the
 	/// device is given its stored fingerprint, which lets it stop transferring
@@ -130,7 +107,8 @@ final class DiveComputerManager {
 			do {
 				try await transport.waitForPoweredOn()
 			} catch {
-				// BLE may be unavailable, but we might still have classic devices
+				// Bluetooth is off or not authorized. Only surface the error when
+				// there are no devices still listed from an earlier scan.
 				if discoveredDevices.isEmpty {
 					phase = .error(message: error.localizedDescription)
 				}
@@ -163,8 +141,7 @@ final class DiveComputerManager {
 						name: name,
 						brand: identification.brand,
 						rssi: result.rssi.intValue,
-						transport: .ble(result.peripheral),
-						matchedDescriptorProduct: identification.matchedDescriptorProduct
+						transport: .ble(result.peripheral)
 					))
 				}
 			}
@@ -258,7 +235,6 @@ final class DiveComputerManager {
 			deviceName: deviceName,
 			fingerprint: storedFingerprint?.fingerprint
 		) { [weak self] progress in
-			self?.transferProgress = progress
 			self?.phase = .downloading(progress: progress)
 		}
 
@@ -426,8 +402,6 @@ final class DiveComputerManager {
 		phase = .idle
 		discoveredDevices = []
 		downloadedDives = []
-		transferProgress = .connecting
-		errorMessage = nil
 		connectedDeviceModel = nil
 		connectedDeviceKey = nil
 		connectedDeviceSerial = nil

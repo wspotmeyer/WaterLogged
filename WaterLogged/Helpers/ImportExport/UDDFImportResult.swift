@@ -1,8 +1,8 @@
 //
-//  StatsSmallRow.swift
-//  WaterLoggedWidgets
+//  UDDFImportResult.swift
+//  WaterLogged
 //
-//  Created by John Meyer on 7/5/26.
+//  Created by John Meyer on 10/4/26.
 //
 //  Copyright © 2026 John Meyer.
 //
@@ -19,18 +19,31 @@
 //  You should have received a copy of the GNU General Public License along with WaterLogged. If not,
 //  see <https://www.gnu.org/licenses/>.
 
-import SwiftUI
+import Foundation
 
-/// A horizontal row of `StatsSmallTile`s for the medium widget that expands to fill
-/// the available vertical space, so the two rows split the widget's height
-/// evenly instead of bunching in the middle.
-struct StatsSmallRow<Content: View>: View {
-	@ViewBuilder var content: Content
+/// The outcome of a UDDF import, shown to the user in an alert.
+enum UDDFImportResult: Identifiable {
+	case success(UDDFImporter.ImportSummary)
+	case failure(String)
 
-	var body: some View {
-		HStack {
-			content
+	var id: String {
+		switch self {
+			case .success(let summary): "success-\(summary.total)"
+			case .failure(let message): "failure-\(message)"
 		}
-		.frame(maxHeight: .infinity)
+	}
+
+	var title: LocalizedStringResource {
+		switch self {
+			case .success: "Import Complete"
+			case .failure: "Import Failed"
+		}
+	}
+
+	var message: String {
+		switch self {
+			case .success(let summary): summary.message
+			case .failure(let message): message
+		}
 	}
 }

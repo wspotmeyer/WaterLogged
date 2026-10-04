@@ -28,11 +28,11 @@ import SwiftData
 /// Resolves `BuddyAppEntity` values for Siri, Shortcuts, Spotlight, and Apple
 /// Intelligence.
 ///
-/// Conforms to `EntityStringQuery` so spoken text like "John" can be resolved
+/// Conforms to `EntityStringQuery` so free text like "John" can be resolved
 /// to a `BuddyAppEntity`, to `EntityPropertyQuery` so the Shortcuts app offers
 /// a generic "Find Dive Buddies" action, and to `IndexedEntityQuery` so the
-/// system can refresh specific buddies in the Spotlight index on demand. Per
-/// CLAUDE.md text matching uses `localizedStandardContains` (locale-aware,
+/// system can refresh specific buddies in the Spotlight index on demand. Text
+/// matching uses `localizedStandardContains` (locale-aware,
 /// diacritic- and case-insensitive), which `#Predicate` doesn't support — so we
 /// fetch all buddies and filter in memory. Buddy lists are small (tens to a
 /// couple hundred) so this is fine.
@@ -135,8 +135,8 @@ nonisolated struct BuddyEntityQuery: EntityStringQuery, EntityPropertyQuery {
 		}
 	}
 
-	/// Free-text matching invoked when Siri resolves a parameter from spoken
-	/// input (e.g. "with John" → search "John" against buddies).
+	/// Free-text matching, used when the system resolves a buddy from typed
+	/// or spoken text (e.g. "John").
 	func entities(matching string: String) async throws -> [BuddyAppEntity] {
 		try await MainActor.run {
 			let context = ModelContext(WaterLoggedStore.shared)

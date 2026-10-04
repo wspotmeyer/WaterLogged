@@ -33,7 +33,7 @@ struct StatCell: View {
 				.foregroundStyle(.tint)
 				.frame(height: 28)
 			Text(value)
-				.font(.title2.weight(.bold))
+				.font(.title2.bold())
 				.fontDesign(.rounded)
 				.lineLimit(1)
 				.minimumScaleFactor(0.8)

@@ -48,12 +48,10 @@ enum TestModelContainer {
 	// once did exactly that, which is why nine suites sat disabled for weeks,
 	// misdiagnosed as Xcode 27 beta instability.
 	//
-	// Correct forms:
+	// Correct form:
 	//
 	//     let container = try TestModelContainer.make()             // ✓ stored property
 	//     let context = container.mainContext
-	//
-	//     let (container, context) = try TestModelContainer.makeContext()  // ✓ both bound
 
 	/// A fresh, empty, in-memory container using the full production schema.
 	/// Each container gets a unique configuration name so its store is distinct.
@@ -74,12 +72,6 @@ enum TestModelContainer {
 			cloudKitDatabase: .none
 		)
 		return try ModelContainer(for: WaterLoggedStore.schema, configurations: configuration)
-	}
-
-	/// A fresh in-memory container plus its main context, for convenience.
-	static func makeContext() throws -> (ModelContainer, ModelContext) {
-		let container = try make()
-		return (container, container.mainContext)
 	}
 }
 

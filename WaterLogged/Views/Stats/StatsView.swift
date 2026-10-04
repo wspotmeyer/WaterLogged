@@ -280,7 +280,7 @@ struct StatsView: View {
 
 	private var countryStatValues: [StatMetricValue] {
 		let grouped = Dictionary(grouping: dives.filter { !($0.site?.country.isEmpty ?? true) }) { dive in
-			dive.site!.country
+			dive.site?.country ?? ""
 		}
 		return grouped.map { country, countryDives in
 			let flag = CountryFlag.emoji(for: country)
@@ -298,7 +298,7 @@ struct StatsView: View {
 
 	private var regionStatValues: [StatMetricValue] {
 		let grouped = Dictionary(grouping: dives.filter { !($0.site?.region.isEmpty ?? true) }) { dive in
-			dive.site!.region
+			dive.site?.region ?? ""
 		}
 		return grouped.map { region, regionDives in
 			StatMetricValue(

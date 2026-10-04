@@ -129,7 +129,8 @@ enum EquipmentType: String, Codable, CaseIterable, Identifiable {
 		}
 	}
 
-	/// Maps a UDDF equipment XML tag name to an `EquipmentType`.
+	/// Maps a UDDF equipment XML tag name to an `EquipmentType`. `tank` is
+	/// deliberately absent: UDDF tanks are imported as `Tank` records, not equipment.
 	init?(uddfTag: String) {
 		switch uddfTag {
 			case "boots": self = .boots
@@ -148,7 +149,6 @@ enum EquipmentType: String, Codable, CaseIterable, Identifiable {
 			case "regulator": self = .regulator
 			case "scooter": self = .scooter
 			case "suit": self = .suit
-			case "tank" where false: self = .tank // tank is handled separately in UDDF
 			case "variouspieces": self = .miscellaneous
 			case "videocamera": self = .videoCamera
 			case "watch": self = .watch

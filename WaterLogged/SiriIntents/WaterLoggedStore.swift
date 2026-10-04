@@ -30,9 +30,9 @@ import SwiftData
 /// would race on writes and double-sync to CloudKit.
 nonisolated enum WaterLoggedStore {
 
-	/// Every `@Model` type WaterLogged persists. Must mirror the schema passed
-	/// to `.modelContainer(_:)` in `WaterLoggedApp` — kept here so there's one
-	/// source of truth.
+	/// Every `@Model` type WaterLogged persists. The shared container below (used
+	/// by the app and the App Intents) and the test containers are all built from
+	/// this one list.
 	static let schema = Schema([
 		Dive.self,
 		DiveSite.self,
@@ -114,8 +114,8 @@ nonisolated enum WaterLoggedStore {
 		let isCloudSyncActive: Bool
 	}
 
-	/// Reads the user's preferred unit system out of UserDefaults so AppIntent
-	/// responses (which may run outside the SwiftUI view tree) can format
+	/// Reads the user's preferred unit system out of UserDefaults so code that
+	/// runs outside the SwiftUI view tree (the widget snapshot) can format
 	/// values in the unit the user sees inside the app.
 	///
 	/// Relies on `registerDefaults()` having been called at launch to seed
@@ -150,11 +150,9 @@ nonisolated enum WaterLoggedStore {
 	/// the SwiftUI view tree (search for `@AppStorage` to find them).
 	static func registerDefaults() {
 		UserDefaults.standard.register(defaults: [
-			// Mirrored from @AppStorage("unitSystem") = .imperial in
-			// SettingsView, DiveDetailView, StatsView, DepthProfileChart,
-			// DiveListView, DiveEntryView, GasMixDetailView,
-			// EquipmentListView, BulkUpdateView, SamplesToolView,
-			// DiveTransferRowView, etc.
+			// Mirrored from every @AppStorage("unitSystem") = .imperial
+			// (SettingsView, StatsView, DiveEntryView, DepthProfileChart,
+			// HomeStatusBars and others; search for "unitSystem").
 			"unitSystem": UnitSystem.imperial.rawValue,
 
 			// Mirrored from @AppStorage("appearanceMode") = .system in

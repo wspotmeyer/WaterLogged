@@ -67,7 +67,6 @@ struct DiveSiteAppEntity: IndexedEntity, Identifiable {
 
 	let latitude: Double?
 	let longitude: Double?
-	let totalDiveTimeSeconds: Int
 
 	// MARK: - Precomputed display strings
 
@@ -137,7 +136,6 @@ extension DiveSiteAppEntity {
 		self.id = site.externalId
 		self.latitude = site.latitude
 		self.longitude = site.longitude
-		self.totalDiveTimeSeconds = site.totalDiveTimeSeconds
 		self.primaryDisplayTitle = site.name.isEmpty ? "Unnamed Site" : site.name
 		self.displaySubtitle = subtitle
 

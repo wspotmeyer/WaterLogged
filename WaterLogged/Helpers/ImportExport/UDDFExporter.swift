@@ -31,8 +31,10 @@ import SwiftData
 /// - Time: seconds
 /// - Gas fractions: 0.0–1.0
 ///
-/// All XML `id` attributes use the model's `externalId` (UUID) to enable
-/// cross-referencing with the companion extras XML.
+/// Every XML `id` attribute is derived from the model's `externalId` (UUID) via
+/// `UDDFIdentifier`, which adds a `wl-` prefix so the id is a valid NCName. The
+/// transform is reversible, which is what lets the companion extras XML (keyed
+/// by the raw `externalId`) be matched back up on restore.
 struct UDDFExporter {
 
 	/// The XML `id` attribute of every record written to the file, keyed by its
@@ -540,8 +542,8 @@ struct UDDFExporter {
 		}
 	}
 
-	/// Accepts pre-fetched samples rather than reading `dive.depthProfile`
-	/// to work around SwiftData relationship faulting (see comment in `export`).
+	/// Accepts pre-fetched samples rather than reading `dive.diveProfile`
+	/// to work around SwiftData relationship faulting (see comment in `exportString`).
 	private static func writeWaypoints(
 		_ xml: inout XMLBuilder,
 		samples: [DepthSample],

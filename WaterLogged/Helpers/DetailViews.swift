@@ -42,7 +42,7 @@ struct DetailSection<Content: View>: View {
 				.frame(maxWidth: .infinity, alignment: .leading)
 		} label: {
 			Text(title)
-				.font(.title2.weight(.bold))
+				.font(.title2.bold())
 				.padding(.bottom, 4)
 		}
 		.tileBackgroundStyle()

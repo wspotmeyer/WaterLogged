@@ -21,9 +21,11 @@
 
 import SwiftUI
 
-/// The widget's background gradient: the dark variant of the app's navy
-/// gradient theme, used in both light and dark system appearances. Pair with
-/// a forced dark color scheme so semantic text styles stay legible.
+/// The widget's background gradient: a dark navy gradient used in both light
+/// and dark system appearances. Its colors are set here, not read from the
+/// app's color assets, so it no longer matches the app's turquoise dark
+/// gradient exactly. Pair with a forced dark color scheme so semantic text
+/// styles stay legible.
 struct WidgetGradientBackground: View {
 	var body: some View {
 		LinearGradient(

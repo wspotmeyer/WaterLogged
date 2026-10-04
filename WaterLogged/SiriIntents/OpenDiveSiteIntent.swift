@@ -27,8 +27,8 @@ import AppIntents
 /// forward and routes to the site via `NavigationRouter`.
 ///
 /// `perform()` is nonisolated (the `AppIntent` requirement), so it hops to the
-/// main actor to set the `@MainActor` router — the same pattern the data-backed
-/// intents use for SwiftData access.
+/// main actor to set the `@MainActor` router, the same way the entity queries
+/// hop to the main actor for SwiftData access.
 struct OpenDiveSiteIntent: OpenIntent {
 
 	static let title: LocalizedStringResource = "Open Dive Site"

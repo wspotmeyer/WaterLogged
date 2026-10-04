@@ -25,8 +25,8 @@ import SwiftData
 
 /// Keeps the Spotlight / Apple Intelligence index in sync with the SwiftData
 /// store by reindexing whenever a save commits. This is what makes an edit to a
-/// dive, site, or buddy show up in search and the assistant right away, rather
-/// than only at the next launch.
+/// dive, site, trip, or buddy show up in Spotlight right away, rather than only
+/// at the next launch.
 ///
 /// It observes `ModelContext.didSave` (which fires for every context backed by
 /// the shared container, including the background contexts used by import and

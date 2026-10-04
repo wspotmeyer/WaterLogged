@@ -33,8 +33,10 @@ cd Scripts/SymbolTemplate
 ```
 
 That writes the template SVG plus a `Contents.json`. The folder name sets the
-asset name, so the example above is used as
-`Tab("Dives", image: "scuba.diver.symbol", value: RootTab.dives)`.
+asset name, so the example above would be used as
+`Image("scuba.diver.symbol")` or `Tab("Dives", image: "scuba.diver.symbol", value: …)`.
+(The app's Dives tab currently uses an SF Symbol instead; the symbol set is kept
+in the catalog as this script's worked example.)
 
 Or just inspect the template without touching the catalog:
 

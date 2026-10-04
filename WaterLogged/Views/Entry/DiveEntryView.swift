@@ -103,9 +103,7 @@ struct DiveEntryView: View {
 #endif
 	@State private var verificationSignatureData: Data?
 
-	// File importer — single state to avoid duplicate .fileImporter modifiers
-	private enum FileImportTarget { case logbook }
-	@State private var activeFileImport: FileImportTarget?
+	@State private var showingLogbookFileImporter = false
 
 	private static let allowedImageTypes: [UTType] = [.jpeg, .png, .gif, .tiff]
 
@@ -186,7 +184,7 @@ struct DiveEntryView: View {
 					LogbookImageSection(
 						imageData: $logbookImageData,
 						photoItem: $logbookPhotoItem,
-						showingFileImporter: fileImportBinding(for: .logbook)
+						showingFileImporter: $showingLogbookFileImporter
 					)
 					RatingNotesSection(
 						rating: $rating,
@@ -252,25 +250,15 @@ struct DiveEntryView: View {
 				}
 			}
 			.fileImporter(
-				isPresented: Binding(
-					get: { activeFileImport != nil },
-					set: { if !$0 { activeFileImport = nil } }
-				),
+				isPresented: $showingLogbookFileImporter,
 				allowedContentTypes: Self.allowedImageTypes,
 				allowsMultipleSelection: false
-			) { [activeFileImport] (result: Result<[URL], any Error>) in
-				guard let urls = try? result.get() else { return }
-				switch activeFileImport {
-					case .logbook:
-						if let url = urls.first {
-							guard url.startAccessingSecurityScopedResource() else { return }
-							defer { url.stopAccessingSecurityScopedResource() }
-							logbookImageData = try? Data(contentsOf: url)
-							logbookImageFilename = url.lastPathComponent
-						}
-					case nil:
-						break
-				}
+			) { (result: Result<[URL], any Error>) in
+				guard let url = try? result.get().first else { return }
+				guard url.startAccessingSecurityScopedResource() else { return }
+				defer { url.stopAccessingSecurityScopedResource() }
+				logbookImageData = try? Data(contentsOf: url)
+				logbookImageFilename = url.lastPathComponent
 			}
 			.alert("Delete This Dive?", isPresented: $showingDeleteConfirmation) {
 				Button("Delete", role: .destructive) {
@@ -285,15 +273,6 @@ struct DiveEntryView: View {
 #if os(macOS)
 		.frame(minWidth: 500, idealWidth: 650, minHeight: 500, idealHeight: 700)
 #endif
-	}
-
-	// MARK: - Helpers
-
-	private func fileImportBinding(for target: FileImportTarget) -> Binding<Bool> {
-		Binding(
-			get: { activeFileImport == target },
-			set: { activeFileImport = $0 ? target : nil }
-		)
 	}
 
 	// MARK: - Logic
@@ -364,13 +343,6 @@ struct DiveEntryView: View {
 	private func loadImageData(from item: PhotosPickerItem?) async -> Data? {
 		guard let item else { return nil }
 		return try? await item.loadTransferable(type: Data.self)
-	}
-
-	private func loadImageData(from result: Result<URL, Error>) -> Data? {
-		guard let url = try? result.get() else { return nil }
-		guard url.startAccessingSecurityScopedResource() else { return nil }
-		defer { url.stopAccessingSecurityScopedResource() }
-		return try? Data(contentsOf: url)
 	}
 
 	private func saveTanks(to dive: Dive) {

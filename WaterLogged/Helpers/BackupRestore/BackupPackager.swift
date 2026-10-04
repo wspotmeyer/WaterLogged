@@ -27,8 +27,9 @@ import SwiftData
 /// - `extras.xml` — WaterLogged-proprietary XML for fields not in UDDF
 /// - `media/` — exported images (dive photos, logbook scans, signatures, equipment/buddy/cert images)
 ///
-/// The archive is delivered as a `.zip` file. All entities are cross-referenced
-/// using the same `externalId` UUIDs across both XML files.
+/// The archive is delivered as a `.zip` file. Entities are cross-referenced by
+/// their `externalId` UUIDs: raw in `extras.xml`, and `wl-`-prefixed in the UDDF
+/// file (see `UDDFIdentifier`).
 struct BackupPackager {
 
 	enum ExportError: LocalizedError {
@@ -78,7 +79,7 @@ struct BackupPackager {
 	// MARK: - Media Export
 
 	/// Tracks exported media filenames keyed by owner entity identifiers.
-	struct MediaManifest {
+	private struct MediaManifest {
 		var photoFiles: [PersistentIdentifier: String] = [:]
 		var logbookImages: [String: String] = [:]
 		var signatureImages: [String: String] = [:]
@@ -181,7 +182,7 @@ struct BackupPackager {
 		// SwiftData relationship faulting workaround: optional properties on
 		// DepthSample return nil when accessed through dive.diveProfile. Fetching
 		// samples directly and grouping by dive preserves the stored values.
-		// See matching workaround in UDDFExporter.export(from:to:).
+		// See matching workaround in UDDFExporter.exportString(from:selecting:).
 		let allSamples = try context.fetch(FetchDescriptor<DepthSample>())
 		var samplesByDive: [PersistentIdentifier: [DepthSample]] = [:]
 		for sample in allSamples {
@@ -215,11 +216,12 @@ struct BackupPackager {
 		manifest: MediaManifest,
 		samplesByDive: [PersistentIdentifier: [DepthSample]]
 	) {
-		let filtered = dives.filter { diveHasExtras($0, manifest: manifest, samplesByDive: samplesByDive) }
-		guard !filtered.isEmpty else { return }
+		// Every dive is written, even one with no other extras, because the
+		// entry always carries its importSource.
+		guard !dives.isEmpty else { return }
 
 		xml.open("dives")
-		for dive in filtered {
+		for dive in dives {
 			xml.open("dive", attributes: [("id", dive.externalId)])
 
 			if !dive.title.isEmpty { xml.element("title", value: dive.title) }
@@ -278,13 +280,14 @@ struct BackupPackager {
 
 			// Depth sample extras (decoTTSSeconds only — other fields are in the UDDF)
 			let diveSamples = samplesByDive[dive.persistentModelID] ?? []
-			let ttsEntries = diveSamples.filter { $0.decoTTSSeconds != nil }
-				.sorted { $0.elapsedSeconds < $1.elapsedSeconds }
+			let ttsEntries = diveSamples
+				.compactMap { sample in sample.decoTTSSeconds.map { (elapsed: sample.elapsedSeconds, tts: $0) } }
+				.sorted { $0.elapsed < $1.elapsed }
 			if !ttsEntries.isEmpty {
 				xml.open("samples")
-				for sample in ttsEntries {
-					xml.open("sample", attributes: [("elapsed", "\(sample.elapsedSeconds)")])
-					xml.element("decotts", value: "\(sample.decoTTSSeconds!)")
+				for entry in ttsEntries {
+					xml.open("sample", attributes: [("elapsed", "\(entry.elapsed)")])
+					xml.element("decotts", value: "\(entry.tts)")
 					xml.close("sample")
 				}
 				xml.close("samples")
@@ -329,22 +332,6 @@ struct BackupPackager {
 			xml.close("tank")
 		}
 		xml.close("tanks")
-	}
-
-	private static func diveHasExtras(
-		_ dive: Dive,
-		manifest: MediaManifest,
-		samplesByDive: [PersistentIdentifier: [DepthSample]]
-	) -> Bool {
-		!dive.title.isEmpty || dive.diveGuide != nil || dive.diveOperator != nil
-		|| dive.diveBoat != nil || !dive.weather.isEmpty || dive.waterType != nil
-		|| dive.current != nil || dive.waveConditions != nil || dive.suitType != nil
-		|| !dive.tags.isEmpty
-		|| dive.startLatitude != nil || dive.endLatitude != nil
-		|| manifest.logbookImages[dive.externalId] != nil
-		|| manifest.signatureImages[dive.externalId] != nil
-		|| (samplesByDive[dive.persistentModelID]?.contains { $0.decoTTSSeconds != nil } ?? false)
-		|| true // always include for importSource
 	}
 
 	// MARK: Equipment Extras

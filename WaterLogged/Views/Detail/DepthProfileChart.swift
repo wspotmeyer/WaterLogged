@@ -111,7 +111,7 @@ struct DepthProfileChart: View {
 
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Dive Profile")
-				.font(.title2.weight(.bold))
+				.font(.title2.bold())
 			Chart {
 				// Depth — always displayed
 				ForEach(data.sortedSamples, id: \.elapsedSeconds) { sample in

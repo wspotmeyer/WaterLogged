@@ -360,9 +360,8 @@ struct UDDFImporter {
 
 	/// Build a `DepthSample` from a parsed waypoint, resolving decompression
 	/// state (explicit deco stop vs. no-deco time) and the gas-switch index.
-	/// Extracted from `importData` so the sample mapping is unit testable and to
-	/// keep the import routine within a reasonable length.
-	static func makeDepthSample(from sample: ParsedWaypoint, mixRefToIndex: [String: Int]) -> DepthSample {
+	/// Extracted from `importData` to keep the import routine within a reasonable length.
+	private static func makeDepthSample(from sample: ParsedWaypoint, mixRefToIndex: [String: Int]) -> DepthSample {
 		let effectivePpo2 = sample.ppo2Bar ?? sample.calculatedPpo2Bar
 
 		var decoStatus: DecoType?
@@ -620,7 +619,6 @@ struct ParsedSite {
 
 struct ParsedTank {
 	var mixRef: String = ""
-	var volumeLiters: Double?
 	var startPressureBar: Double?
 	var endPressureBar: Double?
 }
@@ -683,7 +681,6 @@ struct ParsedDive {
 	var equipmentRefs: [String] = []
 	/// `<equipmentused><leadquantity>`, in kilograms.
 	var weightKg: Double?
-	var buddyName: String?
 	var airTempCelsius: Double?
 	var tanks: [ParsedTank] = []
 	var waypoints: [ParsedWaypoint] = []
@@ -1028,8 +1025,6 @@ private final class UDDFParser: NSObject, XMLParserDelegate {
 				currentDive.airTempCelsius = kelvinToCelsius(Double(text))
 
 				// Tank data
-			case "tankvolume" where parent == "tankdata":
-				currentTank.volumeLiters = Double(text).map { $0 * 1000 } // m³ to liters
 			case "tankpressurebegin" where parent == "tankdata":
 				currentTank.startPressureBar = Double(text).map { $0 / 100_000 } // Pa to bar
 			case "tankpressureend" where parent == "tankdata":

@@ -73,11 +73,4 @@ struct XMLBuilderTests {
 		#expect(formatted.contains(":"))
 		#expect(formatted.contains("-"))
 	}
-
-	@Test func dateOnlyHasNoTimeComponent() {
-		let date = Date(timeIntervalSince1970: 1_750_000_000)
-		let formatted = XMLBuilder.formatDateOnly(date)
-		#expect(formatted.contains("T") == false)
-		#expect(formatted.contains(":") == false)
-	}
 }

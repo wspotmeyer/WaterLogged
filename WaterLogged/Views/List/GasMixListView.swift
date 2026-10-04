@@ -19,13 +19,6 @@
 //  You should have received a copy of the GNU General Public License along with WaterLogged. If not,
 //  see <https://www.gnu.org/licenses/>.
 
-//
-//  GasMixListView.swift
-//  WaterLogged
-//
-//  Created by John Meyer on 3/27/26.
-//
-
 import SwiftUI
 import SwiftData
 

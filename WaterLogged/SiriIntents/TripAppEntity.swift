@@ -48,11 +48,8 @@ nonisolated struct TripAppEntity: IndexedEntity, Identifiable, Sendable {
 
 	// MARK: - Projected fields
 
-	let name: String
 	let startDate: Date
-	let endDate: Date
 	let location: String
-	let diveCount: Int
 
 	// MARK: - Precomputed display strings
 
@@ -98,11 +95,8 @@ extension TripAppEntity {
 	@MainActor
 	init(from trip: Trip) {
 		self.id = trip.externalId
-		self.name = trip.name
 		self.startDate = trip.startDate
-		self.endDate = trip.endDate
 		self.location = trip.location
-		self.diveCount = trip.diveCount
 
 		self.primaryDisplayTitle = trip.name.isEmpty ? "Untitled Trip" : trip.name
 

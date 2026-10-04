@@ -66,7 +66,7 @@ struct DiveSiteDetailView: View {
 				VStack(alignment: .leading, spacing: 10) {
 					HStack {
 						Text("Photos")
-							.font(.title2.weight(.bold))
+							.font(.title2.bold())
 						Spacer()
 						Button("Edit Photos", systemImage: "pencil") {
 							showingPhotoEditor = true
@@ -118,7 +118,7 @@ struct DiveSiteDetailView: View {
 					} label: {
 						HStack {
 							Text("Dives")
-								.font(.title2.weight(.bold))
+								.font(.title2.bold())
 							Spacer()
 							if dives.count > 0 {
 								TimeCount(seconds: site.totalDiveTimeSeconds, font: .headline)
@@ -230,7 +230,7 @@ private struct TripsSection: View {
 			} label: {
 				HStack {
 					Text("Trips")
-						.font(.title2.weight(.bold))
+						.font(.title2.bold())
 					Spacer()
 					if trips.count > 0 {
 						TripCount(count: trips.count, font: .headline)

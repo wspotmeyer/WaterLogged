@@ -28,11 +28,8 @@ struct GasMixDetailView: View {
 	@Environment(\.dismiss) private var dismiss
 
 	let gasMix: GasMix
-	@AppStorage("unitSystem") private var unitSystem: UnitSystem = .imperial
 	@State private var editingGasMix: GasMix?
 	@State private var isDivesExpanded = false
-
-	private var units: UnitFormatter { UnitFormatter(system: unitSystem) }
 
 	/// Chart colors are a presentation concern, so they live here rather than on the model.
 	private func color(for kind: GasComponent.Kind) -> Color {
@@ -86,7 +83,7 @@ struct GasMixDetailView: View {
 									if !gasMix.name.isEmpty {
 										Text(gasMix.name)
 											.font(.title2.bold())
-											.foregroundColor(.primary)
+											.foregroundStyle(Color.primary)
 									}
 								}
 								.position(x: frame.midX, y: frame.midY)
@@ -141,7 +138,7 @@ struct GasMixDetailView: View {
 					} label: {
 						HStack {
 							Text("Dives")
-								.font(.title2.weight(.bold))
+								.font(.title2.bold())
 							Spacer()
 							if dives.count > 0 {
 								TimeCount(seconds: gasMix.totalDiveTimeSeconds, font: .headline)

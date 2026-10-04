@@ -29,7 +29,8 @@ import SwiftData
 /// - `extras.xml` — WaterLogged-proprietary XML for fields not in UDDF
 /// - `media/` — images (dive photos, logbook scans, signatures, equipment/buddy/cert images)
 ///
-/// All entities are cross-referenced using `externalId` UUIDs.
+/// Entities are cross-referenced by their `externalId` UUIDs: raw in `extras.xml`,
+/// and `wl-`-prefixed in the UDDF file (see `UDDFIdentifier`).
 struct RestorePackager {
 
 	enum RestoreError: LocalizedError {
@@ -173,8 +174,8 @@ struct RestorePackager {
 
 	// MARK: - Delete All Data
 
-	/// Deletes every model instance from the database. Individual deletions ensure
-	/// CloudKit generates proper tombstone records for synced devices.
+	/// Deletes every model instance from the database, one model type at a time,
+	/// using SwiftData's batch `delete(model:)`.
 	private static func deleteAllData(from context: ModelContext) throws {
 		try context.delete(model: Dive.self)
 		try context.delete(model: DiveSite.self)

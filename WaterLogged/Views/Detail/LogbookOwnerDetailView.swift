@@ -217,7 +217,7 @@ private struct OwnerCertificationsSection: View {
 			} label: {
 				HStack {
 					Text("Certifications")
-						.font(.title2.weight(.bold))
+						.font(.title2.bold())
 					Spacer()
 					CountCapsule(text: "\(certifications.count)", color: .gray, font: .headline)
 				}

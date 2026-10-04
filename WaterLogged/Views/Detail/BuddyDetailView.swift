@@ -201,7 +201,7 @@ private struct TripsSection: View {
 			} label: {
 				HStack {
 					Text("Trips")
-						.font(.title2.weight(.bold))
+						.font(.title2.bold())
 					Spacer()
 					if trips.count > 0 {
 						TripCount(count: trips.count, font: .headline)
@@ -261,7 +261,7 @@ private struct DivesSection: View {
 			} label: {
 				HStack {
 					Text("Dives")
-						.font(.title2.weight(.bold))
+						.font(.title2.bold())
 					Spacer()
 					if dives.count > 0 {
 						TimeCount(seconds: buddy.totalDiveTimeSeconds, font: .headline)

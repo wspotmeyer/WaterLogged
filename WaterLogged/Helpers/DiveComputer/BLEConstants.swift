@@ -21,6 +21,11 @@
 
 import CoreBluetooth
 
+/// GATT identifiers for the dive computers WaterLogged scans for.
+///
+/// Only the service UUIDs are used in code. The characteristic UUIDs are kept as
+/// documentation: the transfer characteristics are found at connect time by their
+/// properties (write / notify), so no characteristic UUID is hard-coded.
 enum BLEConstants {
 	enum Shearwater {
 		static let serviceUUID = CBUUID(string: "FE25C237-0ECE-443C-B0AA-E02033E7029D")

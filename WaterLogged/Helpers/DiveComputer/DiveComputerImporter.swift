@@ -24,9 +24,8 @@ import SwiftData
 
 /// Imports parsed dive computer data into the SwiftData model context.
 ///
-/// This importer takes the protocol-agnostic `ParsedDiveData` produced by any
-/// `DiveComputerProtocol` implementation and creates the corresponding
-/// `Dive`, `DepthSample`, and `GasMix` SwiftData models.
+/// This importer takes the `ParsedDiveData` produced by `LibDCDeviceHandler` and
+/// creates the corresponding `Dive`, `DepthSample`, and `GasMix` SwiftData models.
 struct DiveComputerImporter {
 
 	/// Import an array of parsed dives into the given model context.
@@ -53,7 +52,7 @@ struct DiveComputerImporter {
 		var importedCount = 0
 
 		for parsed in sorted {
-			let dive = mapDive(parsed, diveNumber: nextNumber, context: context)
+			let dive = mapDive(parsed, diveNumber: nextNumber)
 			context.insert(dive)
 
 			// Create a Tank only for the gas mix slots that represent a tank the
@@ -125,8 +124,7 @@ struct DiveComputerImporter {
 
 	private static func mapDive(
 		_ parsed: ParsedDiveData,
-		diveNumber: Int,
-		context: ModelContext
+		diveNumber: Int
 	) -> Dive {
 		// Water temperature from the dive computer or average of sample temps
 		let waterTemp: Double? = parsed.waterTempCelsius ?? {

@@ -123,24 +123,18 @@ enum TransferProgress: Sendable, Equatable {
 /// Errors specific to dive computer protocol communication.
 enum DiveComputerError: LocalizedError, Sendable {
 	case protocolError(String)
-	case checksumMismatch
 	case unsupportedModel(String)
 	case noDataAvailable
-	case timeout
 	case cancelled
 
 	var errorDescription: String? {
 		switch self {
 			case .protocolError(let detail):
 				"Protocol error: \(detail)"
-			case .checksumMismatch:
-				"Data integrity check failed. Please try again."
 			case .unsupportedModel(let model):
 				"Unsupported dive computer model: \(model)"
 			case .noDataAvailable:
 				"No dive data available on this computer."
-			case .timeout:
-				"Communication timed out. Make sure the dive computer is nearby."
 			case .cancelled:
 				"Transfer was cancelled."
 		}

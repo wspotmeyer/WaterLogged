@@ -19,13 +19,6 @@
 //  You should have received a copy of the GNU General Public License along with WaterLogged. If not,
 //  see <https://www.gnu.org/licenses/>.
 
-//
-//  TripDetailView.swift
-//  WaterLogged
-//
-//  Created by John Meyer on 4/20/26.
-//
-
 import SwiftUI
 import SwiftData
 import MapKit
@@ -83,7 +76,7 @@ struct TripDetailView: View {
 				VStack(alignment: .leading, spacing: 10) {
 					HStack {
 						Text("Photos")
-							.font(.title2.weight(.bold))
+							.font(.title2.bold())
 						Spacer()
 						Button("Edit Photos", systemImage: "pencil") {
 							showingPhotoEditor = true
@@ -131,7 +124,7 @@ struct TripDetailView: View {
 					} label: {
 						HStack {
 							Text("Dives")
-								.font(.title2.weight(.bold))
+								.font(.title2.bold())
 							Spacer()
 							if sortedDives.count > 0 {
 								TimeCount(seconds: trip.totalDiveTimeSeconds, font: .headline)
@@ -201,12 +194,6 @@ struct TripDetailView: View {
 
 	private var sortedDives: [Dive] {
 		(trip.dives ?? []).sorted { $0.date < $1.date }
-	}
-
-	private func formatCoordinates(lat: Double, lon: Double) -> String {
-		let latDir = lat >= 0 ? "N" : "S"
-		let lonDir = lon >= 0 ? "E" : "W"
-		return "\(abs(lat).formatted(.number.precision(.fractionLength(4))))° \(latDir), \(abs(lon).formatted(.number.precision(.fractionLength(4))))° \(lonDir)"
 	}
 }
 

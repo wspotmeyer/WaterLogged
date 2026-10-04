@@ -24,30 +24,18 @@
 /// Errors that can occur during BLE operations.
 enum BLETransportError: LocalizedError, Sendable {
 	case bluetoothUnavailable(CBManagerState)
-	case scanTimeout
 	case connectionFailed(String)
-	case disconnected(String)
-	case serviceNotFound(CBUUID)
 	case characteristicNotFound(CBUUID)
-	case writeFailed(String)
 	case notifySetupFailed(String)
 
 	var errorDescription: String? {
 		switch self {
 			case .bluetoothUnavailable:
 				"Bluetooth is not available. Please enable Bluetooth in Settings."
-			case .scanTimeout:
-				"No dive computers found. Make sure your device is in transfer mode."
 			case .connectionFailed(let detail):
 				"Failed to connect: \(detail)"
-			case .disconnected(let detail):
-				"Disconnected: \(detail)"
-			case .serviceNotFound:
-				"Required service not found on device."
 			case .characteristicNotFound:
 				"Required characteristic not found on device."
-			case .writeFailed(let detail):
-				"Write failed: \(detail)"
 			case .notifySetupFailed(let detail):
 				"Failed to enable notifications: \(detail)"
 		}

@@ -92,13 +92,6 @@ struct XMLBuilder {
 		return formatter.string(from: date)
 	}
 
-	static func formatDateOnly(_ date: Date) -> String {
-		let formatter = ISO8601DateFormatter()
-		formatter.formatOptions = [.withFullDate, .withDashSeparatorInDate]
-		formatter.timeZone = .current
-		return formatter.string(from: date)
-	}
-
 	static func exportDateStamp() -> String {
 		Date.now.formatted(
 			Date.ISO8601FormatStyle(timeZone: .current)

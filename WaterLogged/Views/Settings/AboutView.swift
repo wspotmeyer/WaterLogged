@@ -61,7 +61,7 @@ struct AboutView: View {
 						VStack {
 							AppIconView()
 							Text(appName)
-								.font(.title2.weight(.bold))
+								.font(.title2.bold())
 							Text("Copyright © 2026 John Meyer")
 								.font(.caption)
 								.foregroundStyle(.secondary)

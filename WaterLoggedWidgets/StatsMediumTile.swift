@@ -34,7 +34,7 @@ struct StatsMediumTile: View {
 				.font(.title2)
 				.foregroundStyle(.tint)
 			Text(value)
-				.font(.title2.weight(.bold))
+				.font(.title2.bold())
 				.fontDesign(.rounded)
 				.lineLimit(1)
 				.minimumScaleFactor(0.8)

@@ -66,7 +66,7 @@ struct BuddyEntryView: View {
 							showingContactPicker = true
 						}
 					} footer: {
-						Text("Optionally import this information from a Contacts record. Doing so will overwrite any existing entries.").foregroundColor(.secondary)
+						Text("Optionally import this information from a Contacts record. Doing so will overwrite any existing entries.").foregroundStyle(Color.secondary)
 					}
 #endif
 

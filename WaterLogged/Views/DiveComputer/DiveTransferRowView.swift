@@ -24,10 +24,10 @@ import SwiftUI
 struct DiveTransferRowView: View {
 	let dive: ParsedDiveData
 
-	@AppStorage("unitSystem") private var unitSystem: String = UnitSystem.imperial.rawValue
+	@AppStorage("unitSystem") private var unitSystem: UnitSystem = .imperial
 
 	private var formatter: UnitFormatter {
-		UnitFormatter(system: UnitSystem(rawValue: unitSystem) ?? .metric)
+		UnitFormatter(system: unitSystem)
 	}
 
 	var body: some View {

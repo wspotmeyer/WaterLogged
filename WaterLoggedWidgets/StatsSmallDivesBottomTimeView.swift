@@ -21,7 +21,7 @@
 
 import SwiftUI
 
-/// The small widget: a hero "Total Dives" count with the deepest dive beneath.
+/// The small widget: a hero "Total Dives" count with the total bottom time beneath.
 struct StatsSmallDivesBottomTimeView: View {
 	let snapshot: StatsSnapshot
 

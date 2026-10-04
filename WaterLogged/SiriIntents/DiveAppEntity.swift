@@ -61,7 +61,6 @@ struct DiveAppEntity: IndexedEntity, Identifiable {
 
 	// MARK: - Non-queryable projected fields
 
-	let diveNumber: Int
 	let latitude: Double?
 	let longitude: Double?
 
@@ -122,7 +121,6 @@ extension DiveAppEntity {
 		// wrapper takes its default storage from the `@Property(title:)`
 		// macro, so its wrapped value is then set through its setter.
 		self.id = dive.externalId
-		self.diveNumber = dive.diveNumber
 		self.latitude = dive.site?.latitude ?? dive.startLatitude
 		self.longitude = dive.site?.longitude ?? dive.startLongitude
 		self.primaryDisplayTitle = dive.displayTitle

@@ -173,7 +173,7 @@ private struct CertificationDivesSection: View {
 			} label: {
 				HStack {
 					Text("Dives")
-						.font(.title2.weight(.bold))
+						.font(.title2.bold())
 					Spacer()
 					if dives.count > 0 {
 						TimeCount(seconds: certification.totalDiveTimeSeconds, font: .headline)

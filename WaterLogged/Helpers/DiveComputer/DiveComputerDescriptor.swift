@@ -23,7 +23,7 @@
 
 /// Identifies the vendor/brand of a dive computer.
 /// The raw value is used for display in the UI.
-enum DiveComputerBrand: String, Sendable, CaseIterable {
+enum DiveComputerBrand: String, Sendable {
 	case shearwater = "Shearwater"
 	case oceanic = "Oceanic"
 	case suunto = "Suunto"
@@ -64,22 +64,11 @@ struct DiscoveredDevice: Identifiable, @unchecked Sendable {
 	let brand: DiveComputerBrand
 	let rssi: Int
 	let transport: DeviceTransport
-
-	/// Debug info: the product name libdivecomputer's descriptor matched to.
-	let matchedDescriptorProduct: String?
-
-	/// Convenience accessor for BLE peripheral.
-	var peripheral: CBPeripheral? {
-		if case .ble(let p) = transport { return p }
-		return nil
-	}
 }
 
 /// Result of identifying a BLE peripheral as a dive computer.
 struct DeviceIdentification {
 	let brand: DiveComputerBrand
-	/// The product name from the matched libdivecomputer descriptor, if any.
-	let matchedDescriptorProduct: String?
 }
 
 /// Identifies a known dive computer brand from a peripheral's advertised data.
@@ -105,14 +94,10 @@ enum DeviceIdentifier {
 			deviceName: name
 		) {
 			let vendor = LibDCDeviceHandler.vendorName(for: descriptor)
-			let product = LibDCDeviceHandler.productName(for: descriptor)
 			dc_descriptor_free(descriptor)
 			let brand = DiveComputerBrand.from(vendorName: vendor)
 			if brand != .generic {
-				return DeviceIdentification(
-					brand: brand,
-					matchedDescriptorProduct: product
-				)
+				return DeviceIdentification(brand: brand)
 			}
 		}
 
@@ -122,7 +107,7 @@ enum DeviceIdentifier {
 		// used by many non-dive-computer BLE devices.
 		let services = advertisedServiceUUIDs ?? []
 		if services.contains(BLEConstants.Shearwater.serviceUUID) {
-			return DeviceIdentification(brand: .shearwater, matchedDescriptorProduct: nil)
+			return DeviceIdentification(brand: .shearwater)
 		}
 
 		// Fallback: match by known name patterns for devices that
@@ -130,10 +115,10 @@ enum DeviceIdentifier {
 		// These patterns are intentionally specific to avoid matching
 		// unrelated BLE peripherals.
 		if shearwaterNamePatterns.contains(where: { name.hasPrefix($0) }) {
-			return DeviceIdentification(brand: .shearwater, matchedDescriptorProduct: nil)
+			return DeviceIdentification(brand: .shearwater)
 		}
 		if oceanicNamePatterns.contains(where: { name.hasPrefix($0) }) {
-			return DeviceIdentification(brand: .oceanic, matchedDescriptorProduct: nil)
+			return DeviceIdentification(brand: .oceanic)
 		}
 
 		return nil

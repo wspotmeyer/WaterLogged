@@ -269,7 +269,7 @@ struct DiveDetailView: View {
 				VStack(alignment: .leading, spacing: 10) {
 					HStack {
 						Text("Photos")
-							.font(.title2.weight(.bold))
+							.font(.title2.bold())
 						Spacer()
 						Button("Edit Photos", systemImage: "pencil") {
 							showingPhotoEditor = true
@@ -853,7 +853,7 @@ private struct TagsSectionView: View {
 		if !dive.tags.isEmpty {
 			VStack(alignment: .leading, spacing: 10) {
 				Text("Tags")
-					.font(.title2.weight(.bold))
+					.font(.title2.bold())
 				TagsListView(tags: dive.tags)
 			}
 		}
@@ -869,7 +869,7 @@ private struct LogbookThumbnailView: View {
 	var body: some View {
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Log Book Page")
-				.font(.title2.weight(.bold))
+				.font(.title2.bold())
 			if let data = dive.logbookImageData, let image = makeImage(from: data) {
 				Button {
 					showingLogbookImage = true
@@ -954,7 +954,7 @@ private struct SignatureSectionView: View {
 	var body: some View {
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Verification Signature")
-				.font(.title2.weight(.bold))
+				.font(.title2.bold())
 			if let data = dive.verificationSignatureData, let image = makeImage(from: data) {
 				image
 					.renderingMode(.template)

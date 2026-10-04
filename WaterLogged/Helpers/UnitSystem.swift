@@ -43,7 +43,6 @@ struct UnitFormatter {
 
 	var depthLabel: String { system == .metric ? "m" : "ft" }
 	var depthFieldLabel: String { system == .metric ? "Max Depth (m)" : "Max Depth (ft)" }
-	var avgDepthFieldLabel: String { system == .metric ? "Avg Depth (m)" : "Avg Depth (ft)" }
 
 	func depthForDisplay(_ meters: Double) -> Double {
 		system == .metric ? meters : meters * 3.28084
@@ -60,9 +59,9 @@ struct UnitFormatter {
 
 	var visibilityFieldLabel: String { system == .metric ? "Visibility (m)" : "Visibility (ft)" }
 
+	/// Visibility is a distance in the same units as depth.
 	func visibilityString(_ meters: Double, decimals: Int = 0) -> String {
-		let value = depthForDisplay(meters)
-		return "\(value.formatted(.number.precision(.fractionLength(decimals)))) \(depthLabel)"
+		depthString(meters, decimals: decimals)
 	}
 
 	// MARK: - Temperature (°C ↔ °F)
@@ -119,23 +118,5 @@ struct UnitFormatter {
 	func weightString(_ kg: Double, decimals: Int = 0) -> String {
 		let value = weightForDisplay(kg)
 		return "\(value.formatted(.number.precision(.fractionLength(decimals)))) \(weightLabel)"
-	}
-
-	// MARK: - Tank Volume (liters ↔ cubic feet)
-
-	var volumeLabel: String { system == .metric ? "L" : "cuft" }
-	var tankVolumeFieldLabel: String { system == .metric ? "Tank Volume (L)" : "Tank Volume (cuft)" }
-
-	func volumeForDisplay(_ liters: Double) -> Double {
-		system == .metric ? liters : liters * 0.0353147
-	}
-
-	func volumeToMetric(_ display: Double) -> Double {
-		system == .metric ? display : display / 0.0353147
-	}
-
-	func volumeString(_ liters: Double, decimals: Int = 0) -> String {
-		let value = volumeForDisplay(liters)
-		return "\(value.formatted(.number.precision(.fractionLength(decimals)))) \(volumeLabel)"
 	}
 }

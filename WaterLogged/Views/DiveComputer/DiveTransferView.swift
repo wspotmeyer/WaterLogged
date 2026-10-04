@@ -24,12 +24,15 @@ import SwiftUI
 struct DiveTransferView: View {
 	let progress: TransferProgress
 
+	/// Hero icon size; scales with Dynamic Type from a 48pt base.
+	@ScaledMetric(relativeTo: .largeTitle) private var iconSize = 48.0
+
 	var body: some View {
 		VStack(spacing: 20) {
 			Spacer()
 
 			Image(systemName: "arrow.down.circle")
-				.font(.system(size: 48))
+				.font(.system(size: iconSize))
 				.foregroundStyle(.tint)
 				.symbolEffect(.pulse)
 
