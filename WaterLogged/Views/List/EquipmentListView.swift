@@ -201,45 +201,47 @@ private struct EquipmentRowView: View {
 	let equipment: Equipment
 
 	var body: some View {
-		HStack(spacing: 12) {
-			VStack(alignment: .leading, spacing: 4) {
-				HStack {
-					EquipmentTypeIcon(type: equipment.resolvedType)
-						.foregroundStyle(.secondary)
-						.frame(width: 24)
-					Text(equipment.name)
-						.font(.headline)
-						.foregroundStyle(equipment.isRetired ? .tertiary : .primary)
-						.lineLimit(1)
-					Spacer()
-					if let dives = equipment.dives, !dives.isEmpty {
-						DiveCount(count: dives.count, font: .headline)
+		if equipment.isLive {
+			HStack(spacing: 12) {
+				VStack(alignment: .leading, spacing: 4) {
+					HStack {
+						EquipmentTypeIcon(type: equipment.resolvedType)
+							.foregroundStyle(.secondary)
+							.frame(width: 24)
+						Text(equipment.name)
+							.font(.headline)
+							.foregroundStyle(equipment.isRetired ? .tertiary : .primary)
+							.lineLimit(1)
+						Spacer()
+						if let dives = equipment.dives, !dives.isEmpty {
+							DiveCount(count: dives.count, font: .headline)
+						}
 					}
-				}
-				HStack {
-					if !equipment.manufacturer.isEmpty {
-						Text(equipment.manufacturer)
-							.foregroundStyle(equipment.isRetired ? .tertiary : .secondary)
+					HStack {
+						if !equipment.manufacturer.isEmpty {
+							Text(equipment.manufacturer)
+								.foregroundStyle(equipment.isRetired ? .tertiary : .secondary)
+								.lineLimit(1)
+						}
+						Spacer()
+						if equipment.autoAddToDives {
+							Image(systemName: "plus.square.fill")
+						}
+					}
+					.font(.caption2)
+					if !equipment.serialNumber.isEmpty {
+						Text("S/N: \(equipment.serialNumber)")
+							.font(.caption2)
+							.foregroundStyle(.tertiary)
 							.lineLimit(1)
 					}
-					Spacer()
-					if equipment.autoAddToDives {
-						Image(systemName: "plus.square.fill")
-					}
-				}
-				.font(.caption2)
-				if !equipment.serialNumber.isEmpty {
-					Text("S/N: \(equipment.serialNumber)")
-						.font(.caption2)
-						.foregroundStyle(.tertiary)
-						.lineLimit(1)
 				}
 			}
-		}
 #if os(macOS)
-		.padding(.vertical, 4)
+			.padding(.vertical, 4)
 #endif
-		.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+		}
 	}
 }
 

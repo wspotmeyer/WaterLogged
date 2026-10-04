@@ -1,5 +1,5 @@
 //
-//  DiveLinkRow.swift
+//  PersistentModel+IsLive.swift
 //  WaterLogged
 //
 //  Created by John Meyer on 10/4/26.
@@ -19,31 +19,19 @@
 //  You should have received a copy of the GNU General Public License along with WaterLogged. If not,
 //  see <https://www.gnu.org/licenses/>.
 
-import SwiftUI
+import SwiftData
 
-/// One row in a detail view's expandable "Dives" list: the dive's title and
-/// date, linking to its `DiveDetailView`.
-struct DiveLinkRow: View {
-	let dive: Dive
-	var topPadding: CGFloat = 12
-
-	var body: some View {
-		if dive.isLive {
-			NavigationLink {
-				DiveDetailView(dive: dive)
-			} label: {
-				HStack {
-					Text(LocalizedStringKey(dive.displayTitle))
-						.lineLimit(1)
-					Spacer()
-					Text(dive.date.formatted(date: .abbreviated, time: .omitted))
-						.lineLimit(1)
-					Image(systemName: "chevron.right")
-						.font(.caption)
-				}
-				.padding(.top, topPadding)
-			}
-			.buttonStyle(.plain)
-		}
+extension PersistentModel {
+	/// Whether the model can still be read safely.
+	///
+	/// A model stops being live when it is deleted (`isDeleted` until the next
+	/// save) or detached from its context — which is what happens to every old
+	/// record when a restore replaces the logbook, and to a record that iCloud
+	/// sync deletes. SwiftData traps when a view reads an attribute that has to
+	/// be fetched from the store for such a model, so a view that is handed a
+	/// model directly (a list row, a detail screen) checks this first and draws
+	/// nothing for a dead one.
+	var isLive: Bool {
+		!isDeleted && modelContext != nil
 	}
 }

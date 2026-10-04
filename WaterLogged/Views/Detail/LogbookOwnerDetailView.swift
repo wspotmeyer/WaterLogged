@@ -33,7 +33,7 @@ struct LogbookOwnerDetailView: View {
 		NavigationStack {
 			ScrollView {
 				VStack(alignment: .leading, spacing: 24) {
-					if let owner {
+					if let owner, owner.isLive {
 						OwnerPhotoHeader(owner: owner)
 
 						if hasOwnerInfo(owner) {

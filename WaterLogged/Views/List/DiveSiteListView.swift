@@ -241,52 +241,54 @@ private struct DiveSiteRowView: View {
 	let site: DiveSite
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 4) {
-			HStack(spacing: 4) {
-				Text(LocalizedStringKey(site.name))
-					.font(.headline)
-					.lineLimit(1)
-				Spacer()
-				if let dives = site.dives, !dives.isEmpty {
-					DiveCount(count: dives.count, font: .headline)
-				}
-			}
-			HStack(spacing: 12) {
-				if !site.region.isEmpty {
-					Label(site.region, systemImage: "map")
+		if site.isLive {
+			VStack(alignment: .leading, spacing: 4) {
+				HStack(spacing: 4) {
+					Text(LocalizedStringKey(site.name))
+						.font(.headline)
 						.lineLimit(1)
-				}
-				if !site.country.isEmpty {
-					if let flag = CountryFlag.emoji(for: site.country) {
-						Text("\(flag) \(site.country)")
-							.lineLimit(1)
-					} else {
-						Label(site.country, systemImage: "globe")
-							.lineLimit(1)
+					Spacer()
+					if let dives = site.dives, !dives.isEmpty {
+						DiveCount(count: dives.count, font: .headline)
 					}
 				}
-				Spacer()
-				if !site.notes.isEmpty {
-					Image(systemName: "text.page")
-						.foregroundStyle(.secondary)
+				HStack(spacing: 12) {
+					if !site.region.isEmpty {
+						Label(site.region, systemImage: "map")
+							.lineLimit(1)
+					}
+					if !site.country.isEmpty {
+						if let flag = CountryFlag.emoji(for: site.country) {
+							Text("\(flag) \(site.country)")
+								.lineLimit(1)
+						} else {
+							Label(site.country, systemImage: "globe")
+								.lineLimit(1)
+						}
+					}
+					Spacer()
+					if !site.notes.isEmpty {
+						Image(systemName: "text.page")
+							.foregroundStyle(.secondary)
+					}
+					if let latitude = site.latitude, let longitude = site.longitude, !(latitude.isNaN && longitude.isNaN) {
+						Image(systemName: "mappin.and.ellipse")
+							.foregroundStyle(.secondary)
+					}
+					if let photos = site.photos, !photos.isEmpty {
+						Image(systemName: "photo")
+							.foregroundStyle(.secondary)
+					}
 				}
-				if let latitude = site.latitude, let longitude = site.longitude, !(latitude.isNaN && longitude.isNaN) {
-					Image(systemName: "mappin.and.ellipse")
-						.foregroundStyle(.secondary)
-				}
-				if let photos = site.photos, !photos.isEmpty {
-					Image(systemName: "photo")
-						.foregroundStyle(.secondary)
-				}
+				.labelStyle(.listRow)
+				.font(.caption)
+				.foregroundStyle(.secondary)
 			}
-			.labelStyle(.listRow)
-			.font(.caption)
-			.foregroundStyle(.secondary)
-		}
 #if os(macOS)
-		.padding(.vertical, 4)
+			.padding(.vertical, 4)
 #endif
-		.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+		}
 	}
 }
 

@@ -34,113 +34,115 @@ struct TripDetailView: View {
 	@State private var isDivesExpanded = false
 
 	var body: some View {
-		ScrollView {
-			VStack(alignment: .leading, spacing: 24) {
+		if trip.isLive {
+			ScrollView {
+				VStack(alignment: .leading, spacing: 24) {
 
-				// Header
-				VStack(alignment: .leading, spacing: 6) {
-					Text(LocalizedStringKey(trip.name))
-						.font(.title.bold())
-					if !trip.location.isEmpty {
-						Label(trip.location, systemImage: "map")
+					// Header
+					VStack(alignment: .leading, spacing: 6) {
+						Text(LocalizedStringKey(trip.name))
+							.font(.title.bold())
+						if !trip.location.isEmpty {
+							Label(trip.location, systemImage: "map")
+								.font(.subheadline)
+						}
+						Label(trip.dateRangeFormatted, systemImage: "calendar")
 							.font(.subheadline)
 					}
-					Label(trip.dateRangeFormatted, systemImage: "calendar")
-						.font(.subheadline)
-				}
 
-				if hasDetails {
-					Divider()
+					if hasDetails {
+						Divider()
 
-					// Details
-					DetailSection(title: "Details") {
-						if !trip.address.isEmpty {
-							DetailRow(label: "Residence", value: trip.address)
-						}
-						if let url = trip.url {
-							DetailRowContent {
-								Link("Trip Details", destination: url)
+						// Details
+						DetailSection(title: "Details") {
+							if !trip.address.isEmpty {
+								DetailRow(label: "Residence", value: trip.address)
 							}
-							.padding(.top, 2)
-						}
-					}
-				}
-
-				// Map
-				if let lat = trip.latitude, let lon = trip.longitude {
-					CoordinateMapView(latitude: lat, longitude: lon) {
-						Marker(!trip.address.isEmpty ? trip.address : trip.name, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
-					}
-				}
-
-				VStack(alignment: .leading, spacing: 10) {
-					HStack {
-						Text("Photos")
-							.font(.title2.bold())
-						Spacer()
-						Button("Edit Photos", systemImage: "pencil") {
-							showingPhotoEditor = true
-						}
-						.labelStyle(.iconOnly)
-					}
-					if let photos = trip.photos, !photos.isEmpty {
-						PhotoCarouselView(photos: photos)
-					} else {
-						Text("No photos yet.")
-					}
-				}
-
-				// Notes
-				if !trip.notes.isEmpty {
-					DetailSection(title: "Notes") {
-						Text(LocalizedStringKey(trip.notes))
-					}
-				}
-
-				// Dives
-				if !sortedDives.isEmpty {
-					Divider()
-
-					GroupBox {
-						if isDivesExpanded {
-							ForEach(sortedDives) { dive in
-								DiveLinkRow(dive: dive, topPadding: 4)
+							if let url = trip.url {
+								DetailRowContent {
+									Link("Trip Details", destination: url)
+								}
+								.padding(.top, 2)
 							}
 						}
-					} label: {
+					}
+
+					// Map
+					if let lat = trip.latitude, let lon = trip.longitude {
+						CoordinateMapView(latitude: lat, longitude: lon) {
+							Marker(!trip.address.isEmpty ? trip.address : trip.name, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
+						}
+					}
+
+					VStack(alignment: .leading, spacing: 10) {
 						HStack {
-							Text("Dives")
+							Text("Photos")
 								.font(.title2.bold())
 							Spacer()
-							TimeCount(seconds: trip.totalDiveTimeSeconds, font: .headline)
-							DiveCount(count: sortedDives.count, font: .headline)
-							DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
+							Button("Edit Photos", systemImage: "pencil") {
+								showingPhotoEditor = true
+							}
+							.labelStyle(.iconOnly)
+						}
+						if let photos = trip.photos, !photos.isEmpty {
+							PhotoCarouselView(photos: photos)
+						} else {
+							Text("No photos yet.")
 						}
 					}
-					.tileBackgroundStyle()
+
+					// Notes
+					if !trip.notes.isEmpty {
+						DetailSection(title: "Notes") {
+							Text(LocalizedStringKey(trip.notes))
+						}
+					}
+
+					// Dives
+					if !sortedDives.isEmpty {
+						Divider()
+
+						GroupBox {
+							if isDivesExpanded {
+								ForEach(sortedDives) { dive in
+									DiveLinkRow(dive: dive, topPadding: 4)
+								}
+							}
+						} label: {
+							HStack {
+								Text("Dives")
+									.font(.title2.bold())
+								Spacer()
+								TimeCount(seconds: trip.totalDiveTimeSeconds, font: .headline)
+								DiveCount(count: sortedDives.count, font: .headline)
+								DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
+							}
+						}
+						.tileBackgroundStyle()
+					}
+				}
+				.padding()
+				.frame(maxWidth: 700)
+				.frame(maxWidth: .infinity)
+			}
+			.appGradientScrollBackground()
+			.toolbar {
+				ToolbarItem(placement: .primaryAction) {
+					Button("Edit", systemImage: "pencil") {
+						editingTrip = trip
+					}
 				}
 			}
-			.padding()
-			.frame(maxWidth: 700)
-			.frame(maxWidth: .infinity)
-		}
-		.appGradientScrollBackground()
-		.toolbar {
-			ToolbarItem(placement: .primaryAction) {
-				Button("Edit", systemImage: "pencil") {
-					editingTrip = trip
+			.sheet(item: $editingTrip) { editing in
+				TripEntryView(trip: editing) {
+					modelContext.delete(editing)
+					onDelete?()
 				}
 			}
-		}
-		.sheet(item: $editingTrip) { editing in
-			TripEntryView(trip: editing) {
-				modelContext.delete(editing)
-				onDelete?()
-			}
-		}
-		.sheet(isPresented: $showingPhotoEditor) {
-			PhotoEditSheet(existingPhotos: trip.photos ?? []) { entries in
-				Photo.replace(trip.photos, with: entries, in: modelContext) { $0.trip = trip }
+			.sheet(isPresented: $showingPhotoEditor) {
+				PhotoEditSheet(existingPhotos: trip.photos ?? []) { entries in
+					Photo.replace(trip.photos, with: entries, in: modelContext) { $0.trip = trip }
+				}
 			}
 		}
 	}

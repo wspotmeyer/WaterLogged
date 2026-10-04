@@ -241,64 +241,66 @@ private struct DiveRowView: View {
 	private var units: UnitFormatter { UnitFormatter(system: unitSystem) }
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 4) {
-			DiveRowHeader(dive: dive)
+		if dive.isLive {
+			VStack(alignment: .leading, spacing: 4) {
+				DiveRowHeader(dive: dive)
 
-			HStack(spacing: 15) {
-				Label(units.depthString(dive.maxDepthMeters, decimals: 0), systemImage: "arrow.down.to.line")
-				Label(dive.durationFormatted, systemImage: "clock")
-				if let site = dive.site {
-					Label(LocalizedStringKey(site.name), systemImage: "mappin.and.ellipse")
-						.lineLimit(1)
+				HStack(spacing: 15) {
+					Label(units.depthString(dive.maxDepthMeters, decimals: 0), systemImage: "arrow.down.to.line")
+					Label(dive.durationFormatted, systemImage: "clock")
+					if let site = dive.site {
+						Label(LocalizedStringKey(site.name), systemImage: "mappin.and.ellipse")
+							.lineLimit(1)
+					}
+				}
+				.labelStyle(.listRow)
+				.font(.caption)
+				.foregroundStyle(.secondary)
+
+				HStack(spacing: 8) {
+					Text(dive.date.formatted(date: .abbreviated, time: .shortened))
+						.foregroundStyle(.tertiary)
+					Spacer()
+					if let certification = dive.certification, certification.isLive {
+						Image(systemName: "graduationcap")
+							.foregroundStyle(.secondary)
+					}
+					if let logbook = dive.logbookImageData, !logbook.isEmpty {
+						Image(systemName: "book.fill")
+							.foregroundStyle(.secondary)
+					}
+					if !dive.notes.isEmpty {
+						Image(systemName: "text.page")
+							.foregroundStyle(.secondary)
+					}
+					if let signature = dive.verificationSignatureData, !signature.isEmpty {
+						Image(systemName: "signature")
+							.foregroundStyle(.secondary)
+					}
+					if let _ = dive.startLatitude, let _ = dive.startLongitude, let _ = dive.endLatitude, let _ = dive.endLongitude {
+						Image(systemName: "location.fill")
+							.foregroundStyle(.secondary)
+					}
+					if let diveProfile = dive.diveProfile, !diveProfile.isEmpty {
+						Image(systemName: "chart.xyaxis.line")
+							.foregroundStyle(.secondary)
+					}
+					if let photos = dive.photos, !photos.isEmpty {
+						Image(systemName: "photo")
+							.foregroundStyle(.secondary)
+					}
+				}
+				.font(.caption2)
+
+				if !dive.tags.isEmpty {
+					TagsListView(tags: dive.tags)
 				}
 			}
-			.labelStyle(.listRow)
-			.font(.caption)
-			.foregroundStyle(.secondary)
-
-			HStack(spacing: 8) {
-				Text(dive.date.formatted(date: .abbreviated, time: .shortened))
-					.foregroundStyle(.tertiary)
-				Spacer()
-				if let certification = dive.certification, !certification.isDeleted {
-					Image(systemName: "graduationcap")
-						.foregroundStyle(.secondary)
-				}
-				if let logbook = dive.logbookImageData, !logbook.isEmpty {
-					Image(systemName: "book.fill")
-						.foregroundStyle(.secondary)
-				}
-				if !dive.notes.isEmpty {
-					Image(systemName: "text.page")
-						.foregroundStyle(.secondary)
-				}
-				if let signature = dive.verificationSignatureData, !signature.isEmpty {
-					Image(systemName: "signature")
-						.foregroundStyle(.secondary)
-				}
-				if let _ = dive.startLatitude, let _ = dive.startLongitude, let _ = dive.endLatitude, let _ = dive.endLongitude {
-					Image(systemName: "location.fill")
-						.foregroundStyle(.secondary)
-				}
-				if let diveProfile = dive.diveProfile, !diveProfile.isEmpty {
-					Image(systemName: "chart.xyaxis.line")
-						.foregroundStyle(.secondary)
-				}
-				if let photos = dive.photos, !photos.isEmpty {
-					Image(systemName: "photo")
-						.foregroundStyle(.secondary)
-				}
-			}
-			.font(.caption2)
-
-			if !dive.tags.isEmpty {
-				TagsListView(tags: dive.tags)
-			}
-		}
 #if os(macOS)
-		.padding(.vertical, 4)
+			.padding(.vertical, 4)
 #endif
-		.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+		}
 	}
 }
 

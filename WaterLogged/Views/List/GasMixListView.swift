@@ -147,25 +147,27 @@ private struct GasMixRowView: View {
 	let gasMix: GasMix
 
 	var body: some View {
-		HStack(spacing: 12) {
-			VStack(alignment: .leading, spacing: 4) {
-				Text(gasMix.displayName)
-					.font(.headline)
-				Text(gasMix.componentSummary)
-					.font(.caption)
-					.foregroundStyle(.secondary)
+		if gasMix.isLive {
+			HStack(spacing: 12) {
+				VStack(alignment: .leading, spacing: 4) {
+					Text(gasMix.displayName)
+						.font(.headline)
+					Text(gasMix.componentSummary)
+						.font(.caption)
+						.foregroundStyle(.secondary)
+				}
+				.padding(.vertical, 4)
+				Spacer()
+				let diveCount = Set((gasMix.tanks ?? []).compactMap(\.dive)).count
+				if diveCount > 0 {
+					DiveCount(count: diveCount, font: .headline)
+				}
 			}
-			.padding(.vertical, 4)
-			Spacer()
-			let diveCount = Set((gasMix.tanks ?? []).compactMap(\.dive)).count
-			if diveCount > 0 {
-				DiveCount(count: diveCount, font: .headline)
-			}
-		}
 #if os(macOS)
-		.padding(.vertical, 4)
+			.padding(.vertical, 4)
 #endif
-		.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+		}
 	}
 }
 

@@ -40,42 +40,44 @@ struct BuddyDetailView: View {
 	}
 
 	var body: some View {
-		ScrollView {
-			VStack(alignment: .leading, spacing: 24) {
-				BuddyPhotoHeader(buddy: buddy)
+		if buddy.isLive {
+			ScrollView {
+				VStack(alignment: .leading, spacing: 24) {
+					BuddyPhotoHeader(buddy: buddy)
 
-				if hasContactInfo {
-					ContactInfoSection(buddy: buddy)
+					if hasContactInfo {
+						ContactInfoSection(buddy: buddy)
+					}
+
+					if hasAddress {
+						AddressSection(buddy: buddy)
+					}
+
+					TripsSection(dives: buddy.dives)
+
+					DivesSection(buddy: buddy)
 				}
-
-				if hasAddress {
-					AddressSection(buddy: buddy)
-				}
-
-				TripsSection(dives: buddy.dives)
-
-				DivesSection(buddy: buddy)
+				.padding()
+				.frame(maxWidth: 700)
+				.frame(maxWidth: .infinity)
 			}
-			.padding()
-			.frame(maxWidth: 700)
-			.frame(maxWidth: .infinity)
-		}
-		.appGradientScrollBackground()
-		.navigationTitle(buddy.formattedName)
+			.appGradientScrollBackground()
+			.navigationTitle(buddy.formattedName)
 #if !os(macOS)
-		.navigationBarTitleDisplayMode(.inline)
+			.navigationBarTitleDisplayMode(.inline)
 #endif
-		.toolbar {
-			ToolbarItem(placement: .primaryAction) {
-				Button("Edit", systemImage: "pencil") {
-					editingBuddy = buddy
+			.toolbar {
+				ToolbarItem(placement: .primaryAction) {
+					Button("Edit", systemImage: "pencil") {
+						editingBuddy = buddy
+					}
 				}
 			}
-		}
-		.sheet(item: $editingBuddy) { editing in
-			BuddyEntryView(buddy: editing) {
-				modelContext.delete(editing)
-				onDelete?()
+			.sheet(item: $editingBuddy) { editing in
+				BuddyEntryView(buddy: editing) {
+					modelContext.delete(editing)
+					onDelete?()
+				}
 			}
 		}
 	}

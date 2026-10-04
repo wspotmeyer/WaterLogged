@@ -34,155 +34,157 @@ struct EquipmentDetailView: View {
 	@State private var isDivesExpanded = false
 
 	var body: some View {
-		ScrollView {
-			VStack(alignment: .leading, spacing: 24) {
+		if equipment.isLive {
+			ScrollView {
+				VStack(alignment: .leading, spacing: 24) {
 
-				// Header
-				VStack(alignment: .leading, spacing: 6) {
-					if !equipment.name.isEmpty {
-						Text(equipment.name)
-							.font(.title.bold())
+					// Header
+					VStack(alignment: .leading, spacing: 6) {
+						if !equipment.name.isEmpty {
+							Text(equipment.name)
+								.font(.title.bold())
+						}
+						EquipmentTypeLabel(type: equipment.resolvedType)
+							.font(.subheadline)
 					}
-					EquipmentTypeLabel(type: equipment.resolvedType)
-						.font(.subheadline)
-				}
 
-				if let photoData = equipment.photoData {
-					EquipmentPhotoThumbnail(
-						photoData: photoData,
-						type: equipment.resolvedType,
-						showingFullScreen: $showingFullScreenPhoto
+					if let photoData = equipment.photoData {
+						EquipmentPhotoThumbnail(
+							photoData: photoData,
+							type: equipment.resolvedType,
+							showingFullScreen: $showingFullScreenPhoto
+						)
+					} else {
+						EquipmentTypePlaceholder(type: equipment.resolvedType)
+					}
+
+					if hasDetails {
+						Divider()
+
+						// Details
+						DetailSection(title: "Details") {
+							if !equipment.manufacturer.isEmpty {
+								DetailRow(label: "Manufacturer", value: equipment.manufacturer)
+							}
+							if !equipment.model.isEmpty {
+								DetailRow(label: "Model", value: equipment.model)
+							}
+							if !equipment.serialNumber.isEmpty {
+								DetailRow(label: "Serial Number", value: equipment.serialNumber)
+							}
+							if let date = equipment.purchaseDate {
+								DetailRow(label: "Purchase Date", value: date.formatted(date: .long, time: .omitted))
+							}
+							if let price = equipment.purchasePrice {
+								DetailRow(label: "Purchase Price", value: price.formatted(.currency(code: Locale.current.currency?.identifier ?? "USD")))
+							}
+							if !equipment.storeName.isEmpty {
+								DetailRow(label: "Store", value: equipment.storeName)
+							}
+							if !equipment.storeURL.isEmpty {
+								if let url = URL(string: equipment.storeURL) {
+									DetailRowContent {
+										Link("Store Link", destination: url)
+									}
+									.padding(.top, 2)
+								}
+							}
+						}
+					}
+
+					// Warranty
+					if !equipment.warranty.isEmpty {
+						DetailSection(title: "Warranty Information") {
+							Text(LocalizedStringKey(equipment.warranty))
+						}
+					}
+
+					// Notes
+					if !equipment.notes.isEmpty {
+						DetailSection(title: "Notes") {
+							Text(LocalizedStringKey(equipment.notes))
+						}
+					}
+
+					// Service History
+					DetailSection(title: "Service History") {
+						VStack {
+							if !sortedServiceHistory.isEmpty {
+								ForEach(sortedServiceHistory) { record in
+									ServiceRecordRow(record: record)
+								}
+							}
+							Button("Add Service Record", systemImage: "plus") {
+								showingAddService = true
+							}
+							.padding(.top, 4)
+						}
+					}
+
+					if let dives = equipment.dives, !dives.isEmpty {
+						Divider()
+						GroupBox {
+							if isDivesExpanded {
+								VStack(spacing: 0) {
+									ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
+										DiveLinkRow(dive: dive)
+									}
+								}
+								.frame(maxWidth: .infinity, alignment: .leading)
+							}
+						} label: {
+							HStack {
+								Text("Dives")
+									.font(.title2.bold())
+								Spacer()
+								TimeCount(seconds: equipment.totalDiveTimeSeconds, font: .headline)
+								DiveCount(count: dives.count, font: .headline)
+								DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
+							}
+						}
+						.tileBackgroundStyle()
+					}
+				}
+				.padding()
+				.frame(maxWidth: 700)
+				.frame(maxWidth: .infinity)
+				.appGradientScrollBackground()
+				.navigationTitle(LocalizedStringKey(equipment.name))
+#if !os(macOS)
+				.navigationBarTitleDisplayMode(.inline)
+#endif
+				.toolbar {
+					ToolbarItem(placement: .primaryAction) {
+						Button("Edit", systemImage: "pencil") {
+							editingEquipment = equipment
+						}
+					}
+				}
+				.sheet(item: $editingEquipment) { editing in
+					EquipmentEntryView(equipment: editing) {
+						modelContext.delete(editing)
+						onDelete?()
+					}
+				}
+				.sheet(isPresented: $showingAddService) {
+					ServiceRecordEntryView(record: nil, equipment: equipment)
+				}
+#if !os(macOS)
+				.fullScreenCover(isPresented: $showingFullScreenPhoto) {
+					EquipmentFullScreenPhoto(
+						photoData: equipment.photoData,
+						equipmentName: equipment.name
 					)
-				} else {
-					EquipmentTypePlaceholder(type: equipment.resolvedType)
 				}
-
-				if hasDetails {
-					Divider()
-
-					// Details
-					DetailSection(title: "Details") {
-						if !equipment.manufacturer.isEmpty {
-							DetailRow(label: "Manufacturer", value: equipment.manufacturer)
-						}
-						if !equipment.model.isEmpty {
-							DetailRow(label: "Model", value: equipment.model)
-						}
-						if !equipment.serialNumber.isEmpty {
-							DetailRow(label: "Serial Number", value: equipment.serialNumber)
-						}
-						if let date = equipment.purchaseDate {
-							DetailRow(label: "Purchase Date", value: date.formatted(date: .long, time: .omitted))
-						}
-						if let price = equipment.purchasePrice {
-							DetailRow(label: "Purchase Price", value: price.formatted(.currency(code: Locale.current.currency?.identifier ?? "USD")))
-						}
-						if !equipment.storeName.isEmpty {
-							DetailRow(label: "Store", value: equipment.storeName)
-						}
-						if !equipment.storeURL.isEmpty {
-							if let url = URL(string: equipment.storeURL) {
-								DetailRowContent {
-									Link("Store Link", destination: url)
-								}
-								.padding(.top, 2)
-							}
-						}
-					}
-				}
-
-				// Warranty
-				if !equipment.warranty.isEmpty {
-					DetailSection(title: "Warranty Information") {
-						Text(LocalizedStringKey(equipment.warranty))
-					}
-				}
-
-				// Notes
-				if !equipment.notes.isEmpty {
-					DetailSection(title: "Notes") {
-						Text(LocalizedStringKey(equipment.notes))
-					}
-				}
-
-				// Service History
-				DetailSection(title: "Service History") {
-					VStack {
-						if !sortedServiceHistory.isEmpty {
-							ForEach(sortedServiceHistory) { record in
-								ServiceRecordRow(record: record)
-							}
-						}
-						Button("Add Service Record", systemImage: "plus") {
-							showingAddService = true
-						}
-						.padding(.top, 4)
-					}
-				}
-
-				if let dives = equipment.dives, !dives.isEmpty {
-					Divider()
-					GroupBox {
-						if isDivesExpanded {
-							VStack(spacing: 0) {
-								ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-									DiveLinkRow(dive: dive)
-								}
-							}
-							.frame(maxWidth: .infinity, alignment: .leading)
-						}
-					} label: {
-						HStack {
-							Text("Dives")
-								.font(.title2.bold())
-							Spacer()
-							TimeCount(seconds: equipment.totalDiveTimeSeconds, font: .headline)
-							DiveCount(count: dives.count, font: .headline)
-							DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
-						}
-					}
-					.tileBackgroundStyle()
-				}
-			}
-			.padding()
-			.frame(maxWidth: 700)
-			.frame(maxWidth: .infinity)
-			.appGradientScrollBackground()
-			.navigationTitle(LocalizedStringKey(equipment.name))
-#if !os(macOS)
-			.navigationBarTitleDisplayMode(.inline)
-#endif
-			.toolbar {
-				ToolbarItem(placement: .primaryAction) {
-					Button("Edit", systemImage: "pencil") {
-						editingEquipment = equipment
-					}
-				}
-			}
-			.sheet(item: $editingEquipment) { editing in
-				EquipmentEntryView(equipment: editing) {
-					modelContext.delete(editing)
-					onDelete?()
-				}
-			}
-			.sheet(isPresented: $showingAddService) {
-				ServiceRecordEntryView(record: nil, equipment: equipment)
-			}
-#if !os(macOS)
-			.fullScreenCover(isPresented: $showingFullScreenPhoto) {
-				EquipmentFullScreenPhoto(
-					photoData: equipment.photoData,
-					equipmentName: equipment.name
-				)
-			}
 #else
-			.sheet(isPresented: $showingFullScreenPhoto) {
-				EquipmentFullScreenPhoto(
-					photoData: equipment.photoData,
-					equipmentName: equipment.name
-				)
-			}
+				.sheet(isPresented: $showingFullScreenPhoto) {
+					EquipmentFullScreenPhoto(
+						photoData: equipment.photoData,
+						equipmentName: equipment.name
+					)
+				}
 #endif
+			}
 		}
 	}
 

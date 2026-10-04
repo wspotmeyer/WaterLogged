@@ -207,40 +207,42 @@ private struct TripRowView: View {
 	let trip: Trip
 
 	var body: some View {
-		HStack(spacing: 12) {
-			VStack(alignment: .leading, spacing: 4) {
-				HStack {
-					Text(trip.name)
-						.font(.headline)
-						.lineLimit(1)
-					Spacer()
-					if let dives = trip.dives, !dives.isEmpty {
-						DiveCount(count: dives.count, font: .headline)
-					}
-				}
-				HStack {
-					if !trip.location.isEmpty {
-						Label(trip.location, systemImage: "map")
-							.foregroundStyle(.secondary)
+		if trip.isLive {
+			HStack(spacing: 12) {
+				VStack(alignment: .leading, spacing: 4) {
+					HStack {
+						Text(trip.name)
+							.font(.headline)
 							.lineLimit(1)
+						Spacer()
+						if let dives = trip.dives, !dives.isEmpty {
+							DiveCount(count: dives.count, font: .headline)
+						}
 					}
-					Spacer()
-					if !trip.urlString.isEmpty {
-						Image(systemName: "link")
-							.foregroundStyle(.secondary)
+					HStack {
+						if !trip.location.isEmpty {
+							Label(trip.location, systemImage: "map")
+								.foregroundStyle(.secondary)
+								.lineLimit(1)
+						}
+						Spacer()
+						if !trip.urlString.isEmpty {
+							Image(systemName: "link")
+								.foregroundStyle(.secondary)
+						}
 					}
-				}
-				.labelStyle(.listRow)
-				.font(.caption2)
-				Text(trip.dateRangeFormatted)
+					.labelStyle(.listRow)
 					.font(.caption2)
-					.foregroundStyle(.tertiary)
+					Text(trip.dateRangeFormatted)
+						.font(.caption2)
+						.foregroundStyle(.tertiary)
+				}
 			}
-		}
 #if os(macOS)
-		.padding(.vertical, 4)
+			.padding(.vertical, 4)
 #endif
-		.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+		}
 	}
 }
 

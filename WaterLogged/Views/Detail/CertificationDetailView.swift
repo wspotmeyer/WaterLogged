@@ -31,92 +31,94 @@ struct CertificationDetailView: View {
 	@State private var editingCertification: Certification?
 
 	var body: some View {
-		ScrollView {
-			VStack(alignment: .leading, spacing: 24) {
+		if certification.isLive {
+			ScrollView {
+				VStack(alignment: .leading, spacing: 24) {
 
-				// Header
-				Text(LocalizedStringKey(certification.name))
-					.font(.title.bold())
+					// Header
+					Text(LocalizedStringKey(certification.name))
+						.font(.title.bold())
 
-				if !certification.certificationNumber.isEmpty {
-					DetailSection(title: "Certification Details") {
-						DetailRow(label: "Number", value: certification.certificationNumber)
-						if !certification.issuingAgency.isEmpty {
-							DetailRow(label: "Agency", value: certification.issuingAgency)
-						}
-						if let date = certification.dateAchieved {
-							DetailRow(label: "Date Achieved", value: date.formatted(date: .long, time: .omitted))
-						}
-					}
-				}
-
-				if hasInstructorDetails {
-					DetailSection(title: "Instructor") {
-						if !certification.instructorName.isEmpty {
-							DetailRow(label: "Name", value: certification.instructorName)
-						}
-						if !certification.instructorNumber.isEmpty {
-							DetailRow(label: "Number", value: certification.instructorNumber)
-						}
-					}
-				}
-
-				if !certification.diveShop.isEmpty {
-					DetailSection(title: "Dive Shop") {
-						Text(certification.diveShop)
-							.font(.subheadline)
-					}
-				}
-
-				// Card Images
-				if certification.frontImageData != nil || certification.backImageData != nil {
-					Divider()
-
-					DetailSection(title: "Certification Card") {
-						if let frontData = certification.frontImageData,
-						   let frontImage = makeDisplayImage(from: frontData) {
-							VStack(alignment: .leading, spacing: 4) {
-								Text("Front")
-									.font(.caption)
-								frontImage
-									.resizable()
-									.scaledToFit()
-									.clipShape(.rect(cornerRadius: 8))
+					if !certification.certificationNumber.isEmpty {
+						DetailSection(title: "Certification Details") {
+							DetailRow(label: "Number", value: certification.certificationNumber)
+							if !certification.issuingAgency.isEmpty {
+								DetailRow(label: "Agency", value: certification.issuingAgency)
 							}
-						}
-						if let backData = certification.backImageData,
-						   let backImage = makeDisplayImage(from: backData) {
-							VStack(alignment: .leading, spacing: 4) {
-								Text("Back")
-									.font(.caption)
-								backImage
-									.resizable()
-									.scaledToFit()
-									.clipShape(.rect(cornerRadius: 8))
+							if let date = certification.dateAchieved {
+								DetailRow(label: "Date Achieved", value: date.formatted(date: .long, time: .omitted))
 							}
 						}
 					}
-				}
 
-				CertificationDivesSection(certification: certification)
+					if hasInstructorDetails {
+						DetailSection(title: "Instructor") {
+							if !certification.instructorName.isEmpty {
+								DetailRow(label: "Name", value: certification.instructorName)
+							}
+							if !certification.instructorNumber.isEmpty {
+								DetailRow(label: "Number", value: certification.instructorNumber)
+							}
+						}
+					}
+
+					if !certification.diveShop.isEmpty {
+						DetailSection(title: "Dive Shop") {
+							Text(certification.diveShop)
+								.font(.subheadline)
+						}
+					}
+
+					// Card Images
+					if certification.frontImageData != nil || certification.backImageData != nil {
+						Divider()
+
+						DetailSection(title: "Certification Card") {
+							if let frontData = certification.frontImageData,
+							   let frontImage = makeDisplayImage(from: frontData) {
+								VStack(alignment: .leading, spacing: 4) {
+									Text("Front")
+										.font(.caption)
+									frontImage
+										.resizable()
+										.scaledToFit()
+										.clipShape(.rect(cornerRadius: 8))
+								}
+							}
+							if let backData = certification.backImageData,
+							   let backImage = makeDisplayImage(from: backData) {
+								VStack(alignment: .leading, spacing: 4) {
+									Text("Back")
+										.font(.caption)
+									backImage
+										.resizable()
+										.scaledToFit()
+										.clipShape(.rect(cornerRadius: 8))
+								}
+							}
+						}
+					}
+
+					CertificationDivesSection(certification: certification)
+				}
+				.padding()
+				.frame(maxWidth: 700)
+				.frame(maxWidth: .infinity)
 			}
-			.padding()
-			.frame(maxWidth: 700)
-			.frame(maxWidth: .infinity)
-		}
-		.appGradientScrollBackground()
-		.toolbar {
-			ToolbarItem(placement: .primaryAction) {
-				Button("Edit", systemImage: "pencil") {
-					editingCertification = certification
+			.appGradientScrollBackground()
+			.toolbar {
+				ToolbarItem(placement: .primaryAction) {
+					Button("Edit", systemImage: "pencil") {
+						editingCertification = certification
+					}
 				}
 			}
-		}
-		.sheet(item: $editingCertification) { editing in
-			CertificationEntryView(certification: editing, onDelete: {
-				modelContext.delete(editing)
-				onDelete?()
-			})
+			.sheet(item: $editingCertification) { editing in
+				CertificationEntryView(certification: editing, onDelete: {
+					modelContext.delete(editing)
+					onDelete?()
+				})
+			}
 		}
 	}
 

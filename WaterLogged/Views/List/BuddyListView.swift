@@ -190,18 +190,20 @@ private struct BuddyRowView: View {
 	let buddy: Buddy
 
 	var body: some View {
-		HStack {
-			BuddyPhoto(photoData: buddy.photoData, size: 32)
-			Text(buddy.formattedName)
-				.font(.headline)
-				.foregroundStyle(buddy.isRetired ? .tertiary : .primary)
-				.lineLimit(1)
-			Spacer()
-			if let dives = buddy.dives, !dives.isEmpty {
-				DiveCount(count: dives.count, font: .headline)
+		if buddy.isLive {
+			HStack {
+				BuddyPhoto(photoData: buddy.photoData, size: 32)
+				Text(buddy.formattedName)
+					.font(.headline)
+					.foregroundStyle(buddy.isRetired ? .tertiary : .primary)
+					.lineLimit(1)
+				Spacer()
+				if let dives = buddy.dives, !dives.isEmpty {
+					DiveCount(count: dives.count, font: .headline)
+				}
 			}
+			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
 		}
-		.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
 	}
 }
 

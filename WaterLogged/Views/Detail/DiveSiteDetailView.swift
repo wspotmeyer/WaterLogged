@@ -33,108 +33,110 @@ struct DiveSiteDetailView: View {
 	@State private var isDivesExpanded = false
 
 	var body: some View {
-		ScrollView {
-			VStack(alignment: .leading, spacing: 24) {
+		if site.isLive {
+			ScrollView {
+				VStack(alignment: .leading, spacing: 24) {
 
-				// Header
-				VStack(alignment: .leading, spacing: 6) {
-					Text(LocalizedStringKey(site.name))
-						.font(.title.bold())
+					// Header
+					VStack(alignment: .leading, spacing: 6) {
+						Text(LocalizedStringKey(site.name))
+							.font(.title.bold())
 
-					if !site.region.isEmpty || !site.country.isEmpty {
-						HStack(spacing: 12) {
-							if !site.region.isEmpty {
-								Label(site.region, systemImage: "map")
-							}
-							if !site.country.isEmpty {
-								if let flag = CountryFlag.emoji(for: site.country) {
-									Text("\(flag) \(site.country)")
-								} else {
-									Label(site.country, systemImage: "globe")
+						if !site.region.isEmpty || !site.country.isEmpty {
+							HStack(spacing: 12) {
+								if !site.region.isEmpty {
+									Label(site.region, systemImage: "map")
+								}
+								if !site.country.isEmpty {
+									if let flag = CountryFlag.emoji(for: site.country) {
+										Text("\(flag) \(site.country)")
+									} else {
+										Label(site.country, systemImage: "globe")
+									}
 								}
 							}
+							.font(.subheadline)
 						}
-						.font(.subheadline)
 					}
-				}
 
-				Divider()
+					Divider()
 
-				DiveSiteMapView(diveSite: site)
-					.id(site.persistentModelID)
+					DiveSiteMapView(diveSite: site)
+						.id(site.persistentModelID)
 
-				VStack(alignment: .leading, spacing: 10) {
-					HStack {
-						Text("Photos")
-							.font(.title2.bold())
-						Spacer()
-						Button("Edit Photos", systemImage: "pencil") {
-							showingPhotoEditor = true
-						}
-						.labelStyle(.iconOnly)
-					}
-					if let photos = site.photos, !photos.isEmpty {
-						PhotoCarouselView(photos: photos)
-					} else {
-						Text("No photos yet.")
-					}
-				}
-
-				if !site.notes.isEmpty {
 					VStack(alignment: .leading, spacing: 10) {
-						DetailSection(title: "Notes") {
-							Text(LocalizedStringKey(site.notes))
-						}
-					}
-				}
-
-				TripsSection(dives: site.dives)
-
-				if let dives = site.dives, !dives.isEmpty {
-
-					GroupBox {
-						if isDivesExpanded {
-							VStack(spacing: 0) {
-								ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-									DiveLinkRow(dive: dive)
-								}
-							}
-							.frame(maxWidth: .infinity, alignment: .leading)
-						}
-					} label: {
 						HStack {
-							Text("Dives")
+							Text("Photos")
 								.font(.title2.bold())
 							Spacer()
-							TimeCount(seconds: site.totalDiveTimeSeconds, font: .headline)
-							DiveCount(count: dives.count, font: .headline)
-							DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
+							Button("Edit Photos", systemImage: "pencil") {
+								showingPhotoEditor = true
+							}
+							.labelStyle(.iconOnly)
+						}
+						if let photos = site.photos, !photos.isEmpty {
+							PhotoCarouselView(photos: photos)
+						} else {
+							Text("No photos yet.")
 						}
 					}
-					.tileBackgroundStyle()
+
+					if !site.notes.isEmpty {
+						VStack(alignment: .leading, spacing: 10) {
+							DetailSection(title: "Notes") {
+								Text(LocalizedStringKey(site.notes))
+							}
+						}
+					}
+
+					TripsSection(dives: site.dives)
+
+					if let dives = site.dives, !dives.isEmpty {
+
+						GroupBox {
+							if isDivesExpanded {
+								VStack(spacing: 0) {
+									ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
+										DiveLinkRow(dive: dive)
+									}
+								}
+								.frame(maxWidth: .infinity, alignment: .leading)
+							}
+						} label: {
+							HStack {
+								Text("Dives")
+									.font(.title2.bold())
+								Spacer()
+								TimeCount(seconds: site.totalDiveTimeSeconds, font: .headline)
+								DiveCount(count: dives.count, font: .headline)
+								DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
+							}
+						}
+						.tileBackgroundStyle()
+					}
+				}
+				.padding()
+				.frame(maxWidth: 700)
+				.frame(maxWidth: .infinity)
+			}
+			.appGradientScrollBackground()
+			.toolbar {
+				ToolbarItem(placement: .primaryAction) {
+					Button("Edit", systemImage: "pencil") {
+						editingSite = site
+					}
 				}
 			}
-			.padding()
-			.frame(maxWidth: 700)
-			.frame(maxWidth: .infinity)
-		}
-		.appGradientScrollBackground()
-		.toolbar {
-			ToolbarItem(placement: .primaryAction) {
-				Button("Edit", systemImage: "pencil") {
-					editingSite = site
-				}
+			.sheet(item: $editingSite) { editing in
+				DiveSiteEntryView(site: editing, onDelete: {
+					modelContext.delete(editing)
+					onDelete?()
+				})
 			}
-		}
-		.sheet(item: $editingSite) { editing in
-			DiveSiteEntryView(site: editing, onDelete: {
-				modelContext.delete(editing)
-				onDelete?()
-			})
-		}
-		.sheet(isPresented: $showingPhotoEditor) {
-			PhotoEditSheet(existingPhotos: site.photos ?? []) { entries in
-				Photo.replace(site.photos, with: entries, in: modelContext) { $0.diveSite = site }
+			.sheet(isPresented: $showingPhotoEditor) {
+				PhotoEditSheet(existingPhotos: site.photos ?? []) { entries in
+					Photo.replace(site.photos, with: entries, in: modelContext) { $0.diveSite = site }
+				}
 			}
 		}
 	}
