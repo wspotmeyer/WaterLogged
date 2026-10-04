@@ -156,7 +156,7 @@ struct BackupPackager {
 		}
 
 		// Owner photo
-		if let owner = try? LogbookOwner.fetchOrCreate(in: context), let data = owner.photoData {
+		if let owner = try? LogbookOwner.existing(in: context), let data = owner.photoData {
 			manifest.ownerPhoto = try writeMedia(data, prefix: "owner")
 		}
 
@@ -177,7 +177,7 @@ struct BackupPackager {
 		let sites = try context.fetch(FetchDescriptor<DiveSite>())
 		let trips = try context.fetch(FetchDescriptor<Trip>())
 		let photos = try context.fetch(FetchDescriptor<Photo>())
-		let owner = try? LogbookOwner.fetchOrCreate(in: context)
+		let owner = try? LogbookOwner.existing(in: context)
 
 		// Samples are fetched directly rather than through `dive.diveProfile` —
 		// see the faulting workaround described on `DepthSample.groupedByDive(in:)`.

@@ -156,14 +156,17 @@ struct UDDFImporter {
 	) throws -> ImportSummary {
 		var summary = ImportSummary()
 
-		// Import owner
-		if let parsedOwner = result.owner {
+		// Import owner. UDDF nests equipment and certifications inside <owner>, so
+		// an <owner> element on its own doesn't mean the file carries a diver
+		// profile — only one with personal details does.
+		if let parsedOwner = result.owner, parsedOwner.hasPersonalDetails {
 			mapOwner(parsedOwner, context: context)
 			summary.ownerImported = true
 		}
 
-		// Import certifications
-		let logbookOwner = try? LogbookOwner.fetchOrCreate(in: context)
+		// Import certifications. They belong to the logbook owner, so the owner is
+		// only looked up (or created) when the file actually has certifications.
+		let logbookOwner = result.certifications.isEmpty ? nil : try? LogbookOwner.fetchOrCreate(in: context)
 		for parsedCert in result.certifications {
 			let cert = mapCertification(parsedCert, owner: logbookOwner, context: context)
 			context.insert(cert)
@@ -740,6 +743,13 @@ struct ParsedBuddy {
 	var telephone: String = ""
 	var email: String = ""
 	var webPage: String = ""
+
+	/// Whether any name, address or contact field is filled in — the same fields
+	/// as `LogbookOwner.hasPersonalDetails`.
+	var hasPersonalDetails: Bool {
+		[firstName, lastName, street, city, state, province,
+		 postalCode, country, telephone, email, webPage].contains { !$0.isEmpty }
+	}
 }
 
 struct UDDFParseResult {

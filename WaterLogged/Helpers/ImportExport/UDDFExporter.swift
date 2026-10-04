@@ -95,7 +95,7 @@ struct UDDFExporter {
 		? try context.fetch(FetchDescriptor<Certification>())
 		: []
 		let trips = selection.contains(.trips) ? try context.fetch(FetchDescriptor<Trip>()) : []
-		let owner = selection.contains(.diverProfile) ? try? LogbookOwner.fetchOrCreate(in: context) : nil
+		let owner = selection.contains(.diverProfile) ? try? LogbookOwner.existing(in: context) : nil
 
 		let hasOwnerDetails = owner?.hasPersonalDetails ?? false
 		let hasContent = !dives.isEmpty || !sites.isEmpty || !gases.isEmpty || !buddies.isEmpty

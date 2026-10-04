@@ -85,6 +85,14 @@ final class LogbookOwner {
 		self.webPage = webPage
 	}
 
+	/// The logbook owner if one exists, without creating or merging anything —
+	/// for read-only paths such as UDDF export and backup, which must not change
+	/// the logbook. With duplicates present it returns the record
+	/// `mergeDuplicates(in:)` would keep (the smallest `externalId`).
+	static func existing(in context: ModelContext) throws -> LogbookOwner? {
+		try context.fetchFirst(FetchDescriptor<LogbookOwner>(sortBy: [SortDescriptor(\.externalId)]))
+	}
+
 	/// Fetches the single LogbookOwner, creating one if it doesn't exist.
 	/// Duplicates (see `mergeDuplicates(in:)`) are folded into one along the way.
 	static func fetchOrCreate(in context: ModelContext) throws -> LogbookOwner {
