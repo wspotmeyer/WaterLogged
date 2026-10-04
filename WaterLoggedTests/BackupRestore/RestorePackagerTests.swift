@@ -126,4 +126,115 @@ struct RestorePackagerTests {
 			#expect(dives.first?.externalId == "dive-1")
 		}
 	}
+
+	// MARK: - Atomicity on disk
+	//
+	// These read the store through a fresh ModelContext — what the next launch
+	// would see — so a deletion that was already saved can't hide behind the
+	// test's own context.
+
+	/// Seeds one dive that a failed restore must leave on disk.
+	private func seedKeeper(in context: ModelContext) throws {
+		context.insert(Dive(title: "Keep me", maxDepthMeters: 10, durationSeconds: 600))
+		try context.save()
+	}
+
+	private func divesOnDisk(_ container: ModelContainer) throws -> [Dive] {
+		try ModelContext(container).fetch(FetchDescriptor<Dive>())
+	}
+
+	@Test("A malformed logbook.uddf fails without touching the existing logbook")
+	func malformedLogbookPreservesDataOnDisk() throws {
+		for logbook in [UDDFFixtures.truncated, UDDFFixtures.unclosedTag, "not xml at all"] {
+			let container = try TestModelContainer.make()
+			let context = container.mainContext
+			try seedKeeper(in: context)
+
+			let archive = RawZip.make([.init(name: "logbook.uddf", data: Data(logbook.utf8))])
+			try withTemporaryDirectory { scratch in
+				let url = try writeArchive(archive, in: scratch)
+				#expect(throws: (any Error).self) {
+					try RestorePackager.restoreArchive(at: url, into: context, workingDirectory: scratch)
+				}
+				let dives = try divesOnDisk(container)
+				#expect(dives.count == 1)
+				#expect(dives.first?.title == "Keep me")
+				// The live context agrees: nothing is left pending.
+				#expect(try context.fetchCount(FetchDescriptor<Dive>()) == 1)
+				#expect(context.hasChanges == false)
+			}
+		}
+	}
+
+	@Test func failureAfterDeletingRollsBackEverything() throws {
+		let container = try TestModelContainer.make()
+		let context = container.mainContext
+		try seedKeeper(in: context)
+
+		// Parses fine but holds nothing importable, so the import step throws
+		// after the existing data has been marked for deletion.
+		let archive = RawZip.make([
+			.init(name: "logbook.uddf", data: Data(UDDFFixtures.emptyDocument.utf8))
+		])
+		try withTemporaryDirectory { scratch in
+			let url = try writeArchive(archive, in: scratch)
+			#expect(throws: UDDFImporter.ImportError.self) {
+				try RestorePackager.restoreArchive(at: url, into: context, workingDirectory: scratch)
+			}
+			let dives = try divesOnDisk(container)
+			#expect(dives.count == 1)
+			#expect(dives.first?.title == "Keep me")
+			#expect(context.hasChanges == false)
+		}
+	}
+
+	@Test func successfulRestoreReplacesDataOnDisk() throws {
+		let container = try TestModelContainer.make()
+		let context = container.mainContext
+		try seedKeeper(in: context)
+
+		let archive = RawZip.make([
+			.init(name: "logbook.uddf", data: Data(UDDFFixtures.minimalDive.utf8))
+		])
+		try withTemporaryDirectory { scratch in
+			let url = try writeArchive(archive, in: scratch)
+			try RestorePackager.restoreArchive(at: url, into: context, workingDirectory: scratch)
+			let dives = try divesOnDisk(container)
+			#expect(dives.map(\.externalId) == ["dive-1"])
+		}
+	}
+
+	@Test(.tags(.roundTrip)) func restoringTwiceIntoTheSameStoreKeepsOneCopyOfEverything() throws {
+		let source = try TestModelContainer.make()
+		_ = try FullLogbook.seed(into: source.mainContext)
+		let dest = try TestModelContainer.make()
+
+		try withTemporaryDirectory { scratch in
+			let zip = try BackupPackager.createExportArchive(from: source.mainContext, workingDirectory: scratch)
+			for _ in 0..<2 {
+				try RestorePackager.restoreArchive(at: zip, into: dest.mainContext, workingDirectory: scratch)
+			}
+			// Old and restored records briefly coexist in one transaction with the
+			// same externalIds; the importer must never reuse a record that is
+			// pending deletion.
+			let disk = ModelContext(dest)
+			#expect(try disk.fetchCount(FetchDescriptor<Dive>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<DiveSite>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<Trip>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<Buddy>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<Equipment>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<GasMix>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<Certification>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<LogbookOwner>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<DepthSample>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<Tank>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<Photo>()) == 1)
+			#expect(try disk.fetchCount(FetchDescriptor<ServiceRecord>()) == 1)
+			let dive = try #require(try disk.fetch(FetchDescriptor<Dive>()).first)
+			#expect(dive.site != nil)
+			#expect(dive.trip != nil)
+			#expect(dive.equipment?.count == 1)
+			#expect(dive.tanks?.first?.gasMix != nil)
+		}
+	}
 }

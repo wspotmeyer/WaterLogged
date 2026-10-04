@@ -83,6 +83,10 @@ struct RestorePackager {
 	/// Restores the backup archive, replacing all existing logbook data.
 	/// Returns a summary of the restored entity counts.
 	///
+	/// All or nothing: the archive is fully parsed before anything is deleted,
+	/// and the replacement is committed by a single save. If the restore fails
+	/// at any point, the existing logbook is left unchanged.
+	///
 	/// - Parameter workingDirectory: Scratch directory into which the archive is
 	///   extracted. Defaults to the system temporary directory; tests inject an
 	///   isolated, self-cleaning directory.
@@ -108,7 +112,10 @@ struct RestorePackager {
 			throw RestoreError.archiveInvalid("Missing logbook.uddf in archive.")
 		}
 
-		// 3. Pre-parse extras.xml before making any database changes
+		// 3. Parse both documents before making any database changes, so a
+		//    damaged archive fails while the existing logbook is untouched.
+		let parsedLogbook = try UDDFImporter.parse(data: Data(contentsOf: uddfURL))
+
 		let extrasURL = archiveRoot.appending(path: "extras.xml")
 		var extras: ParsedExtras?
 		if FileManager.default.fileExists(atPath: extrasURL.path()) {
@@ -117,19 +124,21 @@ struct RestorePackager {
 
 		let mediaDir = archiveRoot.appending(path: "media")
 
-		// 4. Delete all existing data (individual deletes generate CloudKit tombstones)
-		try deleteAllData(from: context)
-
-		// 5. Import UDDF (creates dives, sites, gases, buddies, equipment, certs, trips, owner)
-		//    Defer save so the entire restore is committed atomically after extras are applied.
-		try UDDFImporter.importFile(at: uddfURL, into: context, shouldSave: false)
-
-		// 6. Apply extras and import media
-		if let extras {
-			try applyExtras(extras, to: context, mediaDir: mediaDir)
+		// 4–6. Replace the logbook as a single transaction: the deletions, the
+		//      import and the extras are committed by one save. If any step
+		//      throws, the pending changes are rolled back and the existing data
+		//      is left exactly as it was.
+		do {
+			try deleteAllData(from: context)
+			try UDDFImporter.importParsed(parsedLogbook, into: context, shouldSave: false)
+			if let extras {
+				try applyExtras(extras, to: context, mediaDir: mediaDir)
+			}
+			try context.save()
+		} catch {
+			context.rollback()
+			throw error
 		}
-
-		try context.save()
 
 		// Tally the persisted entities. A restore replaces all existing data,
 		// so these counts describe the entire restored log book — including gas
@@ -174,22 +183,32 @@ struct RestorePackager {
 
 	// MARK: - Delete All Data
 
-	/// Deletes every model instance from the database, one model type at a time,
-	/// using SwiftData's batch `delete(model:)`.
+	/// Marks every model instance for deletion, without saving — the caller
+	/// commits the deletions together with the restored data.
+	///
+	/// Each model is deleted individually rather than with the batch
+	/// `delete(model:)`: individual deletions are ordinary tracked changes that
+	/// CloudKit mirroring propagates to the user's other devices, and they can't
+	/// sweep up the restored records the way a batch delete evaluated at save
+	/// time could.
 	private static func deleteAllData(from context: ModelContext) throws {
-		try context.delete(model: Dive.self)
-		try context.delete(model: DiveSite.self)
-		try context.delete(model: Trip.self)
-		try context.delete(model: Equipment.self)
-		try context.delete(model: GasMix.self)
-		try context.delete(model: Buddy.self)
-		try context.delete(model: Certification.self)
-		try context.delete(model: LogbookOwner.self)
-		try context.delete(model: Photo.self)
-		try context.delete(model: DepthSample.self)
-		try context.delete(model: ServiceRecord.self)
-		try context.delete(model: Tank.self)
-		try context.save()
+		func deleteAll<T: PersistentModel>(_ type: T.Type) throws {
+			for model in try context.fetch(FetchDescriptor<T>()) {
+				context.delete(model)
+			}
+		}
+		try deleteAll(Dive.self)
+		try deleteAll(DiveSite.self)
+		try deleteAll(Trip.self)
+		try deleteAll(Equipment.self)
+		try deleteAll(GasMix.self)
+		try deleteAll(Buddy.self)
+		try deleteAll(Certification.self)
+		try deleteAll(LogbookOwner.self)
+		try deleteAll(Photo.self)
+		try deleteAll(DepthSample.self)
+		try deleteAll(ServiceRecord.self)
+		try deleteAll(Tank.self)
 	}
 
 	// MARK: - Apply Extras

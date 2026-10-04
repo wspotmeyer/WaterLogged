@@ -142,8 +142,18 @@ struct UDDFImporter {
 	/// filesystem or security-scoped resource access.
 	@discardableResult
 	static func importData(_ data: Data, into context: ModelContext, shouldSave: Bool = true) throws -> ImportSummary {
-		let result = try parse(data: data)
+		try importParsed(parse(data: data), into: context, shouldSave: shouldSave)
+	}
 
+	/// Imports an already-parsed UDDF document. Restore parses the archive's
+	/// logbook up front with `parse(data:)`, so a malformed file fails before any
+	/// existing data is touched, then hands the result here.
+	@discardableResult
+	static func importParsed(
+		_ result: UDDFParseResult,
+		into context: ModelContext,
+		shouldSave: Bool = true
+	) throws -> ImportSummary {
 		var summary = ImportSummary()
 
 		// Import owner
