@@ -53,5 +53,5 @@ struct UDDFOmittedDataSection: View {
 	Form {
 		UDDFOmittedDataSection()
 	}
-	.formStyle(.grouped)
+	.appFormStyle()
 }

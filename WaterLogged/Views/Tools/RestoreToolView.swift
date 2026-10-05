@@ -76,7 +76,7 @@ struct RestoreToolView: View {
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
+			.appFormStyle()
 			.frame(maxWidth: 500)
 			.frame(maxWidth: .infinity)
 			.appGradientScrollBackground()

@@ -284,7 +284,7 @@ struct BulkUpdateView: View {
 				}
 				.tileListRowBackground()
 			}
-			.formStyle(.grouped)
+			.appFormStyle()
 			.frame(maxWidth: 700)
 			.frame(maxWidth: .infinity)
 			.appGradientScrollBackground()

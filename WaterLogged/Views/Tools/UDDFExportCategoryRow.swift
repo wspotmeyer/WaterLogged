@@ -67,5 +67,5 @@ struct UDDFExportCategoryRow: View {
 			UDDFExportCategoryRow(category: category, count: 12, selection: $selection)
 		}
 	}
-	.formStyle(.grouped)
+	.appFormStyle()
 }

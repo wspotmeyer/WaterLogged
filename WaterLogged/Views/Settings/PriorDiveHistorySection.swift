@@ -87,5 +87,5 @@ struct PriorDiveHistorySection: View {
 	Form {
 		PriorDiveHistorySection()
 	}
-	.formStyle(.grouped)
+	.appFormStyle()
 }

@@ -56,5 +56,5 @@ struct CloudSyncSection: View {
 	Form {
 		CloudSyncSection()
 	}
-	.formStyle(.grouped)
+	.appFormStyle()
 }

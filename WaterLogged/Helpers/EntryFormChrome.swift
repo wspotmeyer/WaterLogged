@@ -21,8 +21,9 @@
 
 import SwiftUI
 
-/// The presentation shared by every entry form: grouped form style, the app
-/// gradient behind it, an inline title on iOS, and Cancel / Save toolbar buttons.
+/// The presentation shared by every entry form: grouped form style (tile form
+/// style on macOS), the app gradient behind it, an inline title on iOS, and
+/// Cancel / Save toolbar buttons.
 struct EntryFormChrome: ViewModifier {
 	let title: LocalizedStringKey
 	let canSave: Bool
@@ -31,7 +32,7 @@ struct EntryFormChrome: ViewModifier {
 
 	func body(content: Content) -> some View {
 		content
-			.formStyle(.grouped)
+			.appFormStyle()
 			.appGradientScrollBackground()
 			.navigationTitle(title)
 #if os(iOS)
