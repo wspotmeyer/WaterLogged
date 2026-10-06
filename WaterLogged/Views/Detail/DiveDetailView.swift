@@ -607,7 +607,7 @@ private struct GearSummaryRow: View {
 
 /// Overlapping circular type icons for the first few pieces of gear on a dive.
 private struct GearIconStack: View {
-	static let maximumVisible = 5
+	static let maximumVisible = 9
 
 	let equipment: [Equipment]
 
@@ -651,6 +651,7 @@ private struct GearLinkRow: View {
 				if !equipment.manufacturer.isEmpty {
 					Text(equipment.manufacturer)
 						.font(.subheadline)
+						.foregroundStyle(.secondary)
 				}
 				Image(systemName: "chevron.right")
 					.font(.caption)
@@ -714,7 +715,7 @@ private struct BuddySummaryRow: View {
 
 /// Overlapping circular avatars for the first few buddies of a dive.
 private struct BuddyAvatarStack: View {
-	static let maximumVisible = 5
+	static let maximumVisible = 9
 
 	let buddies: [Buddy]
 
@@ -780,6 +781,7 @@ private struct NotesSectionView: View {
 			VStack(alignment: .leading, spacing: 10) {
 				DetailSection(title: "Notes") {
 					Text(LocalizedStringKey(dive.notes))
+						.foregroundStyle(.secondary)
 				}
 			}
 		}
@@ -807,6 +809,7 @@ private struct ImportSourceFooterView: View {
 				}
 			}
 			.font(.footnote)
+			.foregroundStyle(.secondary)
 			.frame(maxWidth: .infinity, alignment: .leading)
 		}
 	}

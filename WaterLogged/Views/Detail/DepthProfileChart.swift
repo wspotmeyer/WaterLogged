@@ -344,9 +344,11 @@ struct DepthProfileChart: View {
 #if os(macOS)
 			Text("Hover over a point to see details of the sample.")
 				.font(.caption)
+				.foregroundStyle(.secondary)
 #else
 			Text("Tap on a point to see details of the sample.")
 				.font(.caption)
+				.foregroundStyle(.secondary)
 #endif
 		}
 	}

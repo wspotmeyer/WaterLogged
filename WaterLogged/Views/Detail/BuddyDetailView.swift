@@ -55,7 +55,7 @@ struct BuddyDetailView: View {
 
 					TripsSection(dives: buddy.dives)
 
-					DivesSection(buddy: buddy)
+					DivesSection(dives: buddy.dives)
 				}
 				.padding()
 				.frame(maxWidth: 700)
@@ -151,40 +151,6 @@ private struct AddressSection: View {
 					Text(buddy.country)
 				}
 			}
-		}
-	}
-}
-
-// MARK: - Dives Section
-
-private struct DivesSection: View {
-	let buddy: Buddy
-
-	@State private var isExpanded = false
-
-	var body: some View {
-		if let dives = buddy.dives, !dives.isEmpty {
-			GroupBox {
-				if isExpanded {
-					VStack(spacing: 0) {
-						ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-							DiveLinkRow(dive: dive)
-						}
-					}
-					.frame(maxWidth: .infinity, alignment: .leading)
-				}
-			} label: {
-				HStack {
-					Text("Dives")
-						.font(.title2.bold())
-					Spacer()
-					TimeCount(seconds: buddy.totalDiveTimeSeconds, font: .headline)
-					DiveCount(count: dives.count, font: .headline)
-					DisclosureToggleButton(isExpanded: $isExpanded, subject: "Dives")
-				}
-			}
-			.tileBackgroundStyle()
-
 		}
 	}
 }

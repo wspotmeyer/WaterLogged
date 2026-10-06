@@ -30,7 +30,6 @@ struct DiveSiteDetailView: View {
 
 	@State private var editingSite: DiveSite?
 	@State private var showingPhotoEditor = false
-	@State private var isDivesExpanded = false
 
 	var body: some View {
 		if site.isLive {
@@ -85,35 +84,14 @@ struct DiveSiteDetailView: View {
 						VStack(alignment: .leading, spacing: 10) {
 							DetailSection(title: "Notes") {
 								Text(LocalizedStringKey(site.notes))
+									.foregroundStyle(.secondary)
 							}
 						}
 					}
 
 					TripsSection(dives: site.dives)
 
-					if let dives = site.dives, !dives.isEmpty {
-
-						GroupBox {
-							if isDivesExpanded {
-								VStack(spacing: 0) {
-									ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-										DiveLinkRow(dive: dive)
-									}
-								}
-								.frame(maxWidth: .infinity, alignment: .leading)
-							}
-						} label: {
-							HStack {
-								Text("Dives")
-									.font(.title2.bold())
-								Spacer()
-								TimeCount(seconds: site.totalDiveTimeSeconds, font: .headline)
-								DiveCount(count: dives.count, font: .headline)
-								DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
-							}
-						}
-						.tileBackgroundStyle()
-					}
+					DivesSection(dives: site.dives)
 				}
 				.padding()
 				.frame(maxWidth: 700)

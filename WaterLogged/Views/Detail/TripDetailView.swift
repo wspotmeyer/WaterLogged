@@ -31,7 +31,6 @@ struct TripDetailView: View {
 
 	@State private var editingTrip: Trip?
 	@State private var showingPhotoEditor = false
-	@State private var isDivesExpanded = false
 
 	var body: some View {
 		if trip.isLive {
@@ -95,31 +94,11 @@ struct TripDetailView: View {
 					if !trip.notes.isEmpty {
 						DetailSection(title: "Notes") {
 							Text(LocalizedStringKey(trip.notes))
+								.foregroundStyle(.secondary)
 						}
 					}
 
-					// Dives
-					if !sortedDives.isEmpty {
-						Divider()
-
-						GroupBox {
-							if isDivesExpanded {
-								ForEach(sortedDives) { dive in
-									DiveLinkRow(dive: dive, topPadding: 4)
-								}
-							}
-						} label: {
-							HStack {
-								Text("Dives")
-									.font(.title2.bold())
-								Spacer()
-								TimeCount(seconds: trip.totalDiveTimeSeconds, font: .headline)
-								DiveCount(count: sortedDives.count, font: .headline)
-								DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
-							}
-						}
-						.tileBackgroundStyle()
-					}
+					DivesSection(dives: trip.dives)
 				}
 				.padding()
 				.frame(maxWidth: 700)
@@ -151,10 +130,6 @@ struct TripDetailView: View {
 		!trip.address.isEmpty
 		|| trip.latitude != nil
 		|| !trip.urlString.isEmpty
-	}
-
-	private var sortedDives: [Dive] {
-		(trip.dives ?? []).sorted { $0.date < $1.date }
 	}
 }
 

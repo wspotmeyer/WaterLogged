@@ -203,6 +203,7 @@ private struct OwnerCertificationsSection: View {
 								Spacer()
 								if let date = cert.dateAchieved {
 									Text(date.formatted(date: .abbreviated, time: .omitted))
+										.foregroundStyle(.secondary)
 										.lineLimit(1)
 								}
 								Image(systemName: "chevron.right")

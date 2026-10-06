@@ -31,7 +31,6 @@ struct EquipmentDetailView: View {
 	@State private var editingEquipment: Equipment?
 	@State private var showingAddService = false
 	@State private var showingFullScreenPhoto = false
-	@State private var isDivesExpanded = false
 
 	var body: some View {
 		if equipment.isLive {
@@ -121,29 +120,7 @@ struct EquipmentDetailView: View {
 						}
 					}
 
-					if let dives = equipment.dives, !dives.isEmpty {
-						Divider()
-						GroupBox {
-							if isDivesExpanded {
-								VStack(spacing: 0) {
-									ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-										DiveLinkRow(dive: dive)
-									}
-								}
-								.frame(maxWidth: .infinity, alignment: .leading)
-							}
-						} label: {
-							HStack {
-								Text("Dives")
-									.font(.title2.bold())
-								Spacer()
-								TimeCount(seconds: equipment.totalDiveTimeSeconds, font: .headline)
-								DiveCount(count: dives.count, font: .headline)
-								DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
-							}
-						}
-						.tileBackgroundStyle()
-					}
+					DivesSection(dives: equipment.dives)
 				}
 				.padding()
 				.frame(maxWidth: 700)
@@ -222,6 +199,7 @@ private struct ServiceRecordRow: View {
 			if !record.notes.isEmpty {
 				Text(record.notes)
 					.font(.caption)
+					.foregroundStyle(.secondary)
 			}
 		}
 		.padding(.vertical, 4)

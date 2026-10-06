@@ -99,7 +99,7 @@ struct CertificationDetailView: View {
 						}
 					}
 
-					CertificationDivesSection(certification: certification)
+					DivesSection(dives: certification.dives)
 				}
 				.padding()
 				.frame(maxWidth: 700)
@@ -125,41 +125,6 @@ struct CertificationDetailView: View {
 	private var hasInstructorDetails: Bool {
 		!certification.instructorName.isEmpty
 		|| !certification.instructorNumber.isEmpty
-	}
-}
-
-// MARK: - Dives Section
-
-private struct CertificationDivesSection: View {
-	let certification: Certification
-
-	@State private var isExpanded = false
-
-	var body: some View {
-		if let dives = certification.dives, !dives.isEmpty {
-			Divider()
-
-			GroupBox {
-				if isExpanded {
-					VStack(spacing: 0) {
-						ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-							DiveLinkRow(dive: dive)
-						}
-					}
-					.frame(maxWidth: .infinity, alignment: .leading)
-				}
-			} label: {
-				HStack {
-					Text("Dives")
-						.font(.title2.bold())
-					Spacer()
-					TimeCount(seconds: certification.totalDiveTimeSeconds, font: .headline)
-					DiveCount(count: dives.count, font: .headline)
-					DisclosureToggleButton(isExpanded: $isExpanded, subject: "Dives")
-				}
-			}
-			.tileBackgroundStyle()
-		}
 	}
 }
 

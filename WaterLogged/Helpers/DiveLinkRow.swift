@@ -25,7 +25,6 @@ import SwiftUI
 /// date, linking to its `DiveDetailView`.
 struct DiveLinkRow: View {
 	let dive: Dive
-	var topPadding: CGFloat = 12
 
 	var body: some View {
 		if dive.isLive {
@@ -37,11 +36,12 @@ struct DiveLinkRow: View {
 						.lineLimit(1)
 					Spacer()
 					Text(dive.date.formatted(date: .abbreviated, time: .omitted))
+						.foregroundStyle(.secondary)
 						.lineLimit(1)
 					Image(systemName: "chevron.right")
 						.font(.caption)
 				}
-				.padding(.top, topPadding)
+				.padding(.top, 12)
 			}
 			.buttonStyle(.plain)
 		}

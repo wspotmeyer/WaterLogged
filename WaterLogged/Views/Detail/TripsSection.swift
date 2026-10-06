@@ -44,7 +44,6 @@ struct TripsSection: View {
 	var body: some View {
 		let trips = Self.trips(for: dives ?? [])
 		if !trips.isEmpty {
-			Divider()
 			GroupBox {
 				if isExpanded {
 					VStack(spacing: 0) {
@@ -57,6 +56,7 @@ struct TripsSection: View {
 										.lineLimit(1)
 									Spacer()
 									Text(trip.dateRangeFormatted)
+										.foregroundStyle(.secondary)
 										.lineLimit(1)
 									Image(systemName: "chevron.right")
 										.font(.caption)

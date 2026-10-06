@@ -29,7 +29,6 @@ struct GasMixDetailView: View {
 
 	let gasMix: GasMix
 	@State private var editingGasMix: GasMix?
-	@State private var isDivesExpanded = false
 
 	/// Chart colors are a presentation concern, so they live here rather than on the model.
 	private func color(for kind: GasComponent.Kind) -> Color {
@@ -109,34 +108,12 @@ struct GasMixDetailView: View {
 					}
 
 					// Associated Dives
-					let associatedDives = Array(Set((gasMix.tanks ?? []).compactMap(\.dive)))
-					if !associatedDives.isEmpty {
-						let dives = associatedDives
-						Divider()
-
-						GroupBox {
-							if isDivesExpanded {
-								VStack(spacing: 0) {
-									ForEach(dives.sorted(by: { $0.date < $1.date })) { dive in
-										DiveLinkRow(dive: dive)
-									}
-								}
-							}
-						} label: {
-							HStack {
-								Text("Dives")
-									.font(.title2.bold())
-								Spacer()
-								TimeCount(seconds: gasMix.totalDiveTimeSeconds, font: .headline)
-								DiveCount(count: dives.count, font: .headline)
-								DisclosureToggleButton(isExpanded: $isDivesExpanded, subject: "Dives")
-							}
-						}
-						.tileBackgroundStyle()
-					}
+					DivesSection(dives: Array(Set((gasMix.tanks ?? []).compactMap(\.dive))))
 				}
 				.padding()
 			}
+			.frame(maxWidth: 700)
+			.frame(maxWidth: .infinity)
 			.appGradientScrollBackground()
 			.navigationTitle(gasMix.displayName)
 			.toolbar {
