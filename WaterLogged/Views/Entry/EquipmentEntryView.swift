@@ -63,7 +63,7 @@ struct EquipmentEntryView: View {
 						}
 						Picker("Type", selection: $type) {
 							ForEach(EquipmentType.allCases) { equipmentType in
-								EquipmentTypeLabel(type: equipmentType)
+								Text(equipmentType.label)
 									.tag(equipmentType)
 							}
 						}
