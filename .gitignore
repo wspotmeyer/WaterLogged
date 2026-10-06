@@ -15,8 +15,8 @@ Icon[
 ## User settings
 xcuserdata/
 
-# Claude Code (project settings and hook scripts are committed; personal overrides are not)
-.claude/settings.local.json
+# Claude Code settings and hook scripts (kept local)
+.claude/
 
 # GitHub Copilot
 .github/copilot-instructions.md
