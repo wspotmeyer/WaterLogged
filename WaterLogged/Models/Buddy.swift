@@ -41,10 +41,6 @@ final class Buddy {
 
 	var dives: [Dive]? = []
 
-	var totalDiveTimeSeconds: Int {
-		dives?.reduce(0) { $0 + $1.durationSeconds } ?? 0
-	}
-
 	/// Formatted display name using the user's locale conventions.
 	var formattedName: String {
 		var components = PersonNameComponents()

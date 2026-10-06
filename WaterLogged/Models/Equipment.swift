@@ -169,10 +169,6 @@ final class Equipment {
 	@Relationship(deleteRule: .nullify, inverse: \Tank.equipment)
 	var tanks: [Tank]? = []
 
-	var totalDiveTimeSeconds: Int {
-		dives?.reduce(0) { $0 + $1.durationSeconds } ?? 0
-	}
-
 	/// Resolves the equipment type, falling back to `.miscellaneous` for pre-existing records.
 	var resolvedType: EquipmentType {
 		type ?? .miscellaneous

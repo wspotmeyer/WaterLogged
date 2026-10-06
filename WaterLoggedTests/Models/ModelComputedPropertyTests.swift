@@ -47,7 +47,7 @@ struct ModelComputedPropertyTests {
 			context.insert(dive)
 		}
 		try context.save()
-		#expect(site.totalDiveTimeSeconds == 3600)
+		#expect(DivesSection.totalDiveTimeSeconds(for: site.dives ?? []) == 3600)
 	}
 
 	@Test func tripDiveCountAndTotalTime() throws {
@@ -59,7 +59,7 @@ struct ModelComputedPropertyTests {
 		context.insert(d2)
 		try context.save()
 		#expect(trip.diveCount == 2)
-		#expect(trip.totalDiveTimeSeconds == 3000)
+		#expect(DivesSection.totalDiveTimeSeconds(for: trip.dives ?? []) == 3000)
 	}
 
 	// MARK: - Gas mix nitrogen balance
@@ -97,7 +97,8 @@ struct ModelComputedPropertyTests {
 			context.insert(tank)
 		}
 		try context.save()
-		#expect(gas.totalDiveTimeSeconds == 1500)
+		#expect(gas.dives.count == 1)
+		#expect(DivesSection.totalDiveTimeSeconds(for: gas.dives) == 1500)
 	}
 
 	// MARK: - Names & display

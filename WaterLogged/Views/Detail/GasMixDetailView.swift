@@ -108,7 +108,7 @@ struct GasMixDetailView: View {
 					}
 
 					// Associated Dives
-					DivesSection(dives: Array(Set((gasMix.tanks ?? []).compactMap(\.dive))))
+					DivesSection(dives: gasMix.dives)
 				}
 				.padding()
 			}

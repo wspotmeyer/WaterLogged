@@ -88,9 +88,10 @@ final class GasMix {
 	@Relationship(deleteRule: .nullify, inverse: \Tank.gasMix)
 	var tanks: [Tank]? = []
 
-	var totalDiveTimeSeconds: Int {
-		let dives = Set((tanks ?? []).compactMap(\.dive))
-		return dives.reduce(0) { $0 + $1.durationSeconds }
+	/// The dives this gas was breathed on, each listed once even when several of
+	/// a dive's tanks hold this gas. Computed, so it is not part of the schema.
+	var dives: [Dive] {
+		Array(Set((tanks ?? []).compactMap(\.dive)))
 	}
 
 	init(

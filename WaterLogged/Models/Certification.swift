@@ -38,10 +38,6 @@ final class Certification {
 	@Relationship(deleteRule: .nullify, inverse: \Dive.certification)
 	var dives: [Dive]? = []
 
-	var totalDiveTimeSeconds: Int {
-		dives?.reduce(0) { $0 + $1.durationSeconds } ?? 0
-	}
-
 	/// Identifies a certification across an export/import cycle by its content.
 	///
 	/// UDDF's `certificationType` allows no `id` attribute, so a certification

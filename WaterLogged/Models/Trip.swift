@@ -67,10 +67,6 @@ final class Trip {
 		return "\(start) – \(end)"
 	}
 
-	var totalDiveTimeSeconds: Int {
-		dives?.reduce(0) { $0 + $1.durationSeconds } ?? 0
-	}
-
 	/// The number of dives associated with this trip.
 	var diveCount: Int {
 		dives?.count ?? 0

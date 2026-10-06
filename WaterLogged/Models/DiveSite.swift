@@ -38,10 +38,6 @@ final class DiveSite {
 	@Relationship(deleteRule: .cascade, inverse: \Photo.diveSite)
 	var photos: [Photo]? = []
 
-	var totalDiveTimeSeconds: Int {
-		dives?.reduce(0) { $0 + $1.durationSeconds } ?? 0
-	}
-
 	init(
 		externalId: String = UUID().uuidString,
 		name: String = "",
