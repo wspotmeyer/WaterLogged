@@ -40,7 +40,9 @@ struct DisclosureToggleButton: View {
 			)
 			.labelStyle(.iconOnly)
 			.imageScale(.small)
-			.frame(width: 32, height: 32)
+			// The generous frame enlarges the tap target; pinning the chevron to
+			// its trailing edge keeps it flush with the row chevrons below.
+			.frame(width: 32, height: 32, alignment: .trailing)
 			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
