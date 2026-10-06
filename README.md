@@ -12,10 +12,10 @@ I wrote WaterLogged as a retired engineer and scuba enthusiast who has been divi
 I tried a number of apps for digitally recording my dives, but each suffered from one or more drawbacks:
 - Logging software written by dive computer manufacturers tend to lock their customers into the manufacturer's ecosystem
 and many do not have the capability (or incentive) to export dive data to another one
-- Apps are often written with cross-platform (Apple, Microsoft, Linux, Android) development in mind, with a "lowest common
+- Some apps are often written with cross-platform (Apple, Microsoft, Linux, Android) development in mind, with a "lowest common
 denominator" user interface and no way to take advantage of Apple's unique capabilities
 - Apps are often written by developers who maintain their code for a while, but eventually stop, locking the user's data
-into code that is no longer being maintained.
+into an app that is no longer being maintained.
 
 I  realized that in order to get what I wanted I would have to write it myself. Seeing the possibility for an interesting
 retirement project and excited to dive into agentic coding, I taught myself some Swift and got a subscription to Claude.
@@ -29,10 +29,22 @@ advanced diving data. If that's what you need, there are plenty of other apps ou
 and start coding. Just remember the give-back requirements of the **GNU General Public License v3**.
 ## Features
 
-### The log book
+### It's unabashedly an Apple-only app
+- Written entirely in Swift, using SwiftUI and SwiftData for maximum performance, features, and look-and-feel
+- Available on iOS, iPadOS, and macOS: optionally synchronized through iCloud, it's ready on any device
+- Liquid Glass for that beautiful modern Apple finish
+- Integrated with Siri: search dives and sites from anywhere and have them show up in your Siri search results
+- Home screen widgets for when you just want a quick, small snapshot of your data
 
+### It's free
+- Really free: no purchase cost, no subscription, no in-app purchases, no ads, no account creation, no e-mails, no catch
+- It's open source: [see for yourself](https://github.com/wspotmeyer/WaterLogged)
+- Low barrier to entry: import your dive data through BlueTooth-enabled dive computers or through UDDF file import
+- Low barrier to exit: when you grow tired of WaterLogged, export your dive data to UDDF and take it all with you somewhere else
+
+### The log book
 - **Dives** — record dive number, date and time, title, bottom time, surface interval (entered or computed from the previous
-  dive), maximum depth, water and air temperature, visibility, water type, current, wave conditions, weather, suit
+  dive), maximum depth, water and air temperature, visibility, water type, current, wave conditions, weather, protection,
   type, weight, dive guide, operator, boat, a 1–5 star rating, free-form notes, and tags.
 - **Depth profiles** — full sample-by-sample profiles (depth, temperature, tank pressure, ppO₂, no-deco time, deco
   state) rendered as an interactive Swift Charts depth profile on the dive's detail view.
@@ -49,7 +61,6 @@ and start coding. Just remember the give-back requirements of the **GNU General 
   signature alongside each dive.
 
 ### Browsing, search, and maps
-
 - A map-centered home screen showing every logged dive site, with a collapsible summary bar of your headline numbers.
 - Per-list search and filtering, including a tag filter strip on the dives list that combines multiple tags.
 - Index bars for jumping through long lists by dive number, year, or first letter.
@@ -57,8 +68,6 @@ and start coding. Just remember the give-back requirements of the **GNU General 
   bar commands on the Mac.
 - **Spotlight integration** — dives, dive sites, trips, and buddies are indexed on device, so a Spotlight result opens
   straight to the matching detail view via a `waterlogged://` deep link.
-- **Home screen widgets** — small and medium widgets summarizing dive count, bottom time, countries, and trips, which
-  tap through to the in-app statistics.
 
 ### Statistics
 
