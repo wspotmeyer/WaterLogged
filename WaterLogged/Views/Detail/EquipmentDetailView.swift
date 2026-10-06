@@ -123,45 +123,45 @@ struct EquipmentDetailView: View {
 					DivesSection(dives: equipment.dives)
 				}
 				.padding()
-				.frame(maxWidth: 700)
-				.frame(maxWidth: .infinity)
-				.appGradientScrollBackground()
-				.navigationTitle(LocalizedStringKey(equipment.name))
-#if !os(macOS)
-				.navigationBarTitleDisplayMode(.inline)
-#endif
-				.toolbar {
-					ToolbarItem(placement: .primaryAction) {
-						Button("Edit", systemImage: "pencil") {
-							editingEquipment = equipment
-						}
-					}
-				}
-				.sheet(item: $editingEquipment) { editing in
-					EquipmentEntryView(equipment: editing) {
-						modelContext.delete(editing)
-						onDelete?()
-					}
-				}
-				.sheet(isPresented: $showingAddService) {
-					ServiceRecordEntryView(record: nil, equipment: equipment)
-				}
-#if !os(macOS)
-				.fullScreenCover(isPresented: $showingFullScreenPhoto) {
-					EquipmentFullScreenPhoto(
-						photoData: equipment.photoData,
-						equipmentName: equipment.name
-					)
-				}
-#else
-				.sheet(isPresented: $showingFullScreenPhoto) {
-					EquipmentFullScreenPhoto(
-						photoData: equipment.photoData,
-						equipmentName: equipment.name
-					)
-				}
-#endif
 			}
+			.frame(maxWidth: 700)
+			.frame(maxWidth: .infinity)
+			.appGradientScrollBackground()
+			.navigationTitle(LocalizedStringKey(equipment.name))
+#if !os(macOS)
+			.navigationBarTitleDisplayMode(.inline)
+#endif
+			.toolbar {
+				ToolbarItem(placement: .primaryAction) {
+					Button("Edit", systemImage: "pencil") {
+						editingEquipment = equipment
+					}
+				}
+			}
+			.sheet(item: $editingEquipment) { editing in
+				EquipmentEntryView(equipment: editing) {
+					modelContext.delete(editing)
+					onDelete?()
+				}
+			}
+			.sheet(isPresented: $showingAddService) {
+				ServiceRecordEntryView(record: nil, equipment: equipment)
+			}
+#if !os(macOS)
+			.fullScreenCover(isPresented: $showingFullScreenPhoto) {
+				EquipmentFullScreenPhoto(
+					photoData: equipment.photoData,
+					equipmentName: equipment.name
+				)
+			}
+#else
+			.sheet(isPresented: $showingFullScreenPhoto) {
+				EquipmentFullScreenPhoto(
+					photoData: equipment.photoData,
+					equipmentName: equipment.name
+				)
+			}
+#endif
 		}
 	}
 
