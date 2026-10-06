@@ -40,3 +40,6 @@ build/
 # Python (Scripts/SymbolTemplate)
 __pycache__/
 *.pyc
+
+# Claude Code project instructions (kept local)
+CLAUDE.md
