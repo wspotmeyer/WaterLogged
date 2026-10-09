@@ -46,7 +46,6 @@ struct DisclosureToggleButton: View {
 			.contentShape(.rect)
 		}
 		.buttonStyle(.plain)
-		.font(.subheadline)
 	}
 }
 
