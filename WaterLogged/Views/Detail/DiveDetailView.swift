@@ -39,199 +39,221 @@ struct DiveDetailView: View {
 	var body: some View {
 		if dive.isLive {
 			ScrollView {
-				VStack(alignment: .leading, spacing: 24) {
-
+				VStack(spacing: 0) {
 					// Header
-					VStack(alignment: .leading, spacing: 6) {
-						DiveHeaderTitle(dive: dive)
-						HStack {
-							Text("\(dive.date.formatted(date: .long, time: .omitted)) \(dive.date.formatted(date: .omitted, time: .shortened)) - \(dive.endDate.formatted(date: .omitted, time: .shortened))")
-								.font(.subheadline)
-								.lineLimit(1)
-							Spacer()
-							if dive.rating > 0 {
-								StarRatingView(rating: dive.rating)
+					DetailHeader(photo: Photo.cover(of: dive.photos)) {
+						VStack(alignment: .leading, spacing: 6) {
+							DiveHeaderTitle(dive: dive)
+							HStack {
+								Text("\(dive.date.formatted(date: .long, time: .omitted)) \(dive.date.formatted(date: .omitted, time: .shortened)) - \(dive.endDate.formatted(date: .omitted, time: .shortened))")
+									.font(.subheadline)
+									.lineLimit(1)
+								Spacer()
+								if dive.rating > 0 {
+									StarRatingView(rating: dive.rating)
+								}
 							}
-						}
-						if let site = dive.site {
-							NavigationLink {
-								DiveSiteDetailView(site: site)
-							} label: {
-								HStack(spacing: 12) {
-									if !site.name.isEmpty {
-										Label(LocalizedStringKey(site.name), systemImage: "mappin.and.ellipse")
-											.lineLimit(1)
-									}
-									if !site.region.isEmpty {
-										Label(site.region, systemImage: "map")
-											.lineLimit(1)
-									}
-									if !site.country.isEmpty {
-										if let flag = CountryFlag.emoji(for: site.country) {
-											Text("\(flag) \(site.country)")
-												.lineLimit(1)
-										} else {
-											Label(site.country, systemImage: "globe")
+							if let site = dive.site {
+								NavigationLink {
+									DiveSiteDetailView(site: site)
+								} label: {
+									HStack(spacing: 12) {
+										if !site.name.isEmpty {
+											Label(LocalizedStringKey(site.name), systemImage: "mappin.and.ellipse")
 												.lineLimit(1)
 										}
+										if !site.region.isEmpty {
+											Label(site.region, systemImage: "map")
+												.lineLimit(1)
+										}
+										if !site.country.isEmpty {
+											if let flag = CountryFlag.emoji(for: site.country) {
+												Text("\(flag) \(site.country)")
+													.lineLimit(1)
+											} else {
+												Label(site.country, systemImage: "globe")
+													.lineLimit(1)
+											}
+										}
+#if !os(macOS)
+										Spacer()
+#endif
+										Image(systemName: "chevron.right")
+											.font(.caption)
 									}
-#if !os(macOS)
-									Spacer()
-#endif
-									Image(systemName: "chevron.right")
-										.font(.caption)
+									.font(.subheadline)
 								}
-								.font(.subheadline)
+								.buttonStyle(.plain)
 							}
-							.buttonStyle(.plain)
-						}
-						if let trip = dive.trip {
-							NavigationLink {
-								TripDetailView(trip: trip)
-							} label: {
-								HStack(spacing: 12) {
-									Label(trip.name, systemImage: "airplane.path.dotted")
+							if let trip = dive.trip {
+								NavigationLink {
+									TripDetailView(trip: trip)
+								} label: {
+									HStack(spacing: 12) {
+										Label(trip.name, systemImage: "airplane.path.dotted")
 #if !os(macOS)
-									Spacer()
+										Spacer()
 #endif
-									Image(systemName: "chevron.right")
-										.font(.caption)
+										Image(systemName: "chevron.right")
+											.font(.caption)
+									}
+									.font(.subheadline)
 								}
-								.font(.subheadline)
+								.buttonStyle(.plain)
 							}
-							.buttonStyle(.plain)
-						}
-						if let certification = dive.certification {
-							NavigationLink {
-								CertificationDetailView(certification: certification)
-							} label: {
-								HStack(spacing: 12) {
-									Label(certification.name, systemImage: "graduationcap")
+							if let certification = dive.certification {
+								NavigationLink {
+									CertificationDetailView(certification: certification)
+								} label: {
+									HStack(spacing: 12) {
+										Label(certification.name, systemImage: "graduationcap")
 #if !os(macOS)
-									Spacer()
+										Spacer()
 #endif
-									Image(systemName: "chevron.right")
-										.font(.caption)
+										Image(systemName: "chevron.right")
+											.font(.caption)
+									}
+									.font(.subheadline)
 								}
-								.font(.subheadline)
-							}
-							.buttonStyle(.plain)
-						}
-					}
-
-					Divider()
-
-					// Key Stats Grid — adapts column count to available width
-					// Optional stats use `.map { … } ?? "—"` so every layout always emits
-					// a StatCell, keeping the grid shape identical across all ViewThatFits
-					// candidates and showing a "—" placeholder when a value is missing.
-					ViewThatFits(in: .horizontal) {
-						// Single row (wide screens)
-						Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-							GridRow {
-								StatCell(label: "Max Depth", value: units.depthString(dive.maxDepthMeters, decimals: 0), icon: "arrow.down.to.line")
-								StatCell(label: "Duration", value: dive.durationFormatted, icon: "clock")
-								StatCell(label: "Surface Interval", value: dive.effectiveSurfaceIntervalSeconds == 0 ? "—" : dive.surfaceIntervalFormatted, icon: "water.waves.and.arrow.trianglehead.up")
-								StatCell(label: "Water Temp", value: dive.waterTempCelsius.map { units.tempString($0, decimals: 0) } ?? "—", icon: "thermometer.medium")
-								StatCell(label: "Visibility", value: dive.visibilityMeters.map { units.visibilityString($0) } ?? "—", icon: "eye")
-								StatCell(label: "Current", value: dive.current?.rawValue ?? "—", icon: "wind")
-							}
-						}
-
-						// Two rows of 3 (medium screens)
-						Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-							GridRow {
-								StatCell(label: "Max Depth", value: units.depthString(dive.maxDepthMeters, decimals: 0), icon: "arrow.down.to.line")
-								StatCell(label: "Duration", value: dive.durationFormatted, icon: "clock")
-								StatCell(label: "Surface Interval", value: dive.effectiveSurfaceIntervalSeconds == 0 ? "—" : dive.surfaceIntervalFormatted, icon: "water.waves.and.arrow.trianglehead.up")
-							}
-							GridRow {
-								StatCell(label: "Water Temp", value: dive.waterTempCelsius.map { units.tempString($0, decimals: 0) } ?? "—", icon: "thermometer.medium")
-								StatCell(label: "Visibility", value: dive.visibilityMeters.map { units.visibilityString($0) } ?? "—", icon: "eye")
-								StatCell(label: "Current", value: dive.current?.rawValue ?? "—", icon: "wind")
-							}
-						}
-
-						// Three rows of 2 (narrow screens)
-						Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-							GridRow {
-								StatCell(label: "Max Depth", value: units.depthString(dive.maxDepthMeters, decimals: 0), icon: "arrow.down.to.line")
-								StatCell(label: "Water Temp", value: dive.waterTempCelsius.map { units.tempString($0, decimals: 0) } ?? "—", icon: "thermometer.medium")
-							}
-							GridRow {
-								StatCell(label: "Duration", value: dive.durationFormatted, icon: "clock")
-								StatCell(label: "Surface Interval", value: dive.effectiveSurfaceIntervalSeconds == 0 ? "—" : dive.surfaceIntervalFormatted, icon: "water.waves.and.arrow.trianglehead.up")
-							}
-							GridRow {
-								StatCell(label: "Visibility", value: dive.visibilityMeters.map { units.visibilityString($0) } ?? "—", icon: "eye")
-								StatCell(label: "Current", value: dive.current?.rawValue ?? "—", icon: "wind")
+								.buttonStyle(.plain)
 							}
 						}
 					}
 
-					HStack {
-						Text("Cumulative bottom time: ")
-						// Includes bottom time from before the logbook began.
-					TimeCount(
-						seconds: PriorDiveHistory(bottomTimeMinutes: priorBottomTimeMinutes)
-							.totalBottomTimeSeconds(logged: dive.cumulativeDiveTimeSeconds),
-						font: .headline
-					)
-					}
+					VStack(alignment: .leading, spacing: 24) {
+						Divider()
 
-					// Depth Profile (if data available)
-					if let diveProfile = dive.diveProfile, !diveProfile.isEmpty {
-						// On a tile like the sections below, so the blue depth line, the overlay colors,
-						// and the axis labels stay readable against the dark fill instead of the gradient.
-						DepthProfileChart(samples: diveProfile, diveStartTime: dive.date)
-							.padding()
-							.tileBackground()
-					}
+						// Key Stats Grid — adapts column count to available width
+						// Optional stats use `.map { … } ?? "—"` so every layout always emits
+						// a StatCell, keeping the grid shape identical across all ViewThatFits
+						// candidates and showing a "—" placeholder when a value is missing.
+						ViewThatFits(in: .horizontal) {
+							// Single row (wide screens)
+							Grid(horizontalSpacing: 12, verticalSpacing: 12) {
+								GridRow {
+									StatCell(label: "Max Depth", value: units.depthString(dive.maxDepthMeters, decimals: 0), icon: "arrow.down.to.line")
+									StatCell(label: "Duration", value: dive.durationFormatted, icon: "clock")
+									StatCell(label: "Surface Interval", value: dive.effectiveSurfaceIntervalSeconds == 0 ? "—" : dive.surfaceIntervalFormatted, icon: "water.waves.and.arrow.trianglehead.up")
+									StatCell(label: "Water Temp", value: dive.waterTempCelsius.map { units.tempString($0, decimals: 0) } ?? "—", icon: "thermometer.medium")
+									StatCell(label: "Visibility", value: dive.visibilityMeters.map { units.visibilityString($0) } ?? "—", icon: "eye")
+									StatCell(label: "Current", value: dive.current?.rawValue ?? "—", icon: "wind")
+								}
+							}
 
-					// Detail Sections — adapts column count to available width
-					ViewThatFits(in: .horizontal) {
-						// Three-column layout (wide screens)
-						HStack(alignment: .top, spacing: 12) {
-							DetailColumn {
+							// Two rows of 3 (medium screens)
+							Grid(horizontalSpacing: 12, verticalSpacing: 12) {
+								GridRow {
+									StatCell(label: "Max Depth", value: units.depthString(dive.maxDepthMeters, decimals: 0), icon: "arrow.down.to.line")
+									StatCell(label: "Duration", value: dive.durationFormatted, icon: "clock")
+									StatCell(label: "Surface Interval", value: dive.effectiveSurfaceIntervalSeconds == 0 ? "—" : dive.surfaceIntervalFormatted, icon: "water.waves.and.arrow.trianglehead.up")
+								}
+								GridRow {
+									StatCell(label: "Water Temp", value: dive.waterTempCelsius.map { units.tempString($0, decimals: 0) } ?? "—", icon: "thermometer.medium")
+									StatCell(label: "Visibility", value: dive.visibilityMeters.map { units.visibilityString($0) } ?? "—", icon: "eye")
+									StatCell(label: "Current", value: dive.current?.rawValue ?? "—", icon: "wind")
+								}
+							}
+
+							// Three rows of 2 (narrow screens)
+							Grid(horizontalSpacing: 12, verticalSpacing: 12) {
+								GridRow {
+									StatCell(label: "Max Depth", value: units.depthString(dive.maxDepthMeters, decimals: 0), icon: "arrow.down.to.line")
+									StatCell(label: "Water Temp", value: dive.waterTempCelsius.map { units.tempString($0, decimals: 0) } ?? "—", icon: "thermometer.medium")
+								}
+								GridRow {
+									StatCell(label: "Duration", value: dive.durationFormatted, icon: "clock")
+									StatCell(label: "Surface Interval", value: dive.effectiveSurfaceIntervalSeconds == 0 ? "—" : dive.surfaceIntervalFormatted, icon: "water.waves.and.arrow.trianglehead.up")
+								}
+								GridRow {
+									StatCell(label: "Visibility", value: dive.visibilityMeters.map { units.visibilityString($0) } ?? "—", icon: "eye")
+									StatCell(label: "Current", value: dive.current?.rawValue ?? "—", icon: "wind")
+								}
+							}
+						}
+
+						HStack {
+							Text("Cumulative bottom time: ")
+							// Includes bottom time from before the logbook began.
+						TimeCount(
+							seconds: PriorDiveHistory(bottomTimeMinutes: priorBottomTimeMinutes)
+								.totalBottomTimeSeconds(logged: dive.cumulativeDiveTimeSeconds),
+							font: .headline
+						)
+						}
+
+						// Depth Profile (if data available)
+						if let diveProfile = dive.diveProfile, !diveProfile.isEmpty {
+							// On a tile like the sections below, so the blue depth line, the overlay colors,
+							// and the axis labels stay readable against the dark fill instead of the gradient.
+							DepthProfileChart(samples: diveProfile, diveStartTime: dive.date)
+								.padding()
+								.tileBackground()
+						}
+
+						// Detail Sections — adapts column count to available width
+						ViewThatFits(in: .horizontal) {
+							// Three-column layout (wide screens)
+							HStack(alignment: .top, spacing: 12) {
+								DetailColumn {
+									ConditionsSectionView(dive: dive, units: units)
+								}
+								DetailColumn {
+									ProtectionGasView(dive: dive, units: units)
+									GearSectionView(dive: dive)
+								}
+								DetailColumn {
+									BuddiesSectionView(dive: dive)
+									PeopleSectionView(dive: dive)
+								}
+							}
+
+							// Two-column layout
+							HStack(alignment: .top, spacing: 12) {
+								DetailColumn {
+									ConditionsSectionView(dive: dive, units: units)
+									BuddiesSectionView(dive: dive)
+									PeopleSectionView(dive: dive)
+								}
+								DetailColumn {
+									ProtectionGasView(dive: dive, units: units)
+									GearSectionView(dive: dive)
+								}
+							}
+
+							// Single-column layout (narrowest)
+							VStack(alignment: .leading, spacing: 12) {
 								ConditionsSectionView(dive: dive, units: units)
-							}
-							DetailColumn {
 								ProtectionGasView(dive: dive, units: units)
 								GearSectionView(dive: dive)
-							}
-							DetailColumn {
 								BuddiesSectionView(dive: dive)
 								PeopleSectionView(dive: dive)
 							}
 						}
 
-						// Two-column layout
-						HStack(alignment: .top, spacing: 12) {
-							DetailColumn {
-								ConditionsSectionView(dive: dive, units: units)
-								BuddiesSectionView(dive: dive)
-								PeopleSectionView(dive: dive)
+						// Notes & Map — side by side on wide screens only
+						ViewThatFits(in: .horizontal) {
+							HStack(alignment: .top, spacing: 12) {
+								DetailColumn {
+									if let site = dive.site {
+										DiveSiteMapView(
+											diveSite: site,
+											startLatitude: dive.startLatitude,
+											startLongitude: dive.startLongitude,
+											endLatitude: dive.endLatitude,
+											endLongitude: dive.endLongitude
+										)
+										.id(site.persistentModelID)
+									}
+								}
+								.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
+								DetailColumn {
+									NotesSectionView(dive: dive)
+									TagsSectionView(dive: dive)
+								}
+								.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
 							}
-							DetailColumn {
-								ProtectionGasView(dive: dive, units: units)
-								GearSectionView(dive: dive)
-							}
-						}
 
-						// Single-column layout (narrowest)
-						VStack(alignment: .leading, spacing: 12) {
-							ConditionsSectionView(dive: dive, units: units)
-							ProtectionGasView(dive: dive, units: units)
-							GearSectionView(dive: dive)
-							BuddiesSectionView(dive: dive)
-							PeopleSectionView(dive: dive)
-						}
-					}
-
-					// Notes & Map — side by side on wide screens only
-					ViewThatFits(in: .horizontal) {
-						HStack(alignment: .top, spacing: 12) {
-							DetailColumn {
+							VStack(alignment: .leading, spacing: 12) {
 								if let site = dive.site {
 									DiveSiteMapView(
 										diveSite: site,
@@ -242,83 +264,64 @@ struct DiveDetailView: View {
 									)
 									.id(site.persistentModelID)
 								}
-							}
-							.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
-							DetailColumn {
 								NotesSectionView(dive: dive)
 								TagsSectionView(dive: dive)
 							}
-							.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
 						}
 
-						VStack(alignment: .leading, spacing: 12) {
-							if let site = dive.site {
-								DiveSiteMapView(
-									diveSite: site,
-									startLatitude: dive.startLatitude,
-									startLongitude: dive.startLongitude,
-									endLatitude: dive.endLatitude,
-									endLongitude: dive.endLongitude
-								)
-								.id(site.persistentModelID)
+						VStack(alignment: .leading, spacing: 10) {
+							HStack {
+								Text("Photos")
+									.font(.title2.bold())
+								Spacer()
+								Button("Edit Photos", systemImage: "pencil") {
+									showingPhotoEditor = true
+								}
+								.labelStyle(.iconOnly)
 							}
-							NotesSectionView(dive: dive)
-							TagsSectionView(dive: dive)
-						}
-					}
-
-					VStack(alignment: .leading, spacing: 10) {
-						HStack {
-							Text("Photos")
-								.font(.title2.bold())
-							Spacer()
-							Button("Edit Photos", systemImage: "pencil") {
-								showingPhotoEditor = true
+							if let photos = dive.photos, !photos.isEmpty {
+								PhotoCarouselView(photos: photos)
+							} else {
+								// Normally, any missing data (notes, etc.) are simply not displayed. Here,
+								// we use a "no photos yet" message because we want to direct the user to
+								// the edit (pencil) icon on the label line. It is unique to the photos and
+								// is used nowhere else.
+								Text("No photos yet.")
 							}
-							.labelStyle(.iconOnly)
 						}
-						if let photos = dive.photos, !photos.isEmpty {
-							PhotoCarouselView(photos: photos)
-						} else {
-							// Normally, any missing data (notes, etc.) are simply not displayed. Here,
-							// we use a "no photos yet" message because we want to direct the user to
-							// the edit (pencil) icon on the label line. It is unique to the photos and
-							// is used nowhere else.
-							Text("No photos yet.")
-						}
-					}
 
-					if dive.logbookImageData != nil || dive.verificationSignatureData != nil {
-						ViewThatFits(in: .horizontal) {
-							HStack(alignment: .top, spacing: 12) {
-								if dive.logbookImageData != nil {
-									DetailColumn {
+						if dive.logbookImageData != nil || dive.verificationSignatureData != nil {
+							ViewThatFits(in: .horizontal) {
+								HStack(alignment: .top, spacing: 12) {
+									if dive.logbookImageData != nil {
+										DetailColumn {
+											LogbookThumbnailView(dive: dive, showingLogbookImage: $showingLogbookImage)
+										}
+										.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
+									}
+									if dive.verificationSignatureData != nil {
+										DetailColumn {
+											SignatureSectionView(dive: dive)
+										}
+										.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
+									}
+								}
+
+								VStack(alignment: .leading, spacing: 12) {
+									if dive.logbookImageData != nil {
 										LogbookThumbnailView(dive: dive, showingLogbookImage: $showingLogbookImage)
 									}
-									.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
-								}
-								if dive.verificationSignatureData != nil {
-									DetailColumn {
+									if dive.verificationSignatureData != nil {
 										SignatureSectionView(dive: dive)
 									}
-									.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
-								}
-							}
-
-							VStack(alignment: .leading, spacing: 12) {
-								if dive.logbookImageData != nil {
-									LogbookThumbnailView(dive: dive, showingLogbookImage: $showingLogbookImage)
-								}
-								if dive.verificationSignatureData != nil {
-									SignatureSectionView(dive: dive)
 								}
 							}
 						}
-					}
 
-					ImportSourceFooterView(dive: dive)
+						ImportSourceFooterView(dive: dive)
+					}
+					.padding([.horizontal, .bottom])
 				}
-				.padding()
 			}
 			.appGradientScrollBackground()
 #if os(macOS)

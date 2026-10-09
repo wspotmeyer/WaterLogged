@@ -35,74 +35,77 @@ struct TripDetailView: View {
 	var body: some View {
 		if trip.isLive {
 			ScrollView {
-				VStack(alignment: .leading, spacing: 24) {
-
+				VStack(spacing: 0) {
 					// Header
-					VStack(alignment: .leading, spacing: 6) {
-						Text(LocalizedStringKey(trip.name))
-							.font(.title.bold())
-						if !trip.location.isEmpty {
-							Label(trip.location, systemImage: "map")
+					DetailHeader(photo: Photo.cover(of: trip.photos), maxContentWidth: 700) {
+						VStack(alignment: .leading, spacing: 6) {
+							Text(LocalizedStringKey(trip.name))
+								.font(.title.bold())
+							if !trip.location.isEmpty {
+								Label(trip.location, systemImage: "map")
+									.font(.subheadline)
+							}
+							Label(trip.dateRangeFormatted, systemImage: "calendar")
 								.font(.subheadline)
 						}
-						Label(trip.dateRangeFormatted, systemImage: "calendar")
-							.font(.subheadline)
 					}
 
-					if hasDetails {
-						Divider()
+					VStack(alignment: .leading, spacing: 24) {
+						if hasDetails {
+							Divider()
 
-						// Details
-						DetailSection(title: "Details") {
-							if !trip.address.isEmpty {
-								DetailRow(label: "Residence", value: trip.address)
-							}
-							if let url = trip.url {
-								DetailRowContent {
-									Link("Trip Details", destination: url)
+							// Details
+							DetailSection(title: "Details") {
+								if !trip.address.isEmpty {
+									DetailRow(label: "Residence", value: trip.address)
 								}
-								.padding(.top, 2)
+								if let url = trip.url {
+									DetailRowContent {
+										Link("Trip Details", destination: url)
+									}
+									.padding(.top, 2)
+								}
 							}
 						}
-					}
 
-					// Map
-					if let lat = trip.latitude, let lon = trip.longitude {
-						CoordinateMapView(latitude: lat, longitude: lon) {
-							Marker(!trip.address.isEmpty ? trip.address : trip.name, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
-						}
-					}
-
-					VStack(alignment: .leading, spacing: 10) {
-						HStack {
-							Text("Photos")
-								.font(.title2.bold())
-							Spacer()
-							Button("Edit Photos", systemImage: "pencil") {
-								showingPhotoEditor = true
+						// Map
+						if let lat = trip.latitude, let lon = trip.longitude {
+							CoordinateMapView(latitude: lat, longitude: lon) {
+								Marker(!trip.address.isEmpty ? trip.address : trip.name, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
 							}
-							.labelStyle(.iconOnly)
 						}
-						if let photos = trip.photos, !photos.isEmpty {
-							PhotoCarouselView(photos: photos)
-						} else {
-							Text("No photos yet.")
-						}
-					}
 
-					// Notes
-					if !trip.notes.isEmpty {
-						DetailSection(title: "Notes") {
-							Text(LocalizedStringKey(trip.notes))
-								.foregroundStyle(.secondary)
+						VStack(alignment: .leading, spacing: 10) {
+							HStack {
+								Text("Photos")
+									.font(.title2.bold())
+								Spacer()
+								Button("Edit Photos", systemImage: "pencil") {
+									showingPhotoEditor = true
+								}
+								.labelStyle(.iconOnly)
+							}
+							if let photos = trip.photos, !photos.isEmpty {
+								PhotoCarouselView(photos: photos)
+							} else {
+								Text("No photos yet.")
+							}
 						}
-					}
 
-					DivesSection(dives: trip.dives)
+						// Notes
+						if !trip.notes.isEmpty {
+							DetailSection(title: "Notes") {
+								Text(LocalizedStringKey(trip.notes))
+									.foregroundStyle(.secondary)
+							}
+						}
+
+						DivesSection(dives: trip.dives)
+					}
+					.padding([.horizontal, .bottom])
+					.frame(maxWidth: 700)
+					.frame(maxWidth: .infinity)
 				}
-				.padding()
-				.frame(maxWidth: 700)
-				.frame(maxWidth: .infinity)
 			}
 			.appGradientScrollBackground()
 			.toolbar {

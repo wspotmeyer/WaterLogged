@@ -34,68 +34,71 @@ struct DiveSiteDetailView: View {
 	var body: some View {
 		if site.isLive {
 			ScrollView {
-				VStack(alignment: .leading, spacing: 24) {
-
+				VStack(spacing: 0) {
 					// Header
-					VStack(alignment: .leading, spacing: 6) {
-						Text(LocalizedStringKey(site.name))
-							.font(.title.bold())
+					DetailHeader(photo: Photo.cover(of: site.photos), maxContentWidth: 700) {
+						VStack(alignment: .leading, spacing: 6) {
+							Text(LocalizedStringKey(site.name))
+								.font(.title.bold())
 
-						if !site.region.isEmpty || !site.country.isEmpty {
-							HStack(spacing: 12) {
-								if !site.region.isEmpty {
-									Label(site.region, systemImage: "map")
-								}
-								if !site.country.isEmpty {
-									if let flag = CountryFlag.emoji(for: site.country) {
-										Text("\(flag) \(site.country)")
-									} else {
-										Label(site.country, systemImage: "globe")
+							if !site.region.isEmpty || !site.country.isEmpty {
+								HStack(spacing: 12) {
+									if !site.region.isEmpty {
+										Label(site.region, systemImage: "map")
+									}
+									if !site.country.isEmpty {
+										if let flag = CountryFlag.emoji(for: site.country) {
+											Text("\(flag) \(site.country)")
+										} else {
+											Label(site.country, systemImage: "globe")
+										}
 									}
 								}
+								.font(.subheadline)
 							}
-							.font(.subheadline)
 						}
 					}
 
-					Divider()
+					VStack(alignment: .leading, spacing: 24) {
+						Divider()
 
-					DiveSiteMapView(diveSite: site)
-						.id(site.persistentModelID)
+						DiveSiteMapView(diveSite: site)
+							.id(site.persistentModelID)
 
-					VStack(alignment: .leading, spacing: 10) {
-						HStack {
-							Text("Photos")
-								.font(.title2.bold())
-							Spacer()
-							Button("Edit Photos", systemImage: "pencil") {
-								showingPhotoEditor = true
-							}
-							.labelStyle(.iconOnly)
-						}
-						if let photos = site.photos, !photos.isEmpty {
-							PhotoCarouselView(photos: photos)
-						} else {
-							Text("No photos yet.")
-						}
-					}
-
-					if !site.notes.isEmpty {
 						VStack(alignment: .leading, spacing: 10) {
-							DetailSection(title: "Notes") {
-								Text(LocalizedStringKey(site.notes))
-									.foregroundStyle(.secondary)
+							HStack {
+								Text("Photos")
+									.font(.title2.bold())
+								Spacer()
+								Button("Edit Photos", systemImage: "pencil") {
+									showingPhotoEditor = true
+								}
+								.labelStyle(.iconOnly)
+							}
+							if let photos = site.photos, !photos.isEmpty {
+								PhotoCarouselView(photos: photos)
+							} else {
+								Text("No photos yet.")
 							}
 						}
+
+						if !site.notes.isEmpty {
+							VStack(alignment: .leading, spacing: 10) {
+								DetailSection(title: "Notes") {
+									Text(LocalizedStringKey(site.notes))
+										.foregroundStyle(.secondary)
+								}
+							}
+						}
+
+						TripsSection(dives: site.dives)
+
+						DivesSection(dives: site.dives)
 					}
-
-					TripsSection(dives: site.dives)
-
-					DivesSection(dives: site.dives)
+					.padding([.horizontal, .bottom])
+					.frame(maxWidth: 700)
+					.frame(maxWidth: .infinity)
 				}
-				.padding()
-				.frame(maxWidth: 700)
-				.frame(maxWidth: .infinity)
 			}
 			.appGradientScrollBackground()
 			.toolbar {
