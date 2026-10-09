@@ -82,6 +82,7 @@ struct AboutView: View {
 						}
 						.font(.footnote)
 						.frame(maxWidth: .infinity, alignment: .leading)
+						NavigationLink(LicenseDocument.gpl3.title, value: LicenseDocument.gpl3)
 					}
 
 					Section("Open Source Libraries") {
@@ -90,6 +91,8 @@ struct AboutView: View {
 							Group {
 								Text("Dive computer communication library by Jef Driesen.")
 								Text("Licensed under the GNU Lesser General Public License v2.1 or later.")
+								// LGPL §6: say where the library's corresponding source can be obtained.
+								Text("The complete source of the libdivecomputer version built into \(appName) is included in its GitHub repository.")
 							}
 							.foregroundStyle(.secondary)
 
@@ -99,6 +102,7 @@ struct AboutView: View {
 						}
 						.font(.footnote)
 						.frame(maxWidth: .infinity, alignment: .leading)
+						NavigationLink(LicenseDocument.lgpl21.title, value: LicenseDocument.lgpl21)
 					}
 
 					Section("Icons") {
@@ -119,6 +123,9 @@ struct AboutView: View {
 			.frame(maxWidth: 500)
 			.frame(maxWidth: .infinity)
 			.appGradientScrollBackground()
+			.navigationDestination(for: LicenseDocument.self) { license in
+				LicenseTextView(license: license)
+			}
 			.navigationTitle("About")
 #if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)

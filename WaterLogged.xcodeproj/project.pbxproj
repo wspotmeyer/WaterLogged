@@ -611,6 +611,7 @@
 				);
 				"INFOPLIST_FILE[sdk=*]" = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WaterLogged;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
@@ -686,6 +687,7 @@
 				);
 				"INFOPLIST_FILE[sdk=*]" = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WaterLogged;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "WaterLogged uses Bluetooth to connect to your dive computer and import dive logs.";
