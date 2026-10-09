@@ -60,6 +60,11 @@ struct DetailHeader<Content: View>: View {
 
 	var body: some View {
 		content
+			// Keep the content at its natural height. The minimum-height frame
+			// below would otherwise hand its spare height to any vertically
+			// flexible child, stretching e.g. `DiveNumberBadge`, which fills its
+			// row's height to match the title beside it.
+			.fixedSize(horizontal: false, vertical: true)
 			.padding([.horizontal, .top])
 			// The gap the detail pages leave between sections, kept inside the
 			// header so the photo fades out below the last line of text.
