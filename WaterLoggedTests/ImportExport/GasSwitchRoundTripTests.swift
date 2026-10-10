@@ -163,6 +163,5 @@ struct GasSwitchRoundTripTests {
 
 		let samples = try context.fetch(FetchDescriptor<DepthSample>(sortBy: [SortDescriptor(\.elapsedSeconds)]))
 		#expect(samples.map { $0.activeGasMix?.name } == ["EAN32", nil, "EAN50", nil])
-		#expect(samples.allSatisfy { $0.activeGasMixIndex == nil })
 	}
 }

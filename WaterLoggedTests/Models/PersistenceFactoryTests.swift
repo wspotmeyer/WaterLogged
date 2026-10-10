@@ -114,6 +114,24 @@ struct PersistenceFactoryTests {
 		#expect(tank.gasMix === survivor)
 	}
 
+	/// Gas switches in a dive profile follow their mix to the survivor, so a
+	/// sync merge doesn't drop them.
+	@Test func gasMixMergeDuplicatesMovesGasSwitchesToSurvivor() throws {
+		let survivor = GasMix(externalId: "A", name: "EAN32", oxygenPercent: 32)
+		let duplicate = GasMix(externalId: "B", name: "EAN32", oxygenPercent: 32)
+		context.insert(survivor)
+		context.insert(duplicate)
+		let sample = DepthSample(elapsedSeconds: 0, depthMeters: 5, activeGasMix: duplicate)
+		context.insert(sample)
+		try context.save()
+
+		let removed = try GasMix.mergeDuplicates(in: context)
+		try context.save()
+
+		#expect(removed == 1)
+		#expect(sample.activeGasMix === survivor)
+	}
+
 	/// Same gases under different names may be deliberate, so they're kept apart.
 	@Test func gasMixMergeDuplicatesKeepsDifferentlyNamedMixes() throws {
 		context.insert(GasMix(externalId: "A", name: "EAN32", oxygenPercent: 32))
