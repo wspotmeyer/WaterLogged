@@ -117,6 +117,16 @@ struct DiveDetailView: View {
 								}
 								.buttonStyle(.plain)
 							}
+							if !dive.tags.isEmpty {
+								// Scrolls rather than squeezing the capsules when the tags outgrow one line.
+								ScrollView(.horizontal) {
+									TagsListView(tags: dive.tags)
+								}
+								// .never rather than .hidden, so macOS's always-show-scroll-bars setting
+								// doesn't add a scroller to this one-line row (as in DiveTagFilterBar).
+								.scrollIndicators(.never)
+								.scrollEdgeEffectStyle(.soft, for: .horizontal)
+							}
 						}
 					}
 
@@ -248,7 +258,6 @@ struct DiveDetailView: View {
 								.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
 								DetailColumn {
 									NotesSectionView(dive: dive)
-									TagsSectionView(dive: dive)
 								}
 								.frame(idealWidth: 400, maxWidth: .infinity, alignment: .leading)
 							}
@@ -265,7 +274,6 @@ struct DiveDetailView: View {
 									.id(site.persistentModelID)
 								}
 								NotesSectionView(dive: dive)
-								TagsSectionView(dive: dive)
 							}
 						}
 
@@ -814,20 +822,6 @@ private struct ImportSourceFooterView: View {
 			.font(.footnote)
 			.foregroundStyle(.secondary)
 			.frame(maxWidth: .infinity, alignment: .leading)
-		}
-	}
-}
-
-private struct TagsSectionView: View {
-	let dive: Dive
-
-	var body: some View {
-		if !dive.tags.isEmpty {
-			VStack(alignment: .leading, spacing: 10) {
-				Text("Tags")
-					.font(.title2.bold())
-				TagsListView(tags: dive.tags)
-			}
 		}
 	}
 }
