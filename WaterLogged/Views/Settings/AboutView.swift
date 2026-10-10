@@ -72,7 +72,7 @@ struct AboutView: View {
 
 					Section {
 						LabeledContent("Version", value: appVersion)
-						LabeledContent("Build", value: buildNumber)
+						LabeledContent("Build", value: BuildInfo.buildDescription(buildNumber: buildNumber, commit: BuildInfo.commit()))
 						VStack(alignment: .leading) {
 							Text("Source code for \(appName) is licensed under the GNU General Public License v3.")
 								.foregroundStyle(.secondary)

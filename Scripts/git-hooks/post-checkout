@@ -1,0 +1,5 @@
+#!/bin/sh
+# Keeps the commit shown on WaterLogged's About screen current.
+# See Scripts/write-build-commit.sh. Enabled by:
+#   git config core.hooksPath Scripts/git-hooks
+"$(git rev-parse --show-toplevel)/Scripts/write-build-commit.sh"
