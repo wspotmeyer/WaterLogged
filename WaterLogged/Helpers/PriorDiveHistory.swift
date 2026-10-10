@@ -23,7 +23,7 @@ import Foundation
 
 /// Dives and bottom time the diver logged before their first entry in WaterLogged — for divers
 /// whose earlier records are partial, on paper, or spread across other apps. These are added to
-/// the logbook-wide totals (dive count and bottom time) wherever statistics are displayed.
+/// the log-book-wide totals (dive count and bottom time) wherever statistics are displayed.
 ///
 /// Both values are stored in `UserDefaults` under `diveCountKey` and `bottomTimeMinutesKey`,
 /// read by SwiftUI through `@AppStorage` and by non-view code through `current`. `nonisolated`
@@ -32,7 +32,7 @@ nonisolated struct PriorDiveHistory: Equatable, Sendable {
 	static let diveCountKey = "priorDiveCount"
 	static let bottomTimeMinutesKey = "priorBottomTimeMinutes"
 
-	/// No prior history; totals are the logbook's alone.
+	/// No prior history; totals are the log book's alone.
 	static let none = PriorDiveHistory()
 
 	var diveCount: Int = 0
@@ -48,7 +48,7 @@ nonisolated struct PriorDiveHistory: Equatable, Sendable {
 	}
 
 	/// Prior bottom time in seconds, the unit `Dive.durationSeconds` uses. Negative stored values
-	/// are treated as zero so a bad entry can never reduce the logbook's own totals.
+	/// are treated as zero so a bad entry can never reduce the log book's own totals.
 	var bottomTimeSeconds: Int {
 		max(bottomTimeMinutes, 0) * 60
 	}

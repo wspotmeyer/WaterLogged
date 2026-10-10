@@ -21,11 +21,11 @@
 
 import Foundation
 
-/// Decides which dives downloaded from a dive computer are not yet in the logbook.
+/// Decides which dives downloaded from a dive computer are not yet in the log book.
 ///
-/// This matches against the dives the logbook actually holds rather than against a
+/// This matches against the dives the log book actually holds rather than against a
 /// stored "last import" date. A date watermark only knows about previous dive
-/// computer imports, so a logbook built from UDDF files or hand-entered dives looks
+/// computer imports, so a log book built from UDDF files or hand-entered dives looks
 /// empty to it and the computer's whole log gets offered again.
 ///
 /// Dives are matched on start time. A dive computer records minutes while other
@@ -39,7 +39,7 @@ enum ImportedDiveMatcher {
 	static let dateTolerance: TimeInterval = 120
 
 	/// The subset of `parsedDives` whose start times don't match a dive already
-	/// in the logbook, in the order they were downloaded.
+	/// in the log book, in the order they were downloaded.
 	static func newDives(
 		from parsedDives: [ParsedDiveData],
 		existingDates: [Date]
@@ -52,7 +52,7 @@ enum ImportedDiveMatcher {
 		}
 	}
 
-	/// Whether a dive starting at `date` is already in the logbook.
+	/// Whether a dive starting at `date` is already in the log book.
 	/// `sortedExistingDates` must be in ascending order.
 	static func isAlreadyImported(
 		date: Date,

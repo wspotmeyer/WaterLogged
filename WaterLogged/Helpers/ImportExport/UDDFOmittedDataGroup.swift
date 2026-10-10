@@ -63,7 +63,7 @@ nonisolated enum UDDFOmittedDataGroup: String, CaseIterable, Identifiable, Senda
 			case .dives:
 			"""
 			Titles, dive guide, operator, boat, weather, water type, current, wave conditions, suit type, \
-			entry and exit coordinates, tags, which certification a dive is linked to, logbook page scans, \
+			entry and exit coordinates, tags, which certification a dive is linked to, log book page scans, \
 			verification signatures, and time-to-surface readings in depth profiles.
 			"""
 				// The mixes are exported; only the per-dive link can be lost, because UDDF

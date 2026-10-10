@@ -31,13 +31,13 @@ struct WelcomeBar: View {
 	/// for the session (see `WaterLoggedStore`), so this doesn't need to be observed.
 	var isCloudSyncActive = WaterLoggedStore.isCloudSyncActive
 
-	/// The getting-started text. While iCloud sync is on, an empty logbook may just
+	/// The getting-started text. While iCloud sync is on, an empty log book may just
 	/// mean dives from another device haven't downloaded yet, so say that first
 	/// instead of suggesting the user turn sync on.
 	static func message(isCloudSyncActive: Bool) -> String {
 		isCloudSyncActive
-		? "Your logbook will appear here once iCloud finishes syncing. You can also enter or import dives from the Dives tab."
-		: "Enter or import dives from the Dives tab, restore a backup from Tools, or turn on iCloud sync in Settings to bring in your logbook from another device."
+		? "Your log book will appear here once iCloud finishes syncing. You can also enter or import dives from the Dives tab."
+		: "Enter or import dives from the Dives tab, restore a backup from Tools, or turn on iCloud sync in Settings to bring in your log book from another device."
 	}
 
 	var body: some View {
@@ -75,7 +75,7 @@ struct StatisticsBar: View {
 
 	private var units: UnitFormatter { UnitFormatter(system: unitSystem) }
 
-	/// Dives and bottom time from before the logbook began, added to the totals.
+	/// Dives and bottom time from before the log book began, added to the totals.
 	private var priorHistory: PriorDiveHistory {
 		PriorDiveHistory(diveCount: priorDiveCount, bottomTimeMinutes: priorBottomTimeMinutes)
 	}

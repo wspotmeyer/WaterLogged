@@ -21,7 +21,7 @@
 
 import SwiftUI
 
-/// What the dive list shows in place of its rows when there is nothing to show: an empty logbook, a
+/// What the dive list shows in place of its rows when there is nothing to show: an empty log book, a
 /// search that matched nothing, or a tag filter that excluded everything.
 ///
 /// These replace the `List`, which is what normally paints the app gradient, so this paints it itself —
@@ -34,7 +34,7 @@ struct DiveListEmptyState: View {
 	/// The tags being filtered on. A binding because this view offers to clear them.
 	@Binding var selectedTags: Set<String>
 
-	/// True when the logbook holds no dives at all, as opposed to the search or tags hiding them.
+	/// True when the log book holds no dives at all, as opposed to the search or tags hiding them.
 	let logbookIsEmpty: Bool
 
 	var body: some View {

@@ -40,7 +40,7 @@ struct StatsView: View {
 
 	private var units: UnitFormatter { UnitFormatter(system: unitSystem) }
 
-	/// Dives and bottom time from before the logbook began, added to the summary totals only —
+	/// Dives and bottom time from before the log book began, added to the summary totals only —
 	/// they can't be attributed to a year, country, buddy, or tag, so the charts leave them out.
 	private var priorHistory: PriorDiveHistory {
 		PriorDiveHistory(diveCount: priorDiveCount, bottomTimeMinutes: priorBottomTimeMinutes)

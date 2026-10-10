@@ -23,7 +23,7 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 
-/// A UDDF file containing the selected logbook data, wrapped for sharing.
+/// A UDDF file containing the selected log book data, wrapped for sharing.
 struct ShareableUDDFExport: Transferable {
 	let url: URL
 
@@ -34,7 +34,7 @@ struct ShareableUDDFExport: Transferable {
 	}
 }
 
-/// Exports a chosen selection of logbook data — dives, sites, buddies,
+/// Exports a chosen selection of log book data — dives, sites, buddies,
 /// equipment and so on — to a UDDF file, then lets the user share it
 /// (iOS/iPadOS) or save it via the file exporter (macOS).
 struct UDDFExportToolView: View {

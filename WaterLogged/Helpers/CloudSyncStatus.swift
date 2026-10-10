@@ -28,7 +28,7 @@ import Foundation
 enum CloudSyncStatus: Equatable {
 	/// Sync is on and the container is syncing through CloudKit.
 	case syncing
-	/// Sync is off; the logbook lives on this device only.
+	/// Sync is off; the log book lives on this device only.
 	case off
 	/// Sync was requested at launch, but CloudKit couldn't be set up.
 	case unavailable
@@ -55,15 +55,15 @@ enum CloudSyncStatus: Equatable {
 	var message: String {
 		switch self {
 			case .syncing:
-				"Your logbook syncs with other devices signed in to the same iCloud account."
+				"Your log book syncs with other devices signed in to the same iCloud account."
 			case .off:
-				"Your logbook is stored on this device only."
+				"Your log book is stored on this device only."
 			case .unavailable:
 				"iCloud sync couldn’t start. Make sure you’re signed in to iCloud, then quit and reopen WaterLogged."
 			case .pendingRelaunch(let turningOn):
 				turningOn
 				? "Quit and reopen WaterLogged to start syncing with iCloud."
-				: "Quit and reopen WaterLogged to stop syncing with iCloud. Your logbook stays on this device."
+				: "Quit and reopen WaterLogged to stop syncing with iCloud. Your log book stays on this device."
 		}
 	}
 }

@@ -46,7 +46,7 @@ struct FingerprintStoreTests {
 		let key = scratchKey()
 		defer { FingerprintStore.remove(forDeviceKey: key) }
 
-		// 16 bytes, the size of an Oceanic logbook entry, including a zero and a
+		// 16 bytes, the size of an Oceanic log book entry, including a zero and a
 		// high byte so any text mangling would show up.
 		let blob = Data([0x00, 0xFF, 0x10, 0x7F, 0x80, 0x01, 0x02, 0x03,
 						 0xAB, 0xCD, 0xEF, 0x00, 0x12, 0x34, 0x56, 0x78])

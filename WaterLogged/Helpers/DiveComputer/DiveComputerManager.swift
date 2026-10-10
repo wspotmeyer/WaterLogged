@@ -47,7 +47,7 @@ final class DiveComputerManager {
 	var discoveredDevices: [DiscoveredDevice] = []
 	var downloadedDives: [ParsedDiveData] = []
 
-	/// Whether to skip dives the logbook already holds. Also controls whether the
+	/// Whether to skip dives the log book already holds. Also controls whether the
 	/// device is given its stored fingerprint, which lets it stop transferring
 	/// early; turning this off forces a full re-read of the computer's log.
 	var downloadNewOnly = true
@@ -157,7 +157,7 @@ final class DiveComputerManager {
 
 	/// Connect to a discovered device and download dives.
 	///
-	/// The context is needed to skip dives the logbook already holds when
+	/// The context is needed to skip dives the log book already holds when
 	/// `downloadNewOnly` is set.
 	func connectAndDownload(
 		_ device: DiscoveredDevice,
@@ -220,7 +220,7 @@ final class DiveComputerManager {
 		// Hand the device the newest dive we already downloaded from it, so it can
 		// stop reading as soon as it reaches that dive instead of streaming its
 		// whole log. Deliberately skipped when the user wants everything, which is
-		// how a dive deleted from the logbook can be downloaded again.
+		// how a dive deleted from the log book can be downloaded again.
 		let storedFingerprint = downloadNewOnly
 		? connectedDeviceKey.flatMap { FingerprintStore.fingerprint(forDeviceKey: $0) }
 		: nil
@@ -246,8 +246,8 @@ final class DiveComputerManager {
 			wasIncremental: storedFingerprint != nil
 		)
 
-		// Drop the dives the logbook already holds, if the user asked for new
-		// dives only. This compares against the logbook itself rather than a
+		// Drop the dives the log book already holds, if the user asked for new
+		// dives only. This compares against the log book itself rather than a
 		// stored last-import date, so dives that arrived by UDDF or by hand
 		// are recognized too.
 		let dives: [ParsedDiveData]
@@ -335,7 +335,7 @@ final class DiveComputerManager {
 		return (write, writeType, notify)
 	}
 
-	/// The start dates of every dive already in the logbook, whatever brought
+	/// The start dates of every dive already in the log book, whatever brought
 	/// them in. Used to recognize dives the device is offering for a second time.
 	private func existingDiveDates(in context: ModelContext) -> [Date] {
 		let descriptor = FetchDescriptor<Dive>()

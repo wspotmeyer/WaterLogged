@@ -32,7 +32,7 @@ struct StatsEntry: TimelineEntry {
 ///
 /// The timeline is a single entry with a `.never` refresh policy: the app pushes
 /// updates by calling `WidgetCenter.shared.reloadAllTimelines()` from
-/// `StatsWidgetCoordinator` whenever the logbook changes, so the widget never
+/// `StatsWidgetCoordinator` whenever the log book changes, so the widget never
 /// needs to poll. The same provider backs every stats widget, since they all
 /// render from the one shared snapshot.
 struct StatsProvider: TimelineProvider {

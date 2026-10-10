@@ -39,7 +39,7 @@ enum EquipmentAutoAdd {
 		autoAddToDives && !isRetired
 	}
 
-	/// The equipment to preselect for a new dive, out of everything in the logbook.
+	/// The equipment to preselect for a new dive, out of everything in the log book.
 	///
 	/// The only member that touches `Equipment`, so the only one that stays on the main actor.
 	static func preselection(from equipment: [Equipment]) -> Set<PersistentIdentifier> {

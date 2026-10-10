@@ -39,7 +39,7 @@ struct ParsedDiveData: Sendable {
 
 	/// libdivecomputer's opaque per-dive identifier, as handed to the dive
 	/// callback. Its size and meaning are backend-specific (for Oceanic it is
-	/// the raw logbook entry), so it is only ever compared or handed straight
+	/// the raw log book entry), so it is only ever compared or handed straight
 	/// back to `dc_device_set_fingerprint` — never interpreted.
 	var fingerprint: Data?
 }

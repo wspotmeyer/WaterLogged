@@ -21,7 +21,7 @@
 
 import Foundation
 
-/// One independently selectable slice of the logbook in a UDDF export.
+/// One independently selectable slice of the log book in a UDDF export.
 ///
 /// Categories are self-contained: excluding one only drops that data and any
 /// cross-references to it, so a partial export always remains valid UDDF.
@@ -68,16 +68,16 @@ nonisolated enum UDDFExportCategory: String, CaseIterable, Identifiable, Sendabl
 typealias UDDFExportSelection = Set<UDDFExportCategory>
 
 nonisolated extension UDDFExportSelection {
-	/// Every category — the default for a full-logbook export.
+	/// Every category — the default for a full-log-book export.
 	static var all: UDDFExportSelection { UDDFExportSelection(UDDFExportCategory.allCases) }
 
 	/// A file name (without extension) describing the selection: a single
-	/// category names itself, anything broader is just the logbook.
+	/// category names itself, anything broader is just the log book.
 	var suggestedFileName: String {
 		if count == 1, let only = first {
 			"WaterLogged \(String(localized: only.title))"
 		} else {
-			"WaterLogged Logbook"
+			"WaterLogged Log Book"
 		}
 	}
 }

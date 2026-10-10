@@ -142,7 +142,7 @@ private extension Data {
 	}
 }
 
-/// Seeds a context with a fully-featured logbook (dives with samples/tanks,
+/// Seeds a context with a fully-featured log book (dives with samples/tanks,
 /// sites, gases, trips, buddies, equipment with service history, certifications,
 /// owner, and photos with real image bytes) so backup round-trips can verify
 /// deep fidelity across every model type.

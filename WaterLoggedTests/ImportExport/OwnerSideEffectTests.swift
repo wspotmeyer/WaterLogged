@@ -24,7 +24,7 @@ import Foundation
 import SwiftData
 @testable import WaterLogged
 
-/// Import, UDDF export and backup must only create a logbook owner when they
+/// Import, UDDF export and backup must only create a log book owner when they
 /// actually have owner data to store — and the read-only paths must never
 /// create, merge or delete owner records.
 @MainActor
@@ -35,7 +35,7 @@ struct OwnerSideEffectTests {
 		try ModelContext(container).fetchCount(FetchDescriptor<LogbookOwner>())
 	}
 
-	/// A saved logbook with one dive and no owner record.
+	/// A saved log book with one dive and no owner record.
 	private func ownerlessLogbook() throws -> ModelContainer {
 		let container = try TestModelContainer.make()
 		container.mainContext.insert(Dive(title: "Solo", maxDepthMeters: 12, durationSeconds: 1_800))

@@ -461,9 +461,9 @@ struct UDDFExportSelectionTests {
 	}
 
 	@Test func broaderSelectionsUseTheGenericFileName() {
-		#expect(UDDFExportSelection.all.suggestedFileName == "WaterLogged Logbook")
-		#expect(UDDFExportSelection([.dives, .diveSites]).suggestedFileName == "WaterLogged Logbook")
-		#expect(UDDFExportSelection().suggestedFileName == "WaterLogged Logbook")
+		#expect(UDDFExportSelection.all.suggestedFileName == "WaterLogged Log Book")
+		#expect(UDDFExportSelection([.dives, .diveSites]).suggestedFileName == "WaterLogged Log Book")
+		#expect(UDDFExportSelection().suggestedFileName == "WaterLogged Log Book")
 	}
 
 	@Test func countsOnlyReportSelectedCategories() {

@@ -187,7 +187,7 @@ enum UDDFFixtures {
 	  </diver>
 	""")
 
-	/// Dive-less file describing just the logbook owner.
+	/// Dive-less file describing just the log book owner.
 	static let ownerOnly = document("""
 	  <diver>
 		<owner id="owner-1">

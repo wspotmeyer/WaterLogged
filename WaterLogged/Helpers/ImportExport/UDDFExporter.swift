@@ -22,7 +22,7 @@
 import Foundation
 import SwiftData
 
-/// Exports the complete WaterLogged logbook as a UDDF 3.2.2 XML file.
+/// Exports the complete WaterLogged log book as a UDDF 3.2.2 XML file.
 ///
 /// UDDF uses SI units internally:
 /// - Depth: meters
@@ -59,7 +59,7 @@ struct UDDFExporter {
 		}
 	}
 
-	/// Exports the selected parts of the logbook to a UDDF file at the given URL.
+	/// Exports the selected parts of the log book to a UDDF file at the given URL.
 	static func export(
 		from context: ModelContext,
 		selecting selection: UDDFExportSelection = .all,
@@ -69,7 +69,7 @@ struct UDDFExporter {
 		try xml.write(to: destinationURL, atomically: true, encoding: .utf8)
 	}
 
-	/// Builds the selected parts of the logbook as a UDDF 3.2.2 XML string.
+	/// Builds the selected parts of the log book as a UDDF 3.2.2 XML string.
 	/// Split out from `export(from:selecting:to:)` so tests and round-trip
 	/// checks can assert on the XML content directly, with no filesystem I/O.
 	///

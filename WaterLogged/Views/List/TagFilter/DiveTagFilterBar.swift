@@ -32,7 +32,7 @@ import SwiftData
 /// which is fine, and the list keeps `.appGradientScrollBackground()` so the gradient stays unbroken.
 ///
 /// It paints no background of its own and removes itself entirely when no dive carries a tag, so a fresh
-/// logbook shows no empty strip.
+/// log book shows no empty strip.
 ///
 /// This owns its own query so a dive edit only invalidates the strip rather than the whole split view.
 /// The query covers *all* dives, not the filtered ones — the vocabulary has to keep offering tags whose

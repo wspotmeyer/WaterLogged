@@ -54,7 +54,7 @@ and start coding. Just remember the give-back requirements of the **GNU General 
 - **Buddies** — a buddy list you can populate from your contacts, with photos and per-buddy dive history.
 - **Equipment and service records** — track gear by type, keep its service history, and attach it to individual dives.
 - **Gas mixes and tanks** — reusable gas mix definitions with per-component fractions, plus per-dive tank entries.
-- **Logbook owner and certifications** — your own diver profile and your certification history, with card images.
+- **Log book owner and certifications** — your own diver profile and your certification history, with card images.
 - **Photos** — attach photos to dives, dive sites, and buddies, view them full screen, and add, delete, or reorder
   them in a dedicated photo editing sheet.
 - **Scanned log pages and signatures** — keep an image of the original paper log page and a captured verification
@@ -74,7 +74,7 @@ and start coding. Just remember the give-back requirements of the **GNU General 
 A dedicated statistics view summarizes total dives, cumulative bottom time, maximum depth, countries visited, dive
 sites visited, and trips, plus charts for dives per year, dives by country and region, dives by buddy, and dives by
 tag, and donut charts breaking dives down by water type and gas mix. Dives and bottom time logged before you started
-using WaterLogged can be entered once in Settings as prior dive history and are added to the logbook-wide totals.
+using WaterLogged can be entered once in Settings as prior dive history and are added to the log-book-wide totals.
 
 ### Units and appearance
 
@@ -84,8 +84,8 @@ can be locked to light or dark.
 
 ### iCloud sync
 
-Turn on **Sync with iCloud** in Settings to keep your logbook in step across your iPhone, iPad, and Mac through your
-own private iCloud database. Sync is off by default; with it off, your logbook stays on the device.
+Turn on **Sync with iCloud** in Settings to keep your log book in step across your iPhone, iPad, and Mac through your
+own private iCloud database. Sync is off by default; with it off, your log book stays on the device.
 
 ## Importing dives
 
@@ -93,20 +93,20 @@ WaterLogged is great for consolidating dive data that already exists somewhere e
 
 | Source | How it works |
 | --- | --- |
-| **Dive computers over Bluetooth** | Direct download from a Bluetooth LE dive computer using the [libdivecomputer](https://www.libdivecomputer.org) library, which is compiled into the app. Hundreds of dive computer models across all the major manufacturers are recognized; scanning, connecting, transfer progress, and a confirmation step before anything is written are all in-app. With **New Dives Only**, dives already in your logbook are recognized by their start time and skipped, and a per-computer fingerprint lets the transfer stop as soon as it reaches dives it has already downloaded. |
+| **Dive computers over Bluetooth** | Direct download from a Bluetooth LE dive computer using the [libdivecomputer](https://www.libdivecomputer.org) library, which is compiled into the app. Hundreds of dive computer models across all the major manufacturers are recognized; scanning, connecting, transfer progress, and a confirmation step before anything is written are all in-app. With **New Dives Only**, dives already in your log book are recognized by their start time and skipped, and a per-computer fingerprint lets the transfer stop as soon as it reaches dives it has already downloaded. |
 | **UDDF files** | Import a UDDF file exported by another dive log app. Both UDDF 2.x and 3.x are parsed, and files don't have to contain dives — a file of only dive sites, buddies, equipment, or gas mixes imports fine. |
-| **Backup archives** | Restore a complete logbook, including photos and log page images, from an archive created by WaterLogged's own Backup tool. |
+| **Backup archives** | Restore a complete log book, including photos and log page images, from an archive created by WaterLogged's own Backup tool. |
 | **Manual entry** | Full entry forms for every record type, reachable from the app's Add buttons and, on macOS, from the `File ▸ New` menu with keyboard shortcuts. |
 
 ## Exporting data
 
-- **UDDF export** — export your logbook as a standards-conformant UDDF file that other dive log software can read.
+- **UDDF export** — export your log book as a standards-conformant UDDF file that other dive log software can read.
   Export is validated against the UDDF 3.2.2 schema, and you choose which categories to include (dives, sites,
   buddies, equipment, gas mixes, and so on); anything you leave out is omitted along with the links to it. Because the
   UDDF format can't represent everything WaterLogged stores, the export tool lists exactly what it has to leave
   behind.
 - **Backup and restore** — a complete, lossless backup written as a single ZIP archive containing a UDDF file, an
-  extras file for the data UDDF cannot express, and all of your saved media. Restore replaces the logbook from that
+  extras file for the data UDDF cannot express, and all of your saved media. Restore replaces the log book from that
   archive, preserving record identities so relationships survive the round trip.
 - **Sharing** — exports are handed off through the standard share sheet on iOS and iPadOS and the standard save panel
   on macOS.
@@ -135,7 +135,7 @@ restore round trips, tag filtering, statistics snapshots, and model logic.
 
 - **SwiftUI** for all user interface code, with `@Observable` classes for shared state.
 - **SwiftData** for persistence, optionally mirrored to the user's private iCloud database through CloudKit, with models for dives, depth samples, dive sites, trips, buddies, equipment, service
-  records, gas mixes, tanks, certifications, photos, and the logbook owner.
+  records, gas mixes, tanks, certifications, photos, and the log book owner.
 - **Modern Swift concurrency** throughout; the module defaults to `@MainActor` isolation, and the C dive computer
   bridge explicitly opts out where it must run off the main actor.
 - **App Intents** for Spotlight indexing and deep-link navigation.

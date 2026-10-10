@@ -20,7 +20,7 @@
 import Testing
 @testable import WaterLogged
 
-/// The home screen's empty-logbook message adapts to whether iCloud sync is on.
+/// The home screen's empty-log-book message adapts to whether iCloud sync is on.
 @MainActor
 @Suite
 struct WelcomeBarMessageTests {

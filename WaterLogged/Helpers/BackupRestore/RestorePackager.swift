@@ -27,7 +27,7 @@ import SwiftData
 /// The archive is expected to contain:
 /// - `logbook.uddf` — UDDF 3.2.2 file with standard dive data
 /// - `extras.xml` — WaterLogged-proprietary XML for fields not in UDDF
-/// - `media/` — images (dive photos, logbook scans, signatures, equipment/buddy/cert images)
+/// - `media/` — images (dive photos, log book scans, signatures, equipment/buddy/cert images)
 ///
 /// Entities are cross-referenced by their `externalId` UUIDs: raw in `extras.xml`,
 /// and `wl-`-prefixed in the UDDF file (see `UDDFIdentifier`).
@@ -80,12 +80,12 @@ struct RestorePackager {
 		}
 	}
 
-	/// Restores the backup archive, replacing all existing logbook data.
+	/// Restores the backup archive, replacing all existing log book data.
 	/// Returns a summary of the restored entity counts.
 	///
 	/// All or nothing: the archive is fully parsed before anything is deleted,
 	/// and the replacement is committed by a single save. If the restore fails
-	/// at any point, the existing logbook is left unchanged.
+	/// at any point, the existing log book is left unchanged.
 	///
 	/// - Parameter workingDirectory: Scratch directory into which the archive is
 	///   extracted. Defaults to the system temporary directory; tests inject an
@@ -113,7 +113,7 @@ struct RestorePackager {
 		}
 
 		// 3. Parse both documents before making any database changes, so a
-		//    damaged archive fails while the existing logbook is untouched.
+		//    damaged archive fails while the existing log book is untouched.
 		let parsedLogbook = try UDDFImporter.parse(data: Data(contentsOf: uddfURL))
 
 		let extrasURL = archiveRoot.appending(path: "extras.xml")
@@ -124,7 +124,7 @@ struct RestorePackager {
 
 		let mediaDir = archiveRoot.appending(path: "media")
 
-		// 4–6. Replace the logbook as a single transaction: the deletions, the
+		// 4–6. Replace the log book as a single transaction: the deletions, the
 		//      import and the extras are committed by one save. If any step
 		//      throws, the pending changes are rolled back and the existing data
 		//      is left exactly as it was.

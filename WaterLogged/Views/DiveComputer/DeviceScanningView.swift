@@ -52,7 +52,7 @@ struct DeviceScanningView: View {
 						Section {
 							Toggle("New Dives Only", isOn: $downloadNewOnly)
 						} footer: {
-							Text("When enabled, dives that are already in your logbook are skipped.")
+							Text("When enabled, dives that are already in your log book are skipped.")
 						}
 					}
 					.tileListRowBackground()

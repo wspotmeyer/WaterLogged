@@ -41,7 +41,7 @@ struct DeviceFingerprint: Codable, Sendable {
 /// Oceanic, `oceanic_common_device_logbook` breaks out of its backwards walk and
 /// then only streams profile bytes for the dives that survived, instead of every
 /// dive the device still holds. Skipping it costs time, never correctness:
-/// whether a downloaded dive is actually new is decided against the logbook by
+/// whether a downloaded dive is actually new is decided against the log book by
 /// `ImportedDiveMatcher`, so a stale, missing, or mismatched fingerprint just
 /// means a longer download.
 ///

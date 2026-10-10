@@ -66,7 +66,7 @@ struct WaterLoggedApp: App {
 					SpotlightIndexCoordinator.shared.start()
 
 					// Write an initial statistics snapshot for the home-screen
-					// widget and keep it current as the logbook changes.
+					// widget and keep it current as the log book changes.
 					StatsWidgetCoordinator.shared.refreshNow()
 					StatsWidgetCoordinator.shared.start()
 				}

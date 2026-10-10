@@ -43,7 +43,7 @@ nonisolated enum WidgetShared {
 	static let deepLinkString = "waterlogged://stats"
 }
 
-/// A small, display-ready summary of logbook statistics that the app computes
+/// A small, display-ready summary of log book statistics that the app computes
 /// and writes to the shared App Group store, and the widget reads back.
 ///
 /// Depth and bottom-time are stored as **pre-formatted strings** (already in the

@@ -23,7 +23,7 @@ import Foundation
 import SwiftData
 import WidgetKit
 
-/// Keeps the home-screen statistics widget in sync with the logbook by writing a
+/// Keeps the home-screen statistics widget in sync with the log book by writing a
 /// fresh `StatsSnapshot` to the shared App Group store whenever the data
 /// changes, then asking WidgetKit to reload its timelines.
 ///

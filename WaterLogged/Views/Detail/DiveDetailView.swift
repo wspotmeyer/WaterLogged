@@ -183,7 +183,7 @@ struct DiveDetailView: View {
 
 						HStack {
 							Text("Cumulative bottom time: ")
-							// Includes bottom time from before the logbook began.
+							// Includes bottom time from before the log book began.
 						TimeCount(
 							seconds: PriorDiveHistory(bottomTimeMinutes: priorBottomTimeMinutes)
 								.totalBottomTimeSeconds(logged: dive.cumulativeDiveTimeSeconds),

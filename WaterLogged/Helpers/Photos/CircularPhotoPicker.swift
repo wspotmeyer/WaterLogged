@@ -22,7 +22,7 @@
 import SwiftUI
 import PhotosUI
 
-/// Photo controls for a person (buddy or logbook owner): a circular preview with
+/// Photo controls for a person (buddy or log book owner): a circular preview with
 /// a Remove button when a photo is set, otherwise Photos and Files pickers.
 struct CircularPhotoPicker: View {
 	@Binding var photoData: Data?

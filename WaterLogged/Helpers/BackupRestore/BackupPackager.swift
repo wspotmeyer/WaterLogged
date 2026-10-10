@@ -25,7 +25,7 @@ import SwiftData
 /// Creates a complete WaterLogged export archive containing:
 /// - `logbook.uddf` — UDDF 3.2.2 file with all standard dive data
 /// - `extras.xml` — WaterLogged-proprietary XML for fields not in UDDF
-/// - `media/` — exported images (dive photos, logbook scans, signatures, equipment/buddy/cert images)
+/// - `media/` — exported images (dive photos, log book scans, signatures, equipment/buddy/cert images)
 ///
 /// The archive is delivered as a `.zip` file. Entities are cross-referenced by
 /// their `externalId` UUIDs: raw in `extras.xml`, and `wl-`-prefixed in the UDDF
@@ -117,7 +117,7 @@ struct BackupPackager {
 			manifest.photoFiles[photo.persistentModelID] = filename
 		}
 
-		// Dive logbook images and signatures
+		// Dive log book images and signatures
 		let dives = try context.fetch(FetchDescriptor<Dive>())
 		for dive in dives {
 			if let data = dive.logbookImageData {

@@ -35,7 +35,7 @@ struct GasSwitchRoundTripTests {
 		let decoGas: GasMix
 	}
 
-	/// A two-gas dive (EAN32 → Trimix 21/35) in a logbook that also holds
+	/// A two-gas dive (EAN32 → Trimix 21/35) in a log book that also holds
 	/// unrelated mixes, so a switch resolved by position rather than identity
 	/// lands on the wrong gas.
 	private func seedTwoGasDive(into context: ModelContext) throws -> Seeded {

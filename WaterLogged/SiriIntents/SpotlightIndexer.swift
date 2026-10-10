@@ -41,7 +41,7 @@ nonisolated enum SpotlightIndexer {
 
 	/// Relative Spotlight ranking hints (`CSSearchableItemAttributeSet.rankingHint`,
 	/// 0–100; higher shows more prominently). Named records — sites, trips, and
-	/// buddies — outrank dives so that a large logbook's many dives don't crowd
+	/// buddies — outrank dives so that a large log book's many dives don't crowd
 	/// them out of search results. Every dive is still indexed and findable,
 	/// just ranked below the named records. Ranking is only a hint; the system
 	/// makes the final ordering decision.
@@ -55,7 +55,7 @@ nonisolated enum SpotlightIndexer {
 	}
 
 	/// Reindexes every dive, dive site, trip, and buddy. Called on launch and
-	/// after the logbook changes so search results stay current. Failures are
+	/// after the log book changes so search results stay current. Failures are
 	/// surfaced to the caller; Spotlight indexing is best-effort and a thrown
 	/// error shouldn't be treated as fatal by callers.
 	@MainActor

@@ -40,6 +40,6 @@ extension Tag {
 	@Tag static var autoAddEquipment: Self
 	/// Which of a dive computer's gas mix slots become tanks on import.
 	@Tag static var diveComputerTanks: Self
-	/// Recognizing downloaded dives the logbook already holds.
+	/// Recognizing downloaded dives the log book already holds.
 	@Tag static var diveComputerDuplicates: Self
 }

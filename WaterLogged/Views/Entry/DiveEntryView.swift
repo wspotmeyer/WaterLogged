@@ -91,7 +91,7 @@ struct DiveEntryView: View {
 	@Query(sort: [SortDescriptor(\Buddy.familyName), SortDescriptor(\Buddy.givenName)]) private var allBuddies: [Buddy]
 	@State private var selectedBuddies: Set<PersistentIdentifier> = []
 
-	// Logbook image
+	// Log book image
 	@State private var logbookImageData: Data?
 	@State private var logbookImageFilename = ""
 	@State private var logbookPhotoItem: PhotosPickerItem?

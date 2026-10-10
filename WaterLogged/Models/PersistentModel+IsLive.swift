@@ -26,7 +26,7 @@ extension PersistentModel {
 	///
 	/// A model stops being live when it is deleted (`isDeleted` until the next
 	/// save) or detached from its context — which is what happens to every old
-	/// record when a restore replaces the logbook, and to a record that iCloud
+	/// record when a restore replaces the log book, and to a record that iCloud
 	/// sync deletes. SwiftData traps when a view reads an attribute that has to
 	/// be fetched from the store for such a model, so a view that is handed a
 	/// model directly (a list row, a detail screen) checks this first and draws

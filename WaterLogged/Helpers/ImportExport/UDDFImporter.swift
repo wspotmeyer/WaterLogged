@@ -146,7 +146,7 @@ struct UDDFImporter {
 	}
 
 	/// Imports an already-parsed UDDF document. Restore parses the archive's
-	/// logbook up front with `parse(data:)`, so a malformed file fails before any
+	/// log book up front with `parse(data:)`, so a malformed file fails before any
 	/// existing data is touched, then hands the result here.
 	@discardableResult
 	static func importParsed(
@@ -164,7 +164,7 @@ struct UDDFImporter {
 			summary.ownerImported = true
 		}
 
-		// Import certifications. They belong to the logbook owner, so the owner is
+		// Import certifications. They belong to the log book owner, so the owner is
 		// only looked up (or created) when the file actually has certifications.
 		let logbookOwner = result.certifications.isEmpty ? nil : try? LogbookOwner.fetchOrCreate(in: context)
 		for parsedCert in result.certifications {

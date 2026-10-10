@@ -22,7 +22,7 @@
 import WidgetKit
 import SwiftUI
 
-/// The medium "Dive Stats" widget: a 3×2 grid summarizing the whole logbook.
+/// The medium "Dive Stats" widget: a 3×2 grid summarizing the whole log book.
 /// Tapping it opens the app on the Statistics view via `widgetURL`.
 ///
 /// Keeps the original widget `kind` so any already-installed instances survive

@@ -23,7 +23,7 @@ import Foundation
 import Testing
 @testable import WaterLogged
 
-/// Unit tests for recognizing downloaded dives the logbook already holds.
+/// Unit tests for recognizing downloaded dives the log book already holds.
 /// The matcher takes plain dates, so none of these need a SwiftData stack.
 @Suite(.tags(.diveComputerDuplicates))
 struct ImportedDiveMatcherTests {
@@ -113,7 +113,7 @@ struct ImportedDiveMatcherTests {
 	func keepsOnlyMissingDives() {
 		let dates = (0..<5).map { reference.addingTimeInterval(Double($0) * 86_400) }
 		let downloaded = dates.map(dive(at:))
-		// The logbook has dives 0, 1 and 3 — from UDDF, say.
+		// The log book has dives 0, 1 and 3 — from UDDF, say.
 		let existing = [dates[0], dates[1], dates[3]]
 
 		let result = ImportedDiveMatcher.newDives(from: downloaded, existingDates: existing)

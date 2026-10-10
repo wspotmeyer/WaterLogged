@@ -78,7 +78,7 @@ struct BackupPackagerTests {
 				.filter { $0.deletingLastPathComponent().lastPathComponent == "media" }
 			let mediaFiles = mediaURLs.map(\.lastPathComponent)
 
-			// 8 seeded blobs: dive photo, logbook scan, signature, equipment,
+			// 8 seeded blobs: dive photo, log book scan, signature, equipment,
 			// buddy, cert front, cert back, owner.
 			#expect(mediaFiles.count == 8)
 

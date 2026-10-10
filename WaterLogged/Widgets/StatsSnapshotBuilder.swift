@@ -21,7 +21,7 @@
 
 import Foundation
 
-/// Builds a `StatsSnapshot` from the logbook's dives and trips. Kept as a pure
+/// Builds a `StatsSnapshot` from the log book's dives and trips. Kept as a pure
 /// function (no SwiftData fetching, no I/O) so it mirrors the computations in
 /// `StatsView` and stays unit-testable. `StatsWidgetCoordinator` supplies the
 /// fetched models; `WidgetCenter` reload and persistence happen there.
@@ -61,7 +61,7 @@ enum StatsSnapshotBuilder {
 		)
 	}
 
-	// MARK: - Logbook-wide counts
+	// MARK: - Log-book-wide counts
 	//
 	// Shared by the widget snapshot, `StatsView` and the home screen's
 	// `StatisticsBar` so all three always agree.

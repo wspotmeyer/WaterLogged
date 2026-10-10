@@ -80,7 +80,7 @@ struct BackupToolView: View {
 					} header: {
 						Text("Backup Summary")
 					} footer: {
-						Text("Backs up your complete logbook as a ZIP archive containing a UDDF file, supplementary data, and media.")
+						Text("Backs up your complete log book as a ZIP archive containing a UDDF file, supplementary data, and media.")
 					}
 
 					Section {

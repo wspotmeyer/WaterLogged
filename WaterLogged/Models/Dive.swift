@@ -133,7 +133,7 @@ final class Dive {
 	var notes: String = ""
 	var tags: [String] = []
 
-	// MARK: - Logbook
+	// MARK: - Log book
 	@Attribute(.externalStorage) var logbookImageData: Data?
 	var logbookImageFilename: String = ""
 	@Attribute(.externalStorage) var verificationSignatureData: Data?

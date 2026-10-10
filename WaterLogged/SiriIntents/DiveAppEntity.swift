@@ -87,7 +87,7 @@ struct DiveAppEntity: IndexedEntity, Identifiable {
 		attributes.keywords = ["dive", "scuba"]
 
 		// Rank dives below the named records (sites/trips/buddies) so a large
-		// logbook's dives don't crowd them out of results.
+		// log book's dives don't crowd them out of results.
 		attributes.rankingHint = SpotlightIndexer.diveRankingHint
 
 		if let latitude, let longitude {

@@ -52,7 +52,7 @@ nonisolated struct DiveEntityQuery: EntityPropertyQuery {
 	nonisolated(unsafe) static let sortingOptions = SortingOptions { }
 
 	/// Returns the dives matching the user-composed comparators. Results sort
-	/// newest first, matching the logbook's default order.
+	/// newest first, matching the log book's default order.
 	func entities(
 		matching comparators: [DiveComparator],
 		mode: ComparatorMode,

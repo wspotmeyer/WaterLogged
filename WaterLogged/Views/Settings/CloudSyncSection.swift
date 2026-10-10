@@ -44,7 +44,7 @@ struct CloudSyncSection: View {
 		} header: {
 			Text("iCloud")
 		} footer: {
-			// iCloud sync covers the SwiftData logbook only; preferences live in
+			// iCloud sync covers the SwiftData log book only; preferences live in
 			// UserDefaults on each device. One Text so the note flows on from the
 			// status message as a single paragraph.
 			Text("\(status.message) Settings on this page, like appearance, units, and prior dive history, apply only to this device and don’t sync.")

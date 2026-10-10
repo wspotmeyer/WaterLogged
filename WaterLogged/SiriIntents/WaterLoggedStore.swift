@@ -51,7 +51,7 @@ nonisolated enum WaterLoggedStore {
 	/// `UserDefaults` key for the user's "Sync with iCloud" preference. Off by default.
 	static let iCloudSyncEnabledKey = "iCloudSyncEnabled"
 
-	/// The CloudKit container the logbook syncs through. It must match the
+	/// The CloudKit container the log book syncs through. It must match the
 	/// container in the app's iCloud capability (Signing & Capabilities).
 	static let cloudKitContainerIdentifier = "iCloud.net.wspot.WaterLogged"
 
@@ -90,7 +90,7 @@ nonisolated enum WaterLoggedStore {
 				return LaunchStore(container: container, requestedCloudSync: true, isCloudSyncActive: true)
 			} catch {
 				// Most likely a missing iCloud entitlement or container. Opening
-				// the logbook locally beats failing to launch; Settings reports
+				// the log book locally beats failing to launch; Settings reports
 				// that sync couldn't start.
 				print("iCloud sync unavailable, opening the local store instead: \(error)")
 			}

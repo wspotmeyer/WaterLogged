@@ -302,7 +302,7 @@ nonisolated enum LibDCDeviceHandler {
 		// Tell the device which dive we already have, so it can stop reading as
 		// soon as it reaches it instead of streaming its whole log. A failure
 		// here is not fatal: the download just falls back to reading everything,
-		// and ImportedDiveMatcher still filters out what the logbook already has.
+		// and ImportedDiveMatcher still filters out what the log book already has.
 		if let fingerprint, !fingerprint.isEmpty {
 			// The status is deliberately discarded. It fails when the blob is the
 			// wrong size for this backend (a fingerprint saved by a different

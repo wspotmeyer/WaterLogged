@@ -25,7 +25,7 @@ import SwiftData
 @testable import WaterLogged
 
 /// `isLive` is what list rows and detail screens check before reading a model.
-/// A view can still be holding a record after a restore replaces the logbook;
+/// A view can still be holding a record after a restore replaces the log book;
 /// that record reports `isDeleted == false` but has lost its context, and
 /// reading it then traps (seen on the simulator, 2026-10-04).
 @MainActor
