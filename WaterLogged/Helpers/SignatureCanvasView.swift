@@ -27,7 +27,10 @@ struct SignatureCanvasView: UIViewRepresentable {
 	func makeUIView(context: Context) -> PKCanvasView {
 		let canvas = PKCanvasView()
 		canvas.drawingPolicy = .anyInput
-		canvas.tool = PKInkingTool(.pen, color: .label, width: 2)
+		// PencilKit treats ink colors as light-appearance values and inverts them
+		// itself in Dark Mode, so plain black draws white on a dark canvas. A dynamic
+		// color like `.label` resolves to white first and then gets inverted to black.
+		canvas.tool = PKInkingTool(.pen, color: .black, width: 2)
 		canvas.drawing = drawing
 		canvas.delegate = context.coordinator
 		canvas.backgroundColor = .clear
