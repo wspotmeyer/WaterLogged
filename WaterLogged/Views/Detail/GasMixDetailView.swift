@@ -107,6 +107,9 @@ struct GasMixDetailView: View {
 						.frame(maxWidth: .infinity)
 					}
 
+					// Associated Trips
+					TripsSection(dives: gasMix.dives)
+
 					// Associated Dives
 					DivesSection(dives: gasMix.dives)
 				}

@@ -120,6 +120,8 @@ struct EquipmentDetailView: View {
 						}
 					}
 
+					TripsSection(dives: equipment.dives)
+
 					DivesSection(dives: equipment.dives)
 				}
 				.padding()

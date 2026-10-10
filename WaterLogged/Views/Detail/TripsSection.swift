@@ -22,7 +22,7 @@
 import SwiftUI
 import SwiftData
 
-/// The collapsible "Trips" section on the buddy and dive site detail views:
+/// The collapsible "Trips" section on the buddy, dive site, gas mix, and equipment detail views:
 /// every trip the given dives belong to, each linking to its `TripDetailView`.
 struct TripsSection: View {
 	let dives: [Dive]?
