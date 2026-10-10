@@ -39,7 +39,6 @@ struct BackupPackagerTests {
 		fileURLs(under: directory).map(\.lastPathComponent)
 	}
 
-
 	@Test func archiveContainsCoreDocuments() throws {
 		let container = try TestModelContainer.make()
 		let context = container.mainContext
