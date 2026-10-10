@@ -88,6 +88,11 @@ final class GasMix {
 	@Relationship(deleteRule: .nullify, inverse: \Tank.gasMix)
 	var tanks: [Tank]? = []
 
+	/// The profile samples where a diver switched to this gas. The inverse of
+	/// `DepthSample.activeGasMix`, which CloudKit requires; not read directly.
+	@Relationship(deleteRule: .nullify, inverse: \DepthSample.activeGasMix)
+	var gasSwitchSamples: [DepthSample]? = []
+
 	/// The dives this gas was breathed on, each listed once even when several of
 	/// a dive's tanks hold this gas. Computed, so it is not part of the schema.
 	var dives: [Dive] {
@@ -175,7 +180,8 @@ final class GasMix {
 	/// mixes the user deliberately named differently are left alone. As with
 	/// `LogbookOwner.mergeDuplicates(in:)`, the survivor is the smallest
 	/// `externalId` so devices merging concurrently converge on the same
-	/// record. Tanks using a duplicate are moved to the survivor first.
+	/// record. Tanks and gas switches using a duplicate are moved to the
+	/// survivor first.
 	@discardableResult
 	static func mergeDuplicates(in context: ModelContext) throws -> Int {
 		let descriptor = FetchDescriptor<GasMix>(sortBy: [SortDescriptor(\.externalId)])
@@ -189,6 +195,9 @@ final class GasMix {
 			}
 			for tank in mix.tanks ?? [] {
 				tank.gasMix = survivor
+			}
+			for sample in mix.gasSwitchSamples ?? [] {
+				sample.activeGasMix = survivor
 			}
 			context.delete(mix)
 			removed += 1

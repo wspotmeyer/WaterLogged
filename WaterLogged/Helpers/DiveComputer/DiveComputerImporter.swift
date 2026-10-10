@@ -58,6 +58,12 @@ enum DiveComputerImporter {
 			// diver actually used. Dive computers report every gas slot they can be
 			// configured with, so importing all of them produces phantom tanks
 			// with no pressure data — see DiveComputerTankFilter.
+			//
+			// The computer's gas slot list isn't saved, so record which GasMix
+			// each kept slot became; gas switches in the samples are slot
+			// indices and are resolved through this map. Every slot the diver
+			// switched to is kept as a tank, so the map covers every switch.
+			var gasMixBySlot: [Int: GasMix] = [:]
 			for index in DiveComputerTankFilter.tankGasMixIndices(for: parsed) {
 				let parsedGas = parsed.gasMixes[index]
 				let tankGasMix = GasMix.findOrCreate(
@@ -66,6 +72,7 @@ enum DiveComputerImporter {
 					heliumPercent: parsedGas.heliumPercent,
 					in: context
 				)
+				gasMixBySlot[index] = tankGasMix
 
 				let pressures = DiveComputerTankFilter.pressures(
 					forGasMixIndex: index,
@@ -101,7 +108,7 @@ enum DiveComputerImporter {
 					rbtSeconds: sample.rbtSeconds,
 					heartbeatBPM: sample.heartbeatBPM,
 					bearingDegrees: sample.bearingDegrees,
-					activeGasMixIndex: sample.activeGasMixIndex,
+					activeGasMix: sample.activeGasMixIndex.flatMap { gasMixBySlot[$0] },
 					events: sample.events
 				)
 				depthSample.dive = dive

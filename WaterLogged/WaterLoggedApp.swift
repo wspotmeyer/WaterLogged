@@ -53,6 +53,7 @@ struct WaterLoggedApp: App {
 #endif
 				.preferredColorScheme(appearanceMode.colorScheme)
 				.task {
+					Self.convertLegacyGasSwitches()
 					Self.mergeSyncedDuplicates()
 
 					// Donate dives, dive sites, trips, and buddies to the Spotlight
@@ -115,6 +116,19 @@ struct WaterLoggedApp: App {
 		mergeSyncedDuplicates()
 		SpotlightIndexCoordinator.shared.refreshForSyncedChanges()
 		StatsWidgetCoordinator.shared.refreshForSyncedChanges()
+	}
+
+	/// Converts gas switches stored by earlier builds as a bare index into
+	/// links to their gas mix. Runs at launch whether or not sync is on; a
+	/// no-op once nothing is left to convert. See `GasSwitchMigration`.
+	private static func convertLegacyGasSwitches() {
+		do {
+			let converted = try GasSwitchMigration.convertLegacyIndices(in: WaterLoggedStore.shared.mainContext)
+			if converted > 0 {
+				print("Converted \(converted) legacy gas switch(es) to gas mix links")
+			}		} catch {
+			print("Failed to convert legacy gas switches: \(error)")
+		}
 	}
 
 	/// With iCloud sync on, an owner profile or gas mix created on two devices

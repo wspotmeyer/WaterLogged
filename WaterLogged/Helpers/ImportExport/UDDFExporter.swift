@@ -47,8 +47,6 @@ struct UDDFExporter {
 		var gases: [PersistentIdentifier: String] = [:]
 		var buddies: [PersistentIdentifier: String] = [:]
 		var equipment: [PersistentIdentifier: String] = [:]
-		/// Gas array index → XML id, for `<switchmix>` in waypoints.
-		var gasIndex: [Int: String] = [:]
 	}
 
 	enum ExportError: LocalizedError {
@@ -113,9 +111,6 @@ struct UDDFExporter {
 		for buddy in buddies { ids.buddies[buddy.persistentModelID] = UDDFIdentifier.xmlID(for: buddy.externalId) }
 		for item in equipment { ids.equipment[item.persistentModelID] = UDDFIdentifier.xmlID(for: item.externalId) }
 		for dive in dives { ids.dives[dive.persistentModelID] = UDDFIdentifier.xmlID(for: dive.externalId) }
-
-		// Gas array-index → XML id map for switchmix resolution in waypoints
-		for (i, gas) in gases.enumerated() { ids.gasIndex[i] = UDDFIdentifier.xmlID(for: gas.externalId) }
 
 		// Samples are fetched directly rather than through `dive.diveProfile` —
 		// see the faulting workaround described on `DepthSample.groupedByDive(in:)`.
@@ -431,7 +426,7 @@ struct UDDFExporter {
 			xml.open("dive", attributes: [("id", diveXmlId)])
 			writeInfoBefore(&xml, dive: dive, ids: ids)
 			writeTankData(&xml, dive: dive, gasIdMap: ids.gases)
-			writeWaypoints(&xml, samples: samplesByDive[dive.persistentModelID] ?? [], gasIndexMap: ids.gasIndex)
+			writeWaypoints(&xml, samples: samplesByDive[dive.persistentModelID] ?? [], gasIdMap: ids.gases)
 			writeInfoAfter(&xml, dive: dive)
 			xml.close("dive")
 		}
@@ -536,7 +531,7 @@ struct UDDFExporter {
 	private static func writeWaypoints(
 		_ xml: inout XMLBuilder,
 		samples: [DepthSample],
-		gasIndexMap: [Int: String]
+		gasIdMap: [PersistentIdentifier: String]
 	) {
 		guard !samples.isEmpty else { return }
 
@@ -563,7 +558,9 @@ struct UDDFExporter {
 				xml.element("setpo2", value: XMLBuilder.formatDecimal(barToPascals(sp)),
 							attributes: [("setby", "computer")])
 			}
-			if let gi = sample.activeGasMixIndex, let ref = gasIndexMap[gi] {
+			// A switch to a mix that isn't in the file (gas mixes not selected)
+			// is skipped, like a tank's mix link.
+			if let gas = sample.activeGasMix, let ref = gasIdMap[gas.persistentModelID] {
 				xml.selfClosing("switchmix", attributes: [("ref", ref)])
 			}
 			if let p = sample.tankPressureBar { xml.element("tankpressure", value: XMLBuilder.formatDecimal(barToPascals(p))) }

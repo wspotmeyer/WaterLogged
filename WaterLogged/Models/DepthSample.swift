@@ -61,8 +61,17 @@ final class DepthSample {
 	// Compass bearing (degrees)
 	var bearingDegrees: Int?
 
-	// Active gas mix index
+	/// LEGACY — read only by `GasSwitchMigration`, which converts it to
+	/// `activeGasMix` and clears it. Its meaning depended on where the sample
+	/// came from (a dive computer's slot list, or a UDDF file's mix order), so
+	/// it could not be resolved reliably. Remove once every device has run the
+	/// conversion, before the CloudKit schema is deployed to Production.
 	var activeGasMixIndex: Int?
+
+	/// The gas the diver switched to at this sample; `nil` when no switch
+	/// happened here. Switches are sparse, so only a few samples per dive
+	/// carry a value.
+	var activeGasMix: GasMix?
 
 	// Events (human-readable descriptions)
 	var events: [String]?
@@ -97,7 +106,7 @@ final class DepthSample {
 		rbtSeconds: Int? = nil,
 		heartbeatBPM: Int? = nil,
 		bearingDegrees: Int? = nil,
-		activeGasMixIndex: Int? = nil,
+		activeGasMix: GasMix? = nil,
 		events: [String]? = nil
 	) {
 		self.elapsedSeconds = elapsedSeconds
@@ -117,7 +126,7 @@ final class DepthSample {
 		self.rbtSeconds = rbtSeconds
 		self.heartbeatBPM = heartbeatBPM
 		self.bearingDegrees = bearingDegrees
-		self.activeGasMixIndex = activeGasMixIndex
+		self.activeGasMix = activeGasMix
 		self.events = events
 	}
 }

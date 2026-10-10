@@ -215,15 +215,25 @@ struct UDDFImporter {
 		var importedCount = 0
 		var divesByRef: [String: Dive] = [:]
 
-		// Gas mix ref → index lookup for switchmix resolution. It depends only on
-		// the file's gas definitions, so it's built once for every dive.
-		let mixRefToIndex: [String: Int] = {
-			var map: [String: Int] = [:]
-			for (index, key) in result.gases.keys.sorted().enumerated() {
-				map[key] = index
-			}
-			return map
-		}()
+		// Tanks (<tankdata>) and gas switches (<switchmix>) both reference the
+		// file's <mix> definitions; resolve each ref once and share the result.
+		// A ref the file never defined resolves to nil.
+		var gasMixesByRef: [String: GasMix] = [:]
+		func gasMix(forRef ref: String) -> GasMix? {
+			if let cached = gasMixesByRef[ref] { return cached }
+			guard let parsedGas = result.gases[ref] else { return nil }
+			let mix = GasMix.findOrCreate(
+				name: parsedGas.name ?? gasLabel(o2: parsedGas.o2Fraction, he: parsedGas.heFraction),
+				oxygenPercent: parsedGas.o2Fraction * 100,
+				heliumPercent: parsedGas.heFraction * 100,
+				argonPercent: parsedGas.arFraction * 100,
+				hydrogenPercent: parsedGas.h2Fraction * 100,
+				uddfId: ref,
+				in: context
+			)
+			gasMixesByRef[ref] = mix
+			return mix
+		}
 
 		for parsedDive in result.dives {
 			let dive = mapDive(parsedDive, sites: result.sites, gases: result.gases, buddies: result.buddies, context: context)
@@ -246,22 +256,8 @@ struct UDDFImporter {
 
 			// Create a Tank for each parsed <tankdata> element
 			for parsedTank in parsedDive.tanks {
-				let tankGasMix: GasMix?
-				if let parsedGas = result.gases[parsedTank.mixRef] {
-					tankGasMix = GasMix.findOrCreate(
-						name: parsedGas.name ?? gasLabel(o2: parsedGas.o2Fraction, he: parsedGas.heFraction),
-						oxygenPercent: parsedGas.o2Fraction * 100,
-						heliumPercent: parsedGas.heFraction * 100,
-						argonPercent: parsedGas.arFraction * 100,
-						hydrogenPercent: parsedGas.h2Fraction * 100,
-						uddfId: parsedTank.mixRef,
-						in: context
-					)
-				} else {
-					tankGasMix = nil
-				}
 				let tank = Tank(
-					gasMix: tankGasMix,
+					gasMix: gasMix(forRef: parsedTank.mixRef),
 					startPressureBar: parsedTank.startPressureBar,
 					endPressureBar: parsedTank.endPressureBar
 				)
@@ -275,7 +271,10 @@ struct UDDFImporter {
 
 			// Insert depth profile samples
 			for sample in parsedDive.waypoints {
-				let depthSample = makeDepthSample(from: sample, mixRefToIndex: mixRefToIndex)
+				let depthSample = makeDepthSample(
+					from: sample,
+					switchedTo: sample.switchMixRef.flatMap { gasMix(forRef: $0) }
+				)
 				depthSample.dive = dive
 				context.insert(depthSample)
 			}
@@ -369,9 +368,10 @@ struct UDDFImporter {
 	}
 
 	/// Build a `DepthSample` from a parsed waypoint, resolving decompression
-	/// state (explicit deco stop vs. no-deco time) and the gas-switch index.
+	/// state (explicit deco stop vs. no-deco time). `switchedTo` is the gas mix
+	/// the waypoint's `<switchmix>` resolved to, if any.
 	/// Extracted from `importData` to keep the import routine within a reasonable length.
-	private static func makeDepthSample(from sample: ParsedWaypoint, mixRefToIndex: [String: Int]) -> DepthSample {
+	private static func makeDepthSample(from sample: ParsedWaypoint, switchedTo gasMix: GasMix?) -> DepthSample {
 		let effectivePpo2 = sample.ppo2Bar ?? sample.calculatedPpo2Bar
 
 		var decoStatus: DecoType?
@@ -404,7 +404,7 @@ struct UDDFImporter {
 			rbtSeconds: sample.rbtSeconds,
 			heartbeatBPM: sample.heartbeatBPM,
 			bearingDegrees: sample.headingDegrees,
-			activeGasMixIndex: sample.switchMixRef.flatMap { mixRefToIndex[$0] },
+			activeGasMix: gasMix,
 			events: sample.alarms.isEmpty ? nil : sample.alarms
 		)
 	}
