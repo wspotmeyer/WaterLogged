@@ -31,9 +31,9 @@ import SwiftData
 nonisolated enum WaterLoggedStore {
 
 	/// Every `@Model` type WaterLogged persists. The shared container below (used
-	/// by the app and the App Intents) and the test containers are all built from
-	/// this one list.
-	static let schema = Schema([
+	/// by the app and the App Intents), the test containers, and the Debug-only
+	/// `CloudKitSchemaInitializer` are all built from this one list.
+	static let modelTypes: [any PersistentModel.Type] = [
 		Dive.self,
 		DiveSite.self,
 		GasMix.self,
@@ -46,7 +46,10 @@ nonisolated enum WaterLoggedStore {
 		LogbookOwner.self,
 		Photo.self,
 		Tank.self
-	])
+	]
+
+	/// The schema built from `modelTypes`.
+	static let schema = Schema(modelTypes)
 
 	/// `UserDefaults` key for the user's "Sync with iCloud" preference. Off by default.
 	static let iCloudSyncEnabledKey = "iCloudSyncEnabled"

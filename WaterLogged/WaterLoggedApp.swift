@@ -40,6 +40,12 @@ struct WaterLoggedApp: App {
 	init() {
 		WaterLoggedStore.registerDefaults()
 
+#if DEBUG
+		// Only with the -initializeCloudKitSchema launch argument. Must run before
+		// anything touches WaterLoggedStore.shared.
+		CloudKitSchemaInitializer.runIfRequested()
+#endif
+
 		// Started before the container exists so the first sync events are
 		// caught. Inert when sync is off, since CloudKit then posts nothing.
 		CloudSyncMonitor.shared.start(onDownload: Self.handleSyncedDownload)

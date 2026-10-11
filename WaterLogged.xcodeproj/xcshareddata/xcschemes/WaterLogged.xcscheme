@@ -55,6 +55,16 @@
             ReferencedContainer = "container:WaterLogged.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-initializeCloudKitSchema"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-com.apple.CoreData.CloudKitDebug 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <MetalAPIValidationSettings
          isEnabled = "No">
       </MetalAPIValidationSettings>
