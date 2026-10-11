@@ -280,7 +280,7 @@ private struct DiveRowView: View {
 						Image(systemName: "signature")
 							.foregroundStyle(.secondary)
 					}
-					if let _ = dive.startLatitude, let _ = dive.startLongitude, let _ = dive.endLatitude, let _ = dive.endLongitude {
+					if dive.startLatitude != nil, dive.startLongitude != nil, dive.endLatitude != nil, dive.endLongitude != nil {
 						Image(systemName: "location.fill")
 							.foregroundStyle(.secondary)
 					}
