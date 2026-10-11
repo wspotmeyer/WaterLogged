@@ -258,7 +258,10 @@ private struct DiveRowView: View {
 				.foregroundStyle(.secondary)
 
 				HStack(spacing: 8) {
+					// One line, so a crowded icon strip truncates the date instead of wrapping it and
+					// making the row taller.
 					Text(dive.date.formatted(date: .abbreviated, time: .shortened))
+						.lineLimit(1)
 						.foregroundStyle(.tertiary)
 					Spacer()
 					if let certification = dive.certification, certification.isLive {
@@ -338,6 +341,9 @@ private struct DiveRowHeader: View {
 					StarRatingView(rating: dive.rating, interactive: false)
 				}
 			}
+			// Holds the header at its natural height, so the badge stretches to match the title but
+			// never soaks up spare height the row is given.
+			.fixedSize(horizontal: false, vertical: true)
 		}
 	}
 }
