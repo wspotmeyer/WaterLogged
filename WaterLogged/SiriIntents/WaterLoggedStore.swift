@@ -60,7 +60,8 @@ nonisolated enum WaterLoggedStore {
 
 	/// Process-wide container. Uses default `ModelConfiguration` so the
 	/// on-disk store URL matches what `.modelContainer(for:)` previously
-	/// produced (preserving existing user data).
+	/// produced (preserving existing user data). Debug builds on macOS use a
+	/// separate store; see `makeConfiguration(cloudKitDatabase:)`.
 	static var shared: ModelContainer { launchStore.container }
 
 	/// Whether the user's iCloud sync preference was on when this process
@@ -85,10 +86,7 @@ nonisolated enum WaterLoggedStore {
 		let requested = UserDefaults.standard.bool(forKey: iCloudSyncEnabledKey)
 		if requested {
 			do {
-				let configuration = ModelConfiguration(
-					schema: schema,
-					cloudKitDatabase: .private(cloudKitContainerIdentifier)
-				)
+				let configuration = makeConfiguration(cloudKitDatabase: .private(cloudKitContainerIdentifier))
 				let container = try ModelContainer(for: schema, configurations: configuration)
 				return LaunchStore(container: container, requestedCloudSync: true, isCloudSyncActive: true)
 			} catch {
@@ -99,16 +97,42 @@ nonisolated enum WaterLoggedStore {
 			}
 		}
 		do {
-			let configuration = ModelConfiguration(
-				schema: schema,
-				cloudKitDatabase: .none
-			)
+			let configuration = makeConfiguration(cloudKitDatabase: .none)
 			let container = try ModelContainer(for: schema, configurations: configuration)
 			return LaunchStore(container: container, requestedCloudSync: requested, isCloudSyncActive: false)
 		} catch {
 			fatalError("Failed to create WaterLogged ModelContainer: \(error)")
 		}
 	}()
+
+	/// The configuration for the app's on-disk store.
+	///
+	/// Release builds (TestFlight and the App Store) use SwiftData's default
+	/// store location so existing user data is preserved.
+	///
+	/// Debug builds on macOS open a separate store instead. A Mac app run from
+	/// Xcode shares its sandbox container with the TestFlight copy (same bundle
+	/// ID), so without this every Xcode run would open the real log book, and
+	/// with sync on, mirror it to the CloudKit Development environment. The
+	/// iOS and iPadOS simulators already have containers of their own.
+	private static func makeConfiguration(cloudKitDatabase: ModelConfiguration.CloudKitDatabase) -> ModelConfiguration {
+#if DEBUG && os(macOS)
+		print("WaterLoggedStore: Debug build, using the separate store at \(debugStoreURL.path(percentEncoded: false))")
+		return ModelConfiguration(schema: schema, url: debugStoreURL, cloudKitDatabase: cloudKitDatabase)
+#else
+		return ModelConfiguration(schema: schema, cloudKitDatabase: cloudKitDatabase)
+#endif
+	}
+
+#if DEBUG && os(macOS)
+	/// Where Debug builds on macOS keep their log book: the app's own sandbox
+	/// container. The real store isn't here; with `groupContainer` left at
+	/// `.automatic`, SwiftData keeps `default.store` in the App Group container
+	/// (`group.net.wspot.WaterLogged`).
+	private static var debugStoreURL: URL {
+		URL.applicationSupportDirectory.appending(path: "WaterLogged-Debug.store")
+	}
+#endif
 
 	/// The container plus the sync state it was created with.
 	private struct LaunchStore: Sendable {
