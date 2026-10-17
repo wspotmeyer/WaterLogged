@@ -52,6 +52,9 @@ struct DiveNumberBadge: View {
 		Text(verbatim: "0000")
 			.font(font)
 			.monospacedDigit()
+			// Keeps the template at its one-line size. Otherwise a crowded row squeezes the badge
+			// narrower, the template wraps onto a second line, and the badge stretches to match.
+			.fixedSize()
 			.hidden()
 			.overlay {
 				Text(diveNumber, format: .number.grouping(.never))
