@@ -43,8 +43,14 @@ struct DetailHeader<Content: View>: View {
 	@ViewBuilder let content: Content
 
 	/// Minimum height of the block when it has a photo, not counting the part
-	/// that extends up under the toolbar.
+	/// that extends up under the toolbar. Applies on narrow widths (iPhone).
 	private static var minimumPhotoHeight: CGFloat { 220 }
+	/// Cap on the photo-driven height, so a very wide Mac window doesn't push
+	/// the page content off the bottom of the screen.
+	private static var maximumPhotoHeight: CGFloat { 480 }
+	/// Height of the block as a fraction of its width. Wider displays get a
+	/// taller block, so they show more of the photo instead of a thin strip.
+	private static var heightToWidthRatio: CGFloat { 0.4 }
 	/// How far the photo extends above the header, under the toolbar and
 	/// status bar. Generous enough for the tallest bar (iPhone); any excess is
 	/// clipped by the scroll view and only shows when pulling down past the top.
@@ -57,6 +63,8 @@ struct DetailHeader<Content: View>: View {
 	private static var maxPixelSize: Int { 2400 }
 
 	@State private var image: CGImage?
+	/// The block's full width, which drives its minimum height with a photo.
+	@State private var width: CGFloat = 0
 
 	var body: some View {
 		content
@@ -72,9 +80,16 @@ struct DetailHeader<Content: View>: View {
 			.frame(maxWidth: maxContentWidth ?? .infinity, alignment: .leading)
 			.frame(
 				maxWidth: .infinity,
-				minHeight: image == nil ? nil : Self.minimumPhotoHeight,
+				minHeight: image == nil ? nil : Self.photoHeight(forWidth: width),
 				alignment: .bottom
 			)
+			// The width doesn't depend on the height set above, so measuring it
+			// here can't feed back into a layout loop.
+			.onGeometryChange(for: CGFloat.self) { proxy in
+				proxy.size.width
+			} action: { newWidth in
+				width = newWidth
+			}
 			.background {
 				if let image {
 					// `ignoresSafeArea` has no effect inside a ScrollView, whose
@@ -90,6 +105,12 @@ struct DetailHeader<Content: View>: View {
 			.task(id: photo?.persistentModelID) {
 				image = await loadImage()
 			}
+	}
+
+	/// The block's minimum height with a photo: proportional to its width,
+	/// clamped between the minimum and maximum photo heights.
+	private static func photoHeight(forWidth width: CGFloat) -> CGFloat {
+		min(max(width * heightToWidthRatio, minimumPhotoHeight), maximumPhotoHeight)
 	}
 
 	/// Decodes a downsized copy of the cover photo off the main thread.
