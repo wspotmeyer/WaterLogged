@@ -21,19 +21,17 @@
 
 import SwiftUI
 
-/// A photo that fills whatever frame it's given and fades to transparent
-/// toward its bottom edge, blending into the app gradient behind it. Used as
-/// the backdrop of a `DetailHeader`.
+/// A photo that fills whatever frame it's given, under a light wash of the
+/// system background that builds toward its bottom edge. Used as the backdrop
+/// of a `DetailHeader`.
 struct DetailHeaderPhoto: View {
 	let image: CGImage
 
-	/// Fraction of the height that stays fully opaque before the fade begins.
-	private static let fadeStart = 0.45
-	/// Opacity of the black wash over the photo in Dark Mode, so white titles
-	/// stay readable.
-	private static let darkModeDimming = 0.35
-
-	@Environment(\.colorScheme) private var colorScheme
+	/// Opacity of the wash at the photo's bottom edge.
+	private static let washOpacity = 0.6
+	/// Fraction of the height, from the top, that stays clear before the wash
+	/// begins.
+	private static let washStart = 0.5
 
 	var body: some View {
 		// A clear frame holds the photo, so a fill-scaled image can't push the
@@ -45,23 +43,24 @@ struct DetailHeaderPhoto: View {
 					.resizable()
 					.scaledToFill()
 			}
+			// White in Light Mode and black in Dark Mode, matching the text band
+			// and easing the photo toward it.
 			.overlay {
-				if colorScheme == .dark {
-					Color.black.opacity(Self.darkModeDimming)
-				}
+				Rectangle()
+					.fill(.background)
+					.mask {
+						LinearGradient(
+							stops: [
+								.init(color: .clear, location: 0),
+								.init(color: .clear, location: Self.washStart),
+								.init(color: .black.opacity(Self.washOpacity), location: 1)
+							],
+							startPoint: .top,
+							endPoint: .bottom
+						)
+					}
 			}
 			.clipped()
-			.mask {
-				LinearGradient(
-					stops: [
-						.init(color: .black, location: 0),
-						.init(color: .black, location: Self.fadeStart),
-						.init(color: .clear, location: 1)
-					],
-					startPoint: .top,
-					endPoint: .bottom
-				)
-			}
 			.accessibilityHidden(true)
 	}
 }

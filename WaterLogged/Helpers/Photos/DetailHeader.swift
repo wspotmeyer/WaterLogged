@@ -25,11 +25,10 @@ import SwiftUI
 /// The title block at the top of a detail page, with the record's cover photo
 /// behind it.
 ///
-/// The photo runs edge to edge and up under the toolbar, scrolls away with the
-/// title, and fades into the
-/// app gradient at its bottom. With a photo the block is given a minimum
-/// height and the title sits at its bottom, over the fading part. Without one
-/// the block lays out exactly like a plain padded header.
+/// The photo runs edge to edge and up under the toolbar, and scrolls away with
+/// the title. With a photo the block is given a minimum height and the title
+/// sits at its bottom on a translucent band. Without one the block lays out
+/// exactly like a plain padded header.
 ///
 /// Place it as the first child of the page's scroll content, outside the
 /// padding the rest of the page uses, and pad the content below it with
@@ -58,6 +57,8 @@ struct DetailHeader<Content: View>: View {
 	/// How far the photo extends past each side, to cover the landscape
 	/// iPhone's side insets. Clipped by the scroll view where there are none.
 	private static var sideOverlap: CGFloat { 80 }
+	/// Opacity of the background-colored wash in the text band.
+	private static var bandOpacity: Double { 0.75 }
 	/// Longest side of the decoded photo, in pixels: sharp at full width on a
 	/// large Mac window without decoding the full camera original.
 	private static var maxPixelSize: Int { 2400 }
@@ -73,11 +74,23 @@ struct DetailHeader<Content: View>: View {
 			// flexible child, stretching e.g. `DiveNumberBadge`, which fills its
 			// row's height to match the title beside it.
 			.fixedSize(horizontal: false, vertical: true)
-			.padding([.horizontal, .top])
-			// The gap the detail pages leave between sections, kept inside the
-			// header so the photo fades out below the last line of text.
-			.padding(.bottom, 24)
+			.padding(.horizontal)
+			// With a photo the text is padded inside its band; without one,
+			// only the plain header's top inset is needed.
+			.padding(image == nil ? .top : .vertical)
 			.frame(maxWidth: maxContentWidth ?? .infinity, alignment: .leading)
+			.frame(maxWidth: .infinity)
+			.background {
+				if image != nil {
+					// A band behind the text keeps it readable over any photo,
+					// light or dark. It's a translucent wash of the system
+					// background (white or black to suit the text), and runs
+					// edge to edge like the photo.
+					Rectangle()
+						.fill(.background.opacity(Self.bandOpacity))
+						.padding(.horizontal, -Self.sideOverlap)
+				}
+			}
 			.frame(
 				maxWidth: .infinity,
 				minHeight: image == nil ? nil : Self.photoHeight(forWidth: width),
@@ -102,6 +115,8 @@ struct DetailHeader<Content: View>: View {
 						.padding(.horizontal, -Self.sideOverlap)
 				}
 			}
+			// The gap the detail pages leave between sections.
+			.padding(.bottom, 24)
 			.task(id: photo?.persistentModelID) {
 				image = await loadImage()
 			}
