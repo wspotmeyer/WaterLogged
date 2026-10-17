@@ -21,9 +21,10 @@
 
 import SwiftUI
 
-/// A photo that fills whatever frame it's given, under a light wash of the
-/// system background that builds toward its bottom edge. Used as the backdrop
-/// of a `DetailHeader`.
+/// A photo that fills whatever frame it's given, under a wash of the system
+/// background that's clear across the top and builds toward the bottom edge,
+/// easing the photo into the title band. Used as the backdrop of a
+/// `DetailHeader`.
 struct DetailHeaderPhoto: View {
 	let image: CGImage
 

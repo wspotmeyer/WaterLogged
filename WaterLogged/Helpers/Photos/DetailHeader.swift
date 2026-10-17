@@ -57,8 +57,15 @@ struct DetailHeader<Content: View>: View {
 	/// How far the photo extends past each side, to cover the landscape
 	/// iPhone's side insets. Clipped by the scroll view where there are none.
 	private static var sideOverlap: CGFloat { 80 }
-	/// Opacity of the background-colored wash in the text band.
-	private static var bandOpacity: Double { 0.75 }
+	/// Opacity of the background-colored wash in the text band. The Mac needs a
+	/// stronger wash than iOS and iPadOS to keep the title equally readable.
+	private static var bandOpacity: Double {
+#if os(macOS)
+		0.75
+#else
+		0.45
+#endif
+	}
 	/// Longest side of the decoded photo, in pixels: sharp at full width on a
 	/// large Mac window without decoding the full camera original.
 	private static var maxPixelSize: Int { 2400 }
