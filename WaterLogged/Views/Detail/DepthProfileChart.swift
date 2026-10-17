@@ -28,15 +28,16 @@ struct DepthProfileChart: View {
 	var diveStartTime: Date?
 	@AppStorage("unitSystem") private var unitSystem: UnitSystem = .imperial
 
-	// Overlay toggle states — depth is always shown
-	@State private var showTemperature = false
+	// Overlay toggle states — depth is always shown, and every overlay starts on.
+	// Overlays without data stay hidden regardless, via the `has…` flags.
+	@State private var showTemperature = true
 	@State private var showTankPressure = true
-	@State private var showPPO2 = false
-	@State private var showCNS = false
-	@State private var showDecoType = false
-	@State private var showDecoTime = false
-	@State private var showDecoDepth = false
-	@State private var showRBT = false
+	@State private var showPPO2 = true
+	@State private var showCNS = true
+	@State private var showDecoType = true
+	@State private var showDecoTime = true
+	@State private var showDecoDepth = true
+	@State private var showRBT = true
 
 	// Interactive selection
 	@State private var rawSelectedTime: Double?
@@ -341,15 +342,24 @@ struct DepthProfileChart: View {
 
 			overlayToggles(data: data)
 
+			// The toggle hint only applies when there are toggle buttons to show.
+			Group {
 #if os(macOS)
-			Text("Hover over a point to see details of the sample.")
-				.font(.caption)
-				.foregroundStyle(.secondary)
+				if data.hasAnyOverlay {
+					Text("Hover over a point to see details of the sample. Click the buttons below the graph to turn individual lines on or off.")
+				} else {
+					Text("Hover over a point to see details of the sample.")
+				}
 #else
-			Text("Tap on a point to see details of the sample.")
-				.font(.caption)
-				.foregroundStyle(.secondary)
+				if data.hasAnyOverlay {
+					Text("Tap on a point to see details of the sample. Tap the buttons below the graph to turn individual lines on or off.")
+				} else {
+					Text("Tap on a point to see details of the sample.")
+				}
 #endif
+			}
+			.font(.caption)
+			.foregroundStyle(.secondary)
 		}
 	}
 
@@ -357,11 +367,7 @@ struct DepthProfileChart: View {
 
 	@ViewBuilder
 	private func overlayToggles(data: ChartData) -> some View {
-		let hasAnyOverlay = data.hasTemperature || data.hasTankPressure || data.hasPPO2
-		|| data.hasCNS || data.hasDecoType || data.hasDecoTime
-		|| data.hasDecoDepth || data.hasRBT
-
-		if hasAnyOverlay {
+		if data.hasAnyOverlay {
 			ScrollView(.horizontal) {
 				HStack {
 					if data.hasTemperature {
@@ -725,6 +731,12 @@ struct DepthProfileChart: View {
 		let hasDecoTime: Bool
 		let hasDecoDepth: Bool
 		let hasRBT: Bool
+
+		/// Whether any overlay has data, and so whether the toggle buttons are shown.
+		var hasAnyOverlay: Bool {
+			hasTemperature || hasTankPressure || hasPPO2 || hasCNS
+			|| hasDecoType || hasDecoTime || hasDecoDepth || hasRBT
+		}
 
 		// Value ranges for each overlay (in display units)
 		let tempRange: OverlayRange
