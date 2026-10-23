@@ -251,15 +251,7 @@ struct MetricBarChartSection: View {
 	/// An explicit stride keeps the axis labels on round values, which automatic marks
 	/// don't guarantee once the plotted values switch units.
 	private var axisStride: Double {
-		let largest = sortedValues.map { plotValue(for: $0) }.max() ?? 0
-		guard largest > 0 else { return 1 }
-		let rough = largest / 4
-		let magnitude = pow(10, log10(rough).rounded(.down))
-		let normalized = rough / magnitude
-		let nice: Double = if normalized <= 1.5 { 1 } else if normalized <= 3 { 2 } else if normalized <= 7 { 5 } else { 10 }
-		let step = nice * magnitude
-		// Dive and trip counts are whole numbers, so never subdivide below one.
-		return metric.isCount ? Swift.max(1, step.rounded()) : step
+		metric.axisStride(forLargest: sortedValues.map { plotValue(for: $0) }.max() ?? 0)
 	}
 }
 

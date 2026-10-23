@@ -21,7 +21,6 @@
 
 import SwiftUI
 import SwiftData
-import Charts
 
 struct StatsView: View {
 	@Query(sort: \Dive.date, order: .reverse) var dives: [Dive]
@@ -29,9 +28,9 @@ struct StatsView: View {
 	@AppStorage("unitSystem") private var unitSystem: UnitSystem = .imperial
 	@AppStorage(PriorDiveHistory.diveCountKey) private var priorDiveCount = 0
 	@AppStorage(PriorDiveHistory.bottomTimeMinutesKey) private var priorBottomTimeMinutes = 0
-	@Environment(\.colorScheme) private var colorScheme
 	// Owned here rather than by each chart so that switching between the one- and
 	// two-column layouts doesn't reset the pickers.
+	@State private var yearMetric: StatMetric = .dives
 	@State private var countryMetric: StatMetric = .dives
 	@State private var regionMetric: StatMetric = .dives
 	@State private var buddyMetric: StatMetric = .dives
@@ -165,64 +164,7 @@ struct StatsView: View {
 	}
 
 	private var divesPerYearSection: some View {
-		DetailSection(title: "Dives Per Year") {
-			Chart(divesPerYear) { item in
-				BarMark(
-					x: .value("Year", item.year, unit: .year),
-					y: .value("Dives", item.count)
-				)
-				// Same color as the Dives metric in the bar sections below, so the page doesn't
-				// show two near-identical blues.
-				.foregroundStyle(StatMetric.dives.color(for: colorScheme))
-				.clipShape(.rect(cornerRadius: 4))
-				.annotation(position: .top) {
-					Text("\(item.count)")
-						.font(.caption2)
-						.foregroundStyle(.secondary)
-				}
-			}
-			.chartXAxis {
-				AxisMarks(values: .stride(by: .year)) { _ in
-					AxisGridLine()
-					AxisValueLabel(format: .dateTime.year(), centered: true, collisionResolution: .greedy, orientation: .verticalReversed)
-						.font(.caption2.monospacedDigit())
-				}
-			}
-			.chartYAxis {
-				AxisMarks { _ in
-					AxisGridLine()
-					AxisValueLabel()
-				}
-			}
-			// Grows past its minimum when paired with the water and gas section, so the two
-			// sections sitting side by side come out the same height.
-			.frame(minHeight: 220, idealHeight: 220, maxHeight: .infinity)
-			// Left to itself, Swift Charts reads many years as ranges of years with their plotted
-			// values. So VoiceOver gets one element with a summary, and Audio Graph the counts.
-			.accessibilityElement(children: .ignore)
-			.accessibilityLabel("Dives per year")
-			.accessibilityValue(divesPerYearDescriptor.summary)
-			.accessibilityChartDescriptor(divesPerYearDescriptor)
-		}
-	}
-
-	/// The Dives Per Year chart's data for VoiceOver and Audio Graph.
-	private var divesPerYearDescriptor: DivesPerYearChartDescriptor {
-		let years = divesPerYear
-		return DivesPerYearChartDescriptor(
-			years: years.map { $0.year.formatted(.dateTime.year()) },
-			counts: years.map(\.count)
-		)
-	}
-
-	private var divesPerYear: [YearlyDiveCount] {
-		let calendar = Calendar.current
-		let grouped = Dictionary(grouping: dives) { dive in
-			calendar.dateInterval(of: .year, for: dive.date)!.start
-		}
-		return grouped
-			.map { YearlyDiveCount(year: $0.key, count: $0.value.count) }
-			.sorted { $0.year < $1.year }
+		MetricYearChartSection(years: YearlyStatValue.grouped(dives), metric: $yearMetric)
 	}
 
 	private var waterAndGasSection: some View {
@@ -402,12 +344,6 @@ struct StatsView: View {
 			)
 		}
 	}
-}
-
-private struct YearlyDiveCount: Identifiable {
-	let year: Date
-	let count: Int
-	var id: Date { year }
 }
 
 #Preview {
