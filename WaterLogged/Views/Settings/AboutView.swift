@@ -148,14 +148,14 @@ private struct AppIconView: View {
 #if os(macOS)
 		Image(nsImage: NSApp.applicationIconImage)
 			.resizable()
-			.aspectRatio(contentMode: .fit)
+			.scaledToFit()
 			.frame(width: 128, height: 128)
 #else
 		if let iconName = iconFileName,
 		   let uiImage = UIImage(named: iconName) {
 			Image(uiImage: uiImage)
 				.resizable()
-				.aspectRatio(contentMode: .fit)
+				.scaledToFit()
 				.frame(width: 120, height: 120)
 				.clipShape(.rect(cornerRadius: 27))
 		}
