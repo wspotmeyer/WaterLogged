@@ -264,33 +264,42 @@ private struct DiveRowView: View {
 						.lineLimit(1)
 						.foregroundStyle(.tertiary)
 					Spacer()
+					// Each icon marks something the dive has, so VoiceOver says what it is rather than
+					// reading the symbol's name.
 					if let certification = dive.certification, certification.isLive {
 						Image(systemName: "graduationcap")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Certification dive")
 					}
 					if let logbook = dive.logbookImageData, !logbook.isEmpty {
 						Image(systemName: "book.fill")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has log book page")
 					}
 					if !dive.notes.isEmpty {
 						Image(systemName: "text.page")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has notes")
 					}
 					if let signature = dive.verificationSignatureData, !signature.isEmpty {
 						Image(systemName: "signature")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has signature")
 					}
 					if dive.startLatitude != nil, dive.startLongitude != nil, dive.endLatitude != nil, dive.endLongitude != nil {
 						Image(systemName: "location.fill")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has GPS coordinates")
 					}
 					if let diveProfile = dive.diveProfile, !diveProfile.isEmpty {
 						Image(systemName: "chart.xyaxis.line")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has depth profile")
 					}
 					if let photos = dive.photos, !photos.isEmpty {
 						Image(systemName: "photo")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has photos")
 					}
 				}
 				.font(.caption2)
@@ -303,6 +312,8 @@ private struct DiveRowView: View {
 			.padding(.vertical, 4)
 #endif
 			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			// One VoiceOver stop per dive, read in order, instead of one for every label and icon.
+			.accessibilityElement(children: .combine)
 		}
 	}
 }
