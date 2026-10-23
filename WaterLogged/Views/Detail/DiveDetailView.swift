@@ -186,6 +186,8 @@ struct DiveDetailView: View {
 
 						HStack {
 							Text("Cumulative bottom time: ")
+								// Without the colon, so VoiceOver doesn't read a stray pause before the time.
+								.accessibilityLabel("Cumulative bottom time")
 							// Includes bottom time from before the log book began.
 						TimeCount(
 							seconds: PriorDiveHistory(bottomTimeMinutes: priorBottomTimeMinutes)

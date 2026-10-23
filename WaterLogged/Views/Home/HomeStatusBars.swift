@@ -177,6 +177,10 @@ private struct StatisticLabel: View {
 		.padding(.vertical, 12)
 		.frame(width: 90)
 		.background(.black.opacity(0.2), in: .rect(cornerRadius: 12))
+		// One VoiceOver stop per statistic, caption first: "Dives, 561".
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(label)
+		.accessibilityValue(value)
 	}
 }
 
