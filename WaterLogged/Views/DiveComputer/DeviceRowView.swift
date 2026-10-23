@@ -32,6 +32,8 @@ struct DeviceRowView: View {
 				.font(.title2)
 				.foregroundStyle(.tint)
 				.frame(width: 32, height: 24)
+				// The brand name is written out beside the logo.
+				.accessibilityHidden(true)
 
 			VStack(alignment: .leading) {
 				Text(device.name)
@@ -47,6 +49,8 @@ struct DeviceRowView: View {
 			SignalStrengthView(rssi: device.rssi)
 		}
 		.contentShape(.rect)
+		// One VoiceOver stop per dive computer: name, brand, then signal strength.
+		.accessibilityElement(children: .combine)
 	}
 
 	private var brandImage: Image {
@@ -82,6 +86,10 @@ private struct SignalStrengthView: View {
 			}
 		}
 		.frame(height: 18)
+		// The bars are drawn shapes, so VoiceOver gets their count in words.
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel("Signal strength")
+		.accessibilityValue(Text("\(signalBars) of 4 bars"))
 	}
 
 	private var signalBars: Int {

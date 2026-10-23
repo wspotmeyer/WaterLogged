@@ -37,6 +37,8 @@ struct ToolTile: View {
 					Image(systemName: systemImage)
 						.font(.title)
 						.foregroundStyle(.tint)
+						// Decorative: VoiceOver would otherwise start each tile with a symbol name.
+						.accessibilityHidden(true)
 					Text(title)
 						.font(.headline)
 				}

@@ -35,6 +35,8 @@ struct DiveTransferView: View {
 				.font(.system(size: iconSize))
 				.foregroundStyle(.tint)
 				.symbolEffect(.pulse)
+				// Decorative: the "Downloading Dives" title below says the same thing.
+				.accessibilityHidden(true)
 
 			Text("Downloading Dives")
 				.font(.title2)

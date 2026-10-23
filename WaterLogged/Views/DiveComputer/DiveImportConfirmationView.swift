@@ -40,6 +40,8 @@ struct DiveImportConfirmationView: View {
 				Image(systemName: "checkmark.circle")
 					.font(.title2)
 					.foregroundStyle(.green)
+					// Decorative: the heading beside it says the dives are ready.
+					.accessibilityHidden(true)
 				Text("\(dives.count) Dive\(dives.count == 1 ? "" : "s") Ready to Import")
 					.font(.title3)
 					.bold()
