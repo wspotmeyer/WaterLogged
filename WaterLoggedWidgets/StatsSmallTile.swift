@@ -50,5 +50,10 @@ struct StatsSmallTile: View {
 		}
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
 		.padding(8)
+		// One VoiceOver stop per statistic, read as "Dives, 561". The icon only decorates the
+		// label, and VoiceOver would otherwise read its symbol name.
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(Text(label))
+		.accessibilityValue(value)
 	}
 }
