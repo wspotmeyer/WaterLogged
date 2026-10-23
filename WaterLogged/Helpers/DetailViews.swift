@@ -44,6 +44,8 @@ struct DetailSection<Content: View>: View {
 			Text(title)
 				.font(.title2.bold())
 				.padding(.bottom, 4)
+				// Lets VoiceOver users jump from section to section with the headings rotor.
+				.accessibilityAddTraits(.isHeader)
 		}
 		.tileBackgroundStyle()
 	}

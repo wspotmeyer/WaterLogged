@@ -38,9 +38,13 @@ struct PlaceholderTextEditor: View {
 					.foregroundStyle(.tertiary)
 					.padding(.top, 8)
 					.padding(.leading, 4)
+					// The editor below carries the placeholder as its label instead.
+					.accessibilityHidden(true)
 			}
 			TextEditor(text: $text)
 				.frame(minHeight: minHeight)
+				// A TextEditor has no title of its own, so without this VoiceOver only says "text view".
+				.accessibilityLabel(Text(placeholder))
 		}
 	}
 }

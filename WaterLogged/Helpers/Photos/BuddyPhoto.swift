@@ -21,23 +21,30 @@
 
 import SwiftUI
 
+/// A person's photo in a circle, or a placeholder silhouette when there isn't one.
+///
+/// Hidden from VoiceOver: it always appears beside the person's name, which says everything the
+/// photo would.
 struct BuddyPhoto: View {
 	let photoData: Data?
 	var size: CGFloat = 32
 
 	var body: some View {
-		if let photoData, let image = makeDisplayImage(from: photoData) {
-			image
-				.resizable()
-				.scaledToFill()
-				.frame(width: size, height: size)
-				.clipShape(.circle)
-		} else {
-			Image(systemName: "person.circle.fill")
-				.resizable()
-				.scaledToFit()
-				.frame(width: size, height: size)
-				.foregroundStyle(.secondary)
+		Group {
+			if let photoData, let image = makeDisplayImage(from: photoData) {
+				image
+					.resizable()
+					.scaledToFill()
+					.frame(width: size, height: size)
+					.clipShape(.circle)
+			} else {
+				Image(systemName: "person.circle.fill")
+					.resizable()
+					.scaledToFit()
+					.frame(width: size, height: size)
+					.foregroundStyle(.secondary)
+			}
 		}
+		.accessibilityHidden(true)
 	}
 }
