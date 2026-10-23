@@ -38,6 +38,8 @@ struct TagsListView: View {
 				.font(.caption)
 				.foregroundStyle(.secondary)
 				.padding(.vertical, 4)
+				// Introduces the tag names that follow, as in "Tags, reef, night".
+				.accessibilityLabel("Tags")
 			ForEach(tags, id: \.self) { tag in
 				Text(tag)
 					.tagCapsule()

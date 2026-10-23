@@ -80,6 +80,7 @@ struct DiveDetailView: View {
 #endif
 										Image(systemName: "chevron.right")
 											.font(.caption)
+											.accessibilityHidden(true)
 									}
 									.font(.subheadline)
 								}
@@ -96,6 +97,7 @@ struct DiveDetailView: View {
 #endif
 										Image(systemName: "chevron.right")
 											.font(.caption)
+											.accessibilityHidden(true)
 									}
 									.font(.subheadline)
 								}
@@ -112,6 +114,7 @@ struct DiveDetailView: View {
 #endif
 										Image(systemName: "chevron.right")
 											.font(.caption)
+											.accessibilityHidden(true)
 									}
 									.font(.subheadline)
 								}
@@ -469,6 +472,7 @@ private struct TankRowView: View {
 								.fontWeight(.semibold)
 							Image(systemName: "chevron.right")
 								.font(.caption)
+								.accessibilityHidden(true)
 						}
 					}
 					.buttonStyle(.plain)
@@ -486,6 +490,7 @@ private struct TankRowView: View {
 								.fontWeight(.medium)
 							Image(systemName: "chevron.right")
 								.font(.caption)
+								.accessibilityHidden(true)
 						}
 					}
 					.buttonStyle(.plain)
@@ -668,6 +673,7 @@ private struct GearLinkRow: View {
 				}
 				Image(systemName: "chevron.right")
 					.font(.caption)
+					.accessibilityHidden(true)
 			}
 		}
 		.buttonStyle(.plain)
@@ -766,6 +772,7 @@ private struct BuddyLinkRow: View {
 				Spacer()
 				Image(systemName: "chevron.right")
 					.font(.caption)
+					.accessibilityHidden(true)
 			}
 		}
 		.buttonStyle(.plain)

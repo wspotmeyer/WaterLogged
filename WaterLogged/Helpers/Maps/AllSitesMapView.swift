@@ -58,6 +58,10 @@ struct AllSitesMapView<Empty: View>: View {
 							ScubaFlagMarker(diveCount: site.dives?.count ?? 0)
 						}
 						.buttonStyle(.plain)
+						// Without a name the button would only say how many dives the site has.
+						.accessibilityLabel(Text(LocalizedStringKey(site.name)))
+						.accessibilityValue(Text("^[\(site.dives?.count ?? 0) dive](inflect: true)"))
+						.accessibilityHint("Opens the dive site")
 					}
 				}
 			}

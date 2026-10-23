@@ -79,6 +79,8 @@ struct DiveTagFilterBar: View {
 				Image(systemName: "tag")
 					.font(.caption)
 					.foregroundStyle(.secondary)
+					// Decorative: each chip already reads as a tag filter button.
+					.accessibilityHidden(true)
 			}
 			.safeAreaBar(edge: .trailing, spacing: 8) {
 				if !selectedTags.isEmpty {

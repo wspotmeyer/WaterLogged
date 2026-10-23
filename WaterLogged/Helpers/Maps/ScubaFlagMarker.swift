@@ -60,6 +60,10 @@ struct ScubaFlagMarker: View {
 					.shadow(color: .white, radius: 4)
 			}
 		}
+		// The flag is drawn, so VoiceOver has nothing to read but the bare count. The map
+		// annotation it sits in supplies the site's name.
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(Text("^[\(diveCount) dive](inflect: true)"))
 	}
 }
 

@@ -30,6 +30,8 @@ struct DiveCount: View {
 
 	var body: some View {
 		CountCapsule(text: "\(count)", color: StatMetric.dives.color(for: colorScheme), font: font)
+			// The capsule's color is what says "dives" on screen, so VoiceOver gets the word.
+			.accessibilityLabel(Text("^[\(count) dive](inflect: true)"))
 	}
 }
 
@@ -41,6 +43,7 @@ struct TripCount: View {
 
 	var body: some View {
 		CountCapsule(text: "\(count)", color: StatMetric.trips.color(for: colorScheme), font: font)
+			.accessibilityLabel(Text("^[\(count) trip](inflect: true)"))
 	}
 }
 
@@ -66,6 +69,10 @@ struct TimeCount: View {
 
 	var body: some View {
 		CountCapsule(text: formatted, color: StatMetric.bottomTime.color(for: colorScheme), font: font)
+			// "6h 23m" reads poorly aloud, so VoiceOver gets the words, such as "6 hours, 23 minutes".
+			.accessibilityLabel(
+				Duration.seconds(seconds).formatted(.units(allowed: [.hours, .minutes, .seconds], width: .wide))
+			)
 	}
 }
 

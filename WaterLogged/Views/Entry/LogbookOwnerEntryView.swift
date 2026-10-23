@@ -123,6 +123,7 @@ struct LogbookOwnerEntryView: View {
 									Spacer()
 									Image(systemName: "chevron.right")
 										.font(.caption)
+										.accessibilityHidden(true)
 										.foregroundStyle(.tertiary)
 								}
 							}

@@ -40,6 +40,7 @@ struct DiveLinkRow: View {
 						.lineLimit(1)
 					Image(systemName: "chevron.right")
 						.font(.caption)
+						.accessibilityHidden(true)
 				}
 				.padding(.top, 12)
 			}
