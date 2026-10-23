@@ -467,8 +467,13 @@ private struct ConditionsSection: View {
 
 			Toggle("Rating", isOn: $updateRating)
 			if updateRating {
-				LabeledContent("Rating") {
+				LabeledContent {
 					StarRatingView(rating: rating, interactive: true) { rating = $0 }
+				} label: {
+					// The rating already calls itself "Rating" to VoiceOver, so the row's title is
+					// hidden to avoid hearing "Rating, Rating".
+					Text("Rating")
+						.accessibilityHidden(true)
 				}
 			}
 		}

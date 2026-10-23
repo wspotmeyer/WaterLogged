@@ -994,8 +994,13 @@ private struct RatingNotesSection: View {
 
 	var body: some View {
 		Section {
-			LabeledContent("Rating") {
+			LabeledContent {
 				StarRatingView(rating: rating, interactive: true) { rating = $0 }
+			} label: {
+				// The rating already calls itself "Rating" to VoiceOver, so the row's title is
+				// hidden to avoid hearing "Rating, Rating".
+				Text("Rating")
+					.accessibilityHidden(true)
 			}
 			PlaceholderTextEditor(placeholder: "Notes", text: $notes, minHeight: 200)
 			TextField("Tags (comma-separated)", text: $tags)

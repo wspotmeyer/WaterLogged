@@ -56,6 +56,14 @@ struct PhotoCarouselView: View {
 									.clipShape(.rect(cornerRadius: 8))
 							}
 							.buttonStyle(.plain)
+							// The button shows only the photo, so VoiceOver would otherwise say just
+							// "button". Its caption describes it best; without one, its position does.
+							.accessibilityLabel(
+								photo.caption.isEmpty
+								? Text("Photo \(photo.id + 1) of \(displayPhotos.count)")
+								: Text(photo.caption)
+							)
+							.accessibilityHint("Shows the photo full screen")
 						}
 					}
 				}
