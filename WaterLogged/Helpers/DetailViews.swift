@@ -74,5 +74,8 @@ struct DetailRow: View {
 				.fontWeight(.medium)
 		}
 		.font(.subheadline)
+		// Read as one item, "Water Temp, 80°F", rather than as a label and a value VoiceOver users
+		// have to pair up themselves.
+		.accessibilityElement(children: .combine)
 	}
 }

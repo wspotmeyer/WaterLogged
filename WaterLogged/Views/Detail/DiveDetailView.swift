@@ -190,6 +190,7 @@ struct DiveDetailView: View {
 							font: .headline
 						)
 						}
+						.accessibilityElement(children: .combine)
 
 						// Depth Profile (if data available)
 						if let diveProfile = dive.diveProfile, !diveProfile.isEmpty {
@@ -281,6 +282,7 @@ struct DiveDetailView: View {
 							HStack {
 								Text("Photos")
 									.font(.title2.bold())
+									.accessibilityAddTraits(.isHeader)
 								Spacer()
 								Button("Edit Photos", systemImage: "pencil") {
 									showingPhotoEditor = true

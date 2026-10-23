@@ -45,5 +45,11 @@ struct StatCell: View {
 		.padding()
 		.frame(idealWidth: 100, maxWidth: .infinity, maxHeight: .infinity)
 		.tileBackground()
+		// One VoiceOver stop per tile, read as "Max Depth, 80 ft". The icon only decorates the
+		// label, and VoiceOver would otherwise read its symbol name. This also gives the full
+		// label and value even when the tile has to truncate them.
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(label)
+		.accessibilityValue(value)
 	}
 }
