@@ -50,6 +50,8 @@ struct HomeMapView: View {
 							.contentShape(.circle)
 					}
 					.buttonStyle(.plain)
+					// Icon-only, so VoiceOver would otherwise read the symbol's name.
+					.accessibilityLabel("Show Summary Bar")
 					.padding(.bottom)
 					.transition(.move(edge: .bottom).combined(with: .opacity))
 				} else {
@@ -104,6 +106,8 @@ private struct StatsBarPanel: View {
 					.contentShape(.circle)
 			}
 			.buttonStyle(.plain)
+			// Icon-only, so VoiceOver would otherwise read "Double Downward Chevron".
+			.accessibilityLabel("Hide Summary Bar")
 			.alignmentGuide(.bottom) { d in d[VerticalAlignment.center] }
 		}
 	}
