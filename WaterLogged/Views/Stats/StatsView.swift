@@ -175,6 +175,9 @@ struct StatsView: View {
 				// show two near-identical blues.
 				.foregroundStyle(StatMetric.dives.color(for: colorScheme))
 				.clipShape(.rect(cornerRadius: 4))
+				// Read as "2024, 15 dives" rather than a date and a bare number.
+				.accessibilityLabel(Text(item.year, format: .dateTime.year()))
+				.accessibilityValue(Text("^[\(item.count) dive](inflect: true)"))
 				.annotation(position: .top) {
 					Text("\(item.count)")
 						.font(.caption2)
