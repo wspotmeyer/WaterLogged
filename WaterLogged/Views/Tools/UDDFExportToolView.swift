@@ -35,8 +35,8 @@ struct ShareableUDDFExport: Transferable {
 }
 
 /// Exports a chosen selection of log book data — dives, sites, buddies,
-/// equipment and so on — to a UDDF file, then lets the user share it
-/// (iOS/iPadOS) or save it via the file exporter (macOS).
+/// equipment and so on — to a UDDF file, then lets the user save it to a
+/// folder they choose (confirming once it's there) or, on iOS/iPadOS, share it.
 struct UDDFExportToolView: View {
 	/// How this view is being presented. Drives whether it shows a Home button
 	/// (embedded in the Tools tab) or a Cancel button (sheet).
@@ -63,9 +63,9 @@ struct UDDFExportToolView: View {
 	@State private var isExporting = false
 	@State private var exportedFile: ShareableUDDFExport?
 	@State private var errorMessage: String?
-#if os(macOS)
-	@State private var isPresentingSavePanel = false
-#endif
+	@State private var isPresentingSaveDialog = false
+	/// Set once `fileMover` confirms the file reached the chosen folder.
+	@State private var savedFileMessage: String?
 
 	private var counts: UDDFExportCounts {
 		UDDFExportCounts(
@@ -125,18 +125,34 @@ struct UDDFExportToolView: View {
 						if let exportedFile {
 #if os(macOS)
 							Button("Save UDDF File…", systemImage: "square.and.arrow.down") {
-								isPresentingSavePanel = true
+								isPresentingSaveDialog = true
 							}
 							.frame(maxWidth: .infinity)
 #else
+							Button("Save to Files…", systemImage: "folder") {
+								isPresentingSaveDialog = true
+							}
+							.frame(maxWidth: .infinity)
+
+							// Sharing (AirDrop, Mail…) can't report completion, so
+							// only the Save path above shows a confirmation.
 							ShareLink(
 								item: exportedFile,
 								preview: SharePreview(exportedFile.url.deletingPathExtension().lastPathComponent)
 							) {
-								Label("Share UDDF File", systemImage: "square.and.arrow.up")
+								Label("Share…", systemImage: "square.and.arrow.up")
 							}
 							.frame(maxWidth: .infinity)
 #endif
+						}
+
+						if let savedFileMessage {
+							Label {
+								Text(savedFileMessage)
+							} icon: {
+								Image(systemName: "checkmark.circle.fill")
+									.foregroundStyle(.green)
+							}
 						}
 
 						if let errorMessage {
@@ -163,18 +179,21 @@ struct UDDFExportToolView: View {
 #if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 #endif
-#if os(macOS)
-			.fileExporter(
-				isPresented: $isPresentingSavePanel,
-				document: exportedFile.map { ExportedFileDocument(url: $0.url) },
-				contentType: .uddf,
-				defaultFilename: exportedFile?.url.deletingPathExtension().lastPathComponent
-			) { result in
-				if case .failure(let error) = result {
+			// fileMover moves the finished file out of the temp directory and only
+			// reports success once it's in the chosen folder, which is what lets
+			// the tool confirm the save (ShareLink has no completion).
+			.fileMover(isPresented: $isPresentingSaveDialog, file: exportedFile?.url) { result in
+				switch result {
+				case .success(let url):
+					fileSaved(to: url)
+				case .failure(let error):
 					errorMessage = error.localizedDescription
 				}
+			} onCancellation: {
+				// Keep the temp file so the user can save or share it again.
 			}
-#endif
+			// fileMover's panel defaults to "Move"; to the user this is a save.
+			.fileDialogConfirmationLabel("Save")
 			.onChange(of: selection) {
 				// The generated file no longer matches what's selected.
 				cleanupExport()
@@ -198,11 +217,21 @@ struct UDDFExportToolView: View {
 		}
 		exportedFile = nil
 		errorMessage = nil
+		savedFileMessage = nil
+	}
+
+	private func fileSaved(to url: URL) {
+		let message = FileSaveConfirmation.message(for: url)
+		savedFileMessage = message
+		// The file has moved, so there's nothing left to save or share.
+		exportedFile = nil
+		AccessibilityNotification.Announcement(message).post()
 	}
 
 	private func performExport() {
 		isExporting = true
 		errorMessage = nil
+		savedFileMessage = nil
 		exportedFile = nil
 
 		Task {

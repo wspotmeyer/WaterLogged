@@ -57,9 +57,9 @@ struct BackupToolView: View {
 	@State private var isExporting = false
 	@State private var exportedFile: ShareableExport?
 	@State private var errorMessage: String?
-#if os(macOS)
-	@State private var isPresentingSavePanel = false
-#endif
+	@State private var isPresentingSaveDialog = false
+	/// Set once `fileMover` confirms the archive reached the chosen folder.
+	@State private var savedBackupMessage: String?
 
 	private var hasData: Bool {
 		!dives.isEmpty || !equipment.isEmpty || !certifications.isEmpty
@@ -98,18 +98,34 @@ struct BackupToolView: View {
 						if let exportedFile {
 #if os(macOS)
 							Button("Save Backup…", systemImage: "square.and.arrow.down") {
-								isPresentingSavePanel = true
+								isPresentingSaveDialog = true
 							}
 							.frame(maxWidth: .infinity)
 #else
+							Button("Save to Files…", systemImage: "folder") {
+								isPresentingSaveDialog = true
+							}
+							.frame(maxWidth: .infinity)
+
+							// Sharing (AirDrop, Mail…) can't report completion, so
+							// only the Save path above shows a confirmation.
 							ShareLink(
 								item: exportedFile,
 								preview: SharePreview("WaterLogged Backup")
 							) {
-								Label("Save Backup", systemImage: "square.and.arrow.up")
+								Label("Share…", systemImage: "square.and.arrow.up")
 							}
 							.frame(maxWidth: .infinity)
 #endif
+						}
+
+						if let savedBackupMessage {
+							Label {
+								Text(savedBackupMessage)
+							} icon: {
+								Image(systemName: "checkmark.circle.fill")
+									.foregroundStyle(.green)
+							}
 						}
 
 						if let errorMessage {
@@ -129,18 +145,21 @@ struct BackupToolView: View {
 #if !os(macOS)
 			.navigationBarTitleDisplayMode(.inline)
 #endif
-#if os(macOS)
-			.fileExporter(
-				isPresented: $isPresentingSavePanel,
-				document: exportedFile.map { ExportedFileDocument(url: $0.url) },
-				contentType: .zip,
-				defaultFilename: exportedFile?.url.deletingPathExtension().lastPathComponent
-			) { result in
-				if case .failure(let error) = result {
+			// fileMover moves the finished archive out of the temp directory and
+			// only reports success once it's in the chosen folder, which is what
+			// lets the sheet confirm the save (ShareLink has no completion).
+			.fileMover(isPresented: $isPresentingSaveDialog, file: exportedFile?.url) { result in
+				switch result {
+				case .success(let url):
+					backupSaved(to: url)
+				case .failure(let error):
 					errorMessage = error.localizedDescription
 				}
+			} onCancellation: {
+				// Keep the temp archive so the user can save or share it again.
 			}
-#endif
+			// fileMover's panel defaults to "Move"; to the user this is a save.
+			.fileDialogConfirmationLabel("Save")
 			.onDisappear {
 				cleanupExport()
 			}
@@ -164,9 +183,18 @@ struct BackupToolView: View {
 		}
 	}
 
+	private func backupSaved(to url: URL) {
+		let message = FileSaveConfirmation.message(for: url)
+		savedBackupMessage = message
+		// The archive has moved, so there's nothing left to save or share.
+		exportedFile = nil
+		AccessibilityNotification.Announcement(message).post()
+	}
+
 	private func performExport() {
 		isExporting = true
 		errorMessage = nil
+		savedBackupMessage = nil
 		exportedFile = nil
 
 		Task {
