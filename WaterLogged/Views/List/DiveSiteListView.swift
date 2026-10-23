@@ -267,17 +267,22 @@ private struct DiveSiteRowView: View {
 						}
 					}
 					Spacer()
+					// Each icon marks something the site has, so VoiceOver says what it is rather than
+					// reading the symbol's name.
 					if !site.notes.isEmpty {
 						Image(systemName: "text.page")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has notes")
 					}
 					if let latitude = site.latitude, let longitude = site.longitude, !(latitude.isNaN && longitude.isNaN) {
 						Image(systemName: "mappin.and.ellipse")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has GPS coordinates")
 					}
 					if let photos = site.photos, !photos.isEmpty {
 						Image(systemName: "photo")
 							.foregroundStyle(.secondary)
+							.accessibilityLabel("Has photos")
 					}
 				}
 				.labelStyle(.listRow)
@@ -288,6 +293,8 @@ private struct DiveSiteRowView: View {
 			.padding(.vertical, 4)
 #endif
 			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			// One VoiceOver stop per site, instead of one for every label and icon.
+			.accessibilityElement(children: .combine)
 		}
 	}
 }

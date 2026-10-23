@@ -167,6 +167,8 @@ private struct GasMixRowView: View {
 			.padding(.vertical, 4)
 #endif
 			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			// One VoiceOver stop per gas mix: name, make-up, then dive count.
+			.accessibilityElement(children: .combine)
 		}
 	}
 }

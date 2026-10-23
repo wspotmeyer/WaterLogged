@@ -212,6 +212,8 @@ private struct EquipmentRowView: View {
 							.font(.headline)
 							.foregroundStyle(equipment.isRetired ? .tertiary : .primary)
 							.lineLimit(1)
+							// Retired gear is only dimmed on screen, so VoiceOver says so outright.
+							.accessibilityLabel(equipment.isRetired ? Text("\(equipment.name), retired") : Text(equipment.name))
 						Spacer()
 						if let dives = equipment.dives, !dives.isEmpty {
 							DiveCount(count: dives.count, font: .headline)
@@ -226,6 +228,7 @@ private struct EquipmentRowView: View {
 						Spacer()
 						if equipment.autoAddToDives {
 							Image(systemName: "plus.square.fill")
+								.accessibilityLabel("Added to new dives automatically")
 						}
 					}
 					.font(.caption2)
@@ -234,6 +237,8 @@ private struct EquipmentRowView: View {
 							.font(.caption2)
 							.foregroundStyle(.tertiary)
 							.lineLimit(1)
+							// VoiceOver would read the abbreviation letter by letter.
+							.accessibilityLabel("Serial number \(equipment.serialNumber)")
 					}
 				}
 			}
@@ -241,6 +246,8 @@ private struct EquipmentRowView: View {
 			.padding(.vertical, 4)
 #endif
 			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			// One VoiceOver stop per item, instead of one for every label and icon.
+			.accessibilityElement(children: .combine)
 		}
 	}
 }

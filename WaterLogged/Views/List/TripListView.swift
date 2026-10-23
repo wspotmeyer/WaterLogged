@@ -229,6 +229,7 @@ private struct TripRowView: View {
 						if !trip.urlString.isEmpty {
 							Image(systemName: "link")
 								.foregroundStyle(.secondary)
+								.accessibilityLabel("Has trip details link")
 						}
 					}
 					.labelStyle(.listRow)
@@ -242,6 +243,8 @@ private struct TripRowView: View {
 			.padding(.vertical, 4)
 #endif
 			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			// One VoiceOver stop per trip, instead of one for every label and icon.
+			.accessibilityElement(children: .combine)
 		}
 	}
 }

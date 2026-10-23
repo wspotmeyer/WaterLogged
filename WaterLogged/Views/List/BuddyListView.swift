@@ -197,12 +197,16 @@ private struct BuddyRowView: View {
 					.font(.headline)
 					.foregroundStyle(buddy.isRetired ? .tertiary : .primary)
 					.lineLimit(1)
+					// Retired buddies are only dimmed on screen, so VoiceOver says so outright.
+					.accessibilityLabel(buddy.isRetired ? Text("\(buddy.formattedName), retired") : Text(buddy.formattedName))
 				Spacer()
 				if let dives = buddy.dives, !dives.isEmpty {
 					DiveCount(count: dives.count, font: .headline)
 				}
 			}
 			.alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
+			// One VoiceOver stop per buddy: name, then dive count.
+			.accessibilityElement(children: .combine)
 		}
 	}
 }
