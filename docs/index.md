@@ -1,7 +1,7 @@
 ---
 ---
 
-**Deep dive. Zero pressure.**
+**Dive deep. No pressure.**
 
 WaterLogged is a simple, beautiful dive log for iPhone, iPad, and Mac. Log your dives, relive them, and keep your logbook truly yours, with no strings attached.
 
