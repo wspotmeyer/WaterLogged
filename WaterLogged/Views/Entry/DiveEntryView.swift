@@ -562,7 +562,7 @@ private struct DepthTimeSection: View {
 	var body: some View {
 		Section("Depth & Time") {
 			LabeledContent(units.depthFieldLabel) {
-				TextField(units.depthFieldLabel, value: $maxDepth, format: .number.precision(.fractionLength(0)), prompt: Text("Dive Number"))
+				TextField(units.depthFieldLabel, value: $maxDepth, format: .number.precision(.fractionLength(0)), prompt: Text(units.depthLabel))
 					.labelsHidden()
 #if !os(macOS)
 					.keyboardType(.decimalPad)
