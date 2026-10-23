@@ -22,12 +22,25 @@
 #if os(macOS)
 import SwiftUI
 
-/// Suppresses the standard Help menu. The app ships no help book, so leaving the
-/// stock menu in place would offer a `Help > WaterLogged Help` item that only ever
-/// fails in the system Help Viewer.
+/// Replaces the standard Help menu items with links to the WaterLogged website. The app
+/// ships no help book, so the stock `Help > WaterLogged Help` item would only ever fail
+/// in the system Help Viewer.
 struct HelpCommands: Commands {
+	@Environment(\.openURL) private var openURL
+
 	var body: some Commands {
-		CommandGroup(replacing: .help) { }
+		CommandGroup(replacing: .help) {
+			if let support = WaterLoggedWebsite.support {
+				Button("WaterLogged Support") {
+					openURL(support)
+				}
+			}
+			if let privacyPolicy = WaterLoggedWebsite.privacyPolicy {
+				Button("Privacy Policy") {
+					openURL(privacyPolicy)
+				}
+			}
+		}
 	}
 }
 #endif
