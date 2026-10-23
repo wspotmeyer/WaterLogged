@@ -37,6 +37,14 @@ struct SignatureCanvasView: UIViewRepresentable {
 		canvas.isOpaque = false
 		canvas.isScrollEnabled = false
 
+		// A canvas isn't an accessibility element by default, so VoiceOver would skip it. Direct
+		// interaction lets a VoiceOver user sign by touch, rather than having each touch read as a
+		// VoiceOver gesture.
+		canvas.isAccessibilityElement = true
+		canvas.accessibilityLabel = String(localized: "Signature area")
+		canvas.accessibilityHint = String(localized: "Sign with your finger or Apple Pencil.")
+		canvas.accessibilityTraits = .allowsDirectInteraction
+
 		// Deferred so the canvas is in the view hierarchy when this runs
 		Task {
 			canvas.becomeFirstResponder()

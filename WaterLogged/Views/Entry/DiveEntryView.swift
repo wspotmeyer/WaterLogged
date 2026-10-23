@@ -569,8 +569,12 @@ private struct DepthTimeSection: View {
 #endif
 					.multilineTextAlignment(.trailing)
 			}
+			// These fields keep empty titles, which the layout depends on, so each one is labelled for
+			// VoiceOver with its row and unit instead. That makes the row title and unit text beside
+			// the fields redundant, so VoiceOver skips them.
 			HStack {
 				Text("Duration")
+					.accessibilityHidden(true)
 				Spacer()
 				TextField("", value: $durationMinutes, format: .number.precision(.fractionLength(0)))
 #if !os(macOS)
@@ -578,17 +582,22 @@ private struct DepthTimeSection: View {
 #endif
 					.multilineTextAlignment(.trailing)
 					.frame(width: 50)
+					.accessibilityLabel("Duration, minutes")
 				Text("min")
+					.accessibilityHidden(true)
 				TextField("", value: $durationSeconds, format: .number.precision(.fractionLength(0)))
 #if !os(macOS)
 					.keyboardType(.numberPad)
 #endif
 					.multilineTextAlignment(.trailing)
 					.frame(width: 40)
+					.accessibilityLabel("Duration, seconds")
 				Text("sec")
+					.accessibilityHidden(true)
 			}
 			HStack {
 				Text("Surf Intvl")
+					.accessibilityHidden(true)
 				Spacer()
 				TextField("", value: $surfaceIntervalHours, format: .number.precision(.fractionLength(0)))
 #if !os(macOS)
@@ -596,21 +605,27 @@ private struct DepthTimeSection: View {
 #endif
 					.multilineTextAlignment(.trailing)
 					.frame(width: 50)
+					.accessibilityLabel("Surface interval, hours")
 				Text("hrs")
+					.accessibilityHidden(true)
 				TextField("", value: $surfaceIntervalMinutes, format: .number.precision(.fractionLength(0)))
 #if !os(macOS)
 					.keyboardType(.numberPad)
 #endif
 					.multilineTextAlignment(.trailing)
 					.frame(width: 50)
+					.accessibilityLabel("Surface interval, minutes")
 				Text("min")
+					.accessibilityHidden(true)
 				TextField("", value: $surfaceIntervalSeconds, format: .number.precision(.fractionLength(0)))
 #if !os(macOS)
 					.keyboardType(.numberPad)
 #endif
 					.multilineTextAlignment(.trailing)
 					.frame(width: 40)
+					.accessibilityLabel("Surface interval, seconds")
 				Text("sec")
+					.accessibilityHidden(true)
 			}
 		}
 	}
@@ -758,7 +773,7 @@ private struct TankEntryRow: View {
 				Text("Tank \(index + 1)")
 					.font(.headline)
 				Spacer()
-				Button("Remove", systemImage: "trash", role: .destructive) {
+				Button("Remove Tank \(index + 1)", systemImage: "trash", role: .destructive) {
 					onRemove()
 				}
 				.labelStyle(.iconOnly)
@@ -1008,6 +1023,7 @@ private struct LogbookImageSection: View {
 					.scaledToFit()
 					.frame(maxHeight: 200)
 					.clipShape(.rect(cornerRadius: 8))
+					.accessibilityLabel("Log book page")
 				Button("Remove Image", systemImage: "trash", role: .destructive) {
 					self.imageData = nil
 					photoItem = nil
@@ -1043,6 +1059,7 @@ private struct VerificationSignatureSection: View {
 					.foregroundStyle(.primary)
 					.frame(maxHeight: 150)
 					.clipShape(.rect(cornerRadius: 8))
+					.accessibilityLabel("Signature")
 				Button("Clear Signature", role: .destructive) {
 					self.signatureData = nil
 					drawing = PKDrawing()
@@ -1084,6 +1101,7 @@ private struct VerificationSignatureSection: View {
 					.foregroundStyle(.primary)
 					.frame(maxHeight: 150)
 					.clipShape(.rect(cornerRadius: 8))
+					.accessibilityLabel("Signature")
 			}
 			Button("Clear Signature", systemImage: "trash", role: .destructive) {
 				signatureData = nil
