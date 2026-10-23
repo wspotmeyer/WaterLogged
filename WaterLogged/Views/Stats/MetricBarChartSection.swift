@@ -43,6 +43,20 @@ struct StatMetricValue: Identifiable {
 		}
 		return "\(minutes)m"
 	}
+
+	/// The value for a metric as VoiceOver should say it, with its unit, such as "12 dives" or
+	/// "6 hours, 23 minutes". The numbers drawn on bars and legends carry no unit, since the
+	/// chart's title gives it.
+	func spokenValue(for metric: StatMetric) -> Text {
+		switch metric {
+		case .dives:
+			Text("^[\(diveCount) dive](inflect: true)")
+		case .bottomTime:
+			Text(Duration.seconds(bottomTimeSeconds).formatted(.units(allowed: [.hours, .minutes], width: .wide)))
+		case .trips:
+			Text("^[\(tripCount) trip](inflect: true)")
+		}
+	}
 }
 
 /// A horizontal bar chart of dives grouped by some category, with a toggle that switches
@@ -107,7 +121,9 @@ struct MetricBarChartSection: View {
 					.foregroundStyle(metric.color(for: colorScheme))
 					.clipShape(.rect(cornerRadius: 4))
 					.accessibilityLabel(item.label)
-					.accessibilityValue(spokenValue(for: item))
+					// The plotted value has no unit, and for bottom time it's in hours or minutes
+					// depending on the data, so VoiceOver reads the value with its unit instead.
+					.accessibilityValue(item.spokenValue(for: metric))
 					// The category name rides on the mark rather than on the y axis. Left to the
 					// axis it gets placed a whole row's height away from the bar it belongs to,
 					// close enough to the *next* bar to read as if every row were mislabelled.
@@ -210,20 +226,6 @@ struct MetricBarChartSection: View {
 			item.bottomTimeLabel
 		case .trips:
 			"\(item.tripCount)"
-		}
-	}
-
-	/// A bar's value as VoiceOver should say it, with its unit, such as "12 dives" or
-	/// "6 hours, 23 minutes". The plotted value alone has no unit, and for bottom time it's in
-	/// hours or minutes depending on the data.
-	private func spokenValue(for item: StatMetricValue) -> Text {
-		switch metric {
-		case .dives:
-			Text("^[\(item.diveCount) dive](inflect: true)")
-		case .bottomTime:
-			Text(Duration.seconds(item.bottomTimeSeconds).formatted(.units(allowed: [.hours, .minutes], width: .wide)))
-		case .trips:
-			Text("^[\(item.tripCount) trip](inflect: true)")
 		}
 	}
 

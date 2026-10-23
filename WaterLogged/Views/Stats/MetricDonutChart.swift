@@ -70,7 +70,7 @@ struct MetricDonutChart: View {
 				// Recede the rest of the ring while one slice is highlighted.
 				.opacity(highlightedSlice == nil || highlightedSlice?.id == slice.id ? 1 : 0.4)
 				.accessibilityLabel(slice.value.label)
-				.accessibilityValue(slice.valueLabel(for: metric))
+				.accessibilityValue(slice.value.spokenValue(for: metric))
 			}
 			.chartAngleSelection(value: $selectedAngleValue)
 			.frame(height: donutHeight)
@@ -125,21 +125,26 @@ struct MetricDonutChart: View {
 			// entry, keeping every value close to its label, and the values still line up.
 			Grid(alignment: .leading, horizontalSpacing: 6, verticalSpacing: 4) {
 				ForEach(visibleSlices) { slice in
+					// A GridRow isn't a container, so modifiers on it land on every cell. The name
+					// cell carries the whole row for VoiceOver, read as "Salt, 529 dives" since
+					// the drawn value has no unit, and the dot and number cells are hidden.
 					GridRow {
 						Circle()
 							.fill(ChartCategoryPalette.color(slot: slice.paletteSlot, for: colorScheme))
 							.frame(width: 8, height: 8)
+							.accessibilityHidden(true)
 						Text(slice.value.label)
 							.foregroundStyle(.secondary)
 							.lineLimit(1)
+							.accessibilityValue(slice.value.spokenValue(for: metric))
 						Text(slice.valueLabel(for: metric))
 							.monospacedDigit()
 							.contentTransition(.numericText())
 							.gridColumnAlignment(.trailing)
 							.padding(.leading, 6)
+							.accessibilityHidden(true)
 					}
 					.font(.caption)
-					.accessibilityElement(children: .combine)
 				}
 			}
 			// Centered under the donut, with room reserved for the most rows a legend can have.

@@ -175,9 +175,6 @@ struct StatsView: View {
 				// show two near-identical blues.
 				.foregroundStyle(StatMetric.dives.color(for: colorScheme))
 				.clipShape(.rect(cornerRadius: 4))
-				// Read as "2024, 15 dives" rather than a date and a bare number.
-				.accessibilityLabel(Text(item.year, format: .dateTime.year()))
-				.accessibilityValue(Text("^[\(item.count) dive](inflect: true)"))
 				.annotation(position: .top) {
 					Text("\(item.count)")
 						.font(.caption2)
@@ -200,7 +197,22 @@ struct StatsView: View {
 			// Grows past its minimum when paired with the water and gas section, so the two
 			// sections sitting side by side come out the same height.
 			.frame(minHeight: 220, idealHeight: 220, maxHeight: .infinity)
+			// Left to itself, Swift Charts reads many years as ranges of years with their plotted
+			// values. So VoiceOver gets one element with a summary, and Audio Graph the counts.
+			.accessibilityElement(children: .ignore)
+			.accessibilityLabel("Dives per year")
+			.accessibilityValue(divesPerYearDescriptor.summary)
+			.accessibilityChartDescriptor(divesPerYearDescriptor)
 		}
+	}
+
+	/// The Dives Per Year chart's data for VoiceOver and Audio Graph.
+	private var divesPerYearDescriptor: DivesPerYearChartDescriptor {
+		let years = divesPerYear
+		return DivesPerYearChartDescriptor(
+			years: years.map { $0.year.formatted(.dateTime.year()) },
+			counts: years.map(\.count)
+		)
 	}
 
 	private var divesPerYear: [YearlyDiveCount] {
