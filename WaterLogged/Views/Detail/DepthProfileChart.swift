@@ -346,13 +346,13 @@ struct DepthProfileChart: View {
 			Group {
 #if os(macOS)
 				if data.hasAnyOverlay {
-					Text("Hover over a point to see details of the sample. Click the buttons below the graph to turn individual lines on or off.")
+					Text("Hover over a point to see details of the sample. Click the buttons below the graph to turn individual metrics on or off.")
 				} else {
 					Text("Hover over a point to see details of the sample.")
 				}
 #else
 				if data.hasAnyOverlay {
-					Text("Tap on a point to see details of the sample. Tap the buttons below the graph to turn individual lines on or off.")
+					Text("Tap on a point to see details of the sample. Tap the buttons below the graph to turn individual metrics on or off.")
 				} else {
 					Text("Tap on a point to see details of the sample.")
 				}
