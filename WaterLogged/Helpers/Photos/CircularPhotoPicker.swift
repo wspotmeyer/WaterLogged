@@ -38,6 +38,7 @@ struct CircularPhotoPicker: View {
 					.scaledToFill()
 					.frame(width: 100, height: 100)
 					.clipShape(.circle)
+					.accessibilityLabel("Photo")
 				Spacer()
 			}
 			Button("Remove Photo", systemImage: "trash", role: .destructive) {

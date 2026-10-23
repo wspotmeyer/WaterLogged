@@ -50,8 +50,11 @@ struct PriorDiveHistorySection: View {
 #endif
 					.multilineTextAlignment(.trailing)
 			}
+			// As in DiveEntryView: the fields keep empty titles for the layout, so each is labelled
+			// for VoiceOver with its row and unit, and the row title and unit text are skipped.
 			HStack {
 				Text("Bottom Time")
+					.accessibilityHidden(true)
 				Spacer()
 				TextField("", value: history.bottomTimeHoursComponent, format: .number.precision(.fractionLength(0)))
 #if !os(macOS)
@@ -59,14 +62,18 @@ struct PriorDiveHistorySection: View {
 #endif
 					.multilineTextAlignment(.trailing)
 					.frame(width: 50)
+					.accessibilityLabel("Prior bottom time, hours")
 				Text("hrs")
+					.accessibilityHidden(true)
 				TextField("", value: history.bottomTimeMinutesComponent, format: .number.precision(.fractionLength(0)))
 #if !os(macOS)
 					.keyboardType(.numberPad)
 #endif
 					.multilineTextAlignment(.trailing)
 					.frame(width: 50)
+					.accessibilityLabel("Prior bottom time, minutes")
 				Text("min")
+					.accessibilityHidden(true)
 			}
 		} header: {
 			Text("Prior Dive History")

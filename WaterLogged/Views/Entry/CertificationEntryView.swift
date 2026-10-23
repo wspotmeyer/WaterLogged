@@ -208,6 +208,8 @@ private struct CardImagePicker: View {
 				.scaledToFit()
 				.frame(maxHeight: 200)
 				.clipShape(.rect(cornerRadius: 8))
+				// The section header ("Card Front" or "Card Back") says which side this is.
+				.accessibilityLabel("Card image")
 			Button("Remove Image", systemImage: "trash", role: .destructive) {
 				self.imageData = nil
 				photoItem = nil

@@ -176,6 +176,22 @@ private struct PhotoEditTile: View {
 		makeDisplayImage(from: entry.imageData) ?? Image(systemName: "photo")
 	}
 
+	/// The tile's position in the sheet, or `nil` once it has been deleted.
+	private var position: Int? {
+		photoEntries.firstIndex { $0.id == entry.id }
+	}
+
+	/// Moves the photo one place earlier (negative offset) or later (positive), as the drag to
+	/// reorder would. VoiceOver users can't drag, so this backs the tile's custom actions.
+	private func move(by offset: Int) {
+		guard let position else { return }
+		let destination = position + offset
+		guard photoEntries.indices.contains(destination) else { return }
+		withAnimation {
+			photoEntries.swapAt(position, destination)
+		}
+	}
+
 	var body: some View {
 		thumbnail
 			.resizable()
@@ -183,6 +199,11 @@ private struct PhotoEditTile: View {
 			.frame(width: 120, height: 90)
 			.background(.quaternary)
 			.clipShape(.rect(cornerRadius: 8))
+			// Named by position, which is what reordering changes, and reorderable from the
+			// VoiceOver Actions rotor.
+			.accessibilityLabel(Text("Photo \((position ?? 0) + 1) of \(photoEntries.count)"))
+			.accessibilityAction(named: "Move Earlier") { move(by: -1) }
+			.accessibilityAction(named: "Move Later") { move(by: 1) }
 			.overlay(alignment: .topTrailing) {
 				Button("Delete Photo", systemImage: "trash.circle.fill", role: .destructive) {
 					withAnimation {

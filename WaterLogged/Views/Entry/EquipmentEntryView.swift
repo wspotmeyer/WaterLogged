@@ -260,6 +260,7 @@ private struct EquipmentPhotoSection: View {
 					.scaledToFit()
 					.frame(maxHeight: 200)
 					.clipShape(.rect(cornerRadius: 8))
+					.accessibilityLabel("Equipment photo")
 				Button("Remove Photo", role: .destructive) {
 					self.photoData = nil
 					photoItem = nil
