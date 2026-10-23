@@ -836,6 +836,7 @@ private struct LogbookThumbnailView: View {
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Log Book Page")
 				.font(.title2.bold())
+				.accessibilityAddTraits(.isHeader)
 			if let data = dive.logbookImageData, let image = makeDisplayImage(from: data) {
 				Button {
 					showingLogbookImage = true
@@ -847,6 +848,9 @@ private struct LogbookThumbnailView: View {
 						.clipShape(.rect(cornerRadius: 8))
 				}
 				.buttonStyle(.plain)
+				// The button shows only the scanned page, so VoiceOver would otherwise say just "button".
+				.accessibilityLabel("Log book page")
+				.accessibilityHint("Shows the page full screen")
 			}
 		}
 	}
@@ -901,6 +905,7 @@ private struct SignatureSectionView: View {
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Verification Signature")
 				.font(.title2.bold())
+				.accessibilityAddTraits(.isHeader)
 			if let data = dive.verificationSignatureData, let image = makeDisplayImage(from: data) {
 				image
 					.renderingMode(.template)
@@ -909,6 +914,7 @@ private struct SignatureSectionView: View {
 					.foregroundStyle(.primary)
 					.frame(maxHeight: 150)
 					.clipShape(.rect(cornerRadius: 8))
+					.accessibilityLabel("Signature")
 			}
 		}
 	}

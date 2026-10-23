@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU General Public License along with WaterLogged. If not,
 //  see <https://www.gnu.org/licenses/>.
 
+import Accessibility
 import SwiftUI
 import SwiftData
 import Charts
@@ -113,6 +114,9 @@ struct DepthProfileChart: View {
 		VStack(alignment: .leading, spacing: 10) {
 			Text("Dive Profile")
 				.font(.title2.bold())
+				.accessibilityAddTraits(.isHeader)
+			// Every mark is plotted against a depth axis that runs negative, and the overlays are
+			// rescaled to fit it, so each mark gives VoiceOver its real reading instead.
 			Chart {
 				// Depth — always displayed
 				ForEach(data.sortedSamples, id: \.elapsedSeconds) { sample in
@@ -126,13 +130,17 @@ struct DepthProfileChart: View {
 					)
 					.interpolationMethod(.catmullRom)
 					.foregroundStyle(.tint)
+					.accessibilityLabel(Self.spokenTime(of: sample))
+					.accessibilityValue(Text("Depth \(units.depthString(sample.depthMeters, decimals: 1))"))
 
+					// The shading repeats the depth line, so VoiceOver skips it.
 					AreaMark(
 						x: .value("Time", time),
 						y: .value("Depth", -displayDepth)
 					)
 					.interpolationMethod(.catmullRom)
 					.foregroundStyle(.tint.opacity(0.15))
+					.accessibilityHidden(true)
 				}
 
 				// Temperature
@@ -150,6 +158,8 @@ struct DepthProfileChart: View {
 						.interpolationMethod(.catmullRom)
 						.foregroundStyle(Self.temperatureColor)
 						.lineStyle(StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
+						.accessibilityLabel(Self.spokenTime(of: sample))
+						.accessibilityValue(Text("Temperature \(units.tempString(sample.waterTempCelsius!))"))
 					}
 				}
 
@@ -168,6 +178,8 @@ struct DepthProfileChart: View {
 						.interpolationMethod(.catmullRom)
 						.foregroundStyle(Self.tankPressureColor)
 						.lineStyle(StrokeStyle(lineWidth: 1.5))
+						.accessibilityLabel(Self.spokenTime(of: sample))
+						.accessibilityValue(Text("Tank pressure \(units.pressureString(sample.tankPressureBar!))"))
 					}
 				}
 
@@ -185,6 +197,9 @@ struct DepthProfileChart: View {
 						.interpolationMethod(.catmullRom)
 						.foregroundStyle(Self.ppo2Color)
 						.lineStyle(StrokeStyle(lineWidth: 1.5))
+						.accessibilityLabel(Self.spokenTime(of: sample))
+						// Spelled out: VoiceOver would read "PPO₂" letter by letter.
+						.accessibilityValue(Text("Oxygen partial pressure \(sample.ppo2Bar!, format: .number.precision(.fractionLength(2))) ata"))
 					}
 				}
 
@@ -202,6 +217,8 @@ struct DepthProfileChart: View {
 						.interpolationMethod(.catmullRom)
 						.foregroundStyle(Self.cnsColor)
 						.lineStyle(StrokeStyle(lineWidth: 1.5))
+						.accessibilityLabel(Self.spokenTime(of: sample))
+						.accessibilityValue(Text("CNS \(sample.cnsPercent!, format: .number.precision(.fractionLength(0)))%"))
 					}
 				}
 
@@ -218,6 +235,8 @@ struct DepthProfileChart: View {
 							)
 							.foregroundStyle(Self.decoTypeColor(for: status))
 							.symbolSize(20)
+							.accessibilityLabel(Self.spokenTime(of: sample))
+							.accessibilityValue(Text("Deco status \(Text(status.displayName))"))
 						}
 					}
 				}
@@ -237,6 +256,8 @@ struct DepthProfileChart: View {
 						.interpolationMethod(.catmullRom)
 						.foregroundStyle(Self.decoTimeColor)
 						.lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 2]))
+						.accessibilityLabel(Self.spokenTime(of: sample))
+						.accessibilityValue(Text("Time to deco \(Self.spokenDuration(seconds: sample.decoTimeSeconds!))"))
 					}
 				}
 
@@ -255,6 +276,8 @@ struct DepthProfileChart: View {
 						.interpolationMethod(.catmullRom)
 						.foregroundStyle(Self.decoDepthColor)
 						.lineStyle(StrokeStyle(lineWidth: 1.5, dash: [3, 2]))
+						.accessibilityLabel(Self.spokenTime(of: sample))
+						.accessibilityValue(Text("Deco depth \(units.depthString(sample.decoDepthMeters!, decimals: 1))"))
 					}
 				}
 
@@ -273,6 +296,8 @@ struct DepthProfileChart: View {
 						.interpolationMethod(.catmullRom)
 						.foregroundStyle(Self.rbtColor)
 						.lineStyle(StrokeStyle(lineWidth: 1.5))
+						.accessibilityLabel(Self.spokenTime(of: sample))
+						.accessibilityValue(Text("Remaining bottom time \(Self.spokenDuration(seconds: sample.rbtSeconds!))"))
 					}
 				}
 
@@ -280,9 +305,12 @@ struct DepthProfileChart: View {
 				if let sample = selectedSample(in: data) {
 					let time = Double(sample.elapsedSeconds) / 60.0
 
+					// The selection follows a pointer or finger, which VoiceOver users navigate the marks
+					// without, so the indicator and its popover are left out.
 					RuleMark(x: .value("Selected", time))
 						.foregroundStyle(Color.gray.opacity(0.3))
 						.zIndex(1)
+						.accessibilityHidden(true)
 						.annotation(
 							position: .topLeading, spacing: 0,
 							overflowResolution: .init(
@@ -339,6 +367,13 @@ struct DepthProfileChart: View {
 			.chartXSelection(value: $rawSelectedTime)
 			.chartLegend(.hidden)
 			.frame(height: 250)
+			.accessibilityChartDescriptor(
+				DepthProfileChartDescriptor(
+					minutes: data.sortedSamples.map { Double($0.elapsedSeconds) / 60.0 },
+					depths: data.sortedSamples.map { units.depthForDisplay($0.depthMeters) },
+					depthLabel: units.depthLabel
+				)
+			)
 
 			overlayToggles(data: data)
 
@@ -616,6 +651,18 @@ struct DepthProfileChart: View {
 		}
 	}
 
+	// MARK: - VoiceOver
+
+	/// A sample's elapsed time as VoiceOver says it, such as "12 minutes, 30 seconds".
+	private static func spokenTime(of sample: DepthSample) -> Text {
+		Text(spokenDuration(seconds: sample.elapsedSeconds))
+	}
+
+	/// A number of seconds written out in words, such as "5 minutes", for VoiceOver to read.
+	private static func spokenDuration(seconds: Int) -> String {
+		Duration.seconds(seconds).formatted(.units(allowed: [.hours, .minutes, .seconds], width: .wide))
+	}
+
 	// MARK: - Colors
 
 	private static let temperatureColor: Color = .orange
@@ -778,6 +825,60 @@ struct DepthProfileChart: View {
 	}
 }
 
+// MARK: - Audio Graph
+
+/// Describes the depth profile to VoiceOver's Audio Graph in minutes and real depths. The chart
+/// itself plots depth as negative values so the line runs downward, which Audio Graph would
+/// otherwise play and read out as they are.
+private struct DepthProfileChartDescriptor: AXChartDescriptorRepresentable {
+	/// Elapsed time of each sample, in minutes.
+	let minutes: [Double]
+	/// Depth of each sample in the display unit, matching `minutes` index for index.
+	let depths: [Double]
+	/// The display unit's abbreviation, such as "ft".
+	let depthLabel: String
+
+	func makeChartDescriptor() -> AXChartDescriptor {
+		let maxMinutes = max(minutes.max() ?? 0, 1)
+		let maxDepth = max(depths.max() ?? 0, 1)
+		let depthLabel = depthLabel
+
+		let xAxis = AXNumericDataAxisDescriptor(
+			title: String(localized: "Elapsed time"),
+			range: 0...maxMinutes,
+			gridlinePositions: []
+		) { value in
+			Duration.seconds(Int(value * 60)).formatted(.units(allowed: [.hours, .minutes, .seconds], width: .wide))
+		}
+
+		let yAxis = AXNumericDataAxisDescriptor(
+			title: String(localized: "Depth"),
+			range: 0...maxDepth,
+			gridlinePositions: []
+		) { value in
+			"\(value.formatted(.number.precision(.fractionLength(1)))) \(depthLabel)"
+		}
+
+		let series = AXDataSeriesDescriptor(
+			name: String(localized: "Depth"),
+			isContinuous: true,
+			dataPoints: zip(minutes, depths).map { AXDataPoint(x: $0, y: $1) }
+		)
+
+		let maxDepthText = "\(maxDepth.formatted(.number.precision(.fractionLength(0)))) \(depthLabel)"
+		let durationText = Duration.seconds(Int(maxMinutes * 60)).formatted(.units(allowed: [.hours, .minutes], width: .wide))
+
+		return AXChartDescriptor(
+			title: String(localized: "Dive profile"),
+			summary: String(localized: "Maximum depth \(maxDepthText) over \(durationText)"),
+			xAxis: xAxis,
+			yAxis: yAxis,
+			additionalAxes: [],
+			series: [series]
+		)
+	}
+}
+
 // MARK: - Overlay Toggle Button
 
 private struct OverlayToggleButton: View {
@@ -802,6 +903,8 @@ private struct OverlayToggleButton: View {
 			.clipShape(.capsule)
 		}
 		.buttonStyle(.plain)
+		// The fill shows whether the metric is on. This says it to VoiceOver.
+		.accessibilityAddTraits(isOn ? .isSelected : [])
 	}
 }
 
