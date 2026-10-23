@@ -1,0 +1,9 @@
+# GitHub Pages settings for the WaterLogged website (served from the docs folder).
+title: WaterLogged
+description: A simple, free dive log for iPhone, iPad, and Mac.
+theme: minima
+
+# Pages listed in the site header, in this order.
+header_pages:
+  - support.md
+  - privacy.md
