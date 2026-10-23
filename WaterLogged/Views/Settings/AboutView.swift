@@ -85,6 +85,15 @@ struct AboutView: View {
 						NavigationLink(LicenseDocument.gpl3.title, value: LicenseDocument.gpl3)
 					}
 
+					Section("Help") {
+						if let support = WaterLoggedWebsite.support {
+							Link("Support", destination: support)
+						}
+						if let privacyPolicy = WaterLoggedWebsite.privacyPolicy {
+							Link("Privacy Policy", destination: privacyPolicy)
+						}
+					}
+
 					Section("Open Source Libraries") {
 						LabeledContent("libdivecomputer", value: libDiveComputerVersion)
 						VStack(alignment: .leading) {
