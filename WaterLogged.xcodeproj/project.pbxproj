@@ -54,6 +54,7 @@
 		52922E683016936A0051DA46 /* WaterLoggedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WaterLoggedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		529A11462F9C254D002D9EC7 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		52AA5FAC2FDDEFB2000C3D77 /* WaterLogged App Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "WaterLogged App Icon.icon"; sourceTree = "<group>"; };
+		52D9B3CE308BE908008D9C3F /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		52DD8B94303A7A4600D58FBC /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -121,6 +122,11 @@
 			path = WaterLoggedTests;
 			sourceTree = "<group>";
 		};
+		52D9B3D3308BE908008D9C3F /* docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = docs;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +168,8 @@
 		527B79992F4CB08A0028955B = {
 			isa = PBXGroup;
 			children = (
+				52D9B3CE308BE908008D9C3F /* CHANGELOG.md */,
+				52D9B3D3308BE908008D9C3F /* docs */,
 				522DE2D72FF1ABBF00B75852 /* WaterLoggedWidgetsExtension.entitlements */,
 				52DD8B94303A7A4600D58FBC /* README.md */,
 				529A11462F9C254D002D9EC7 /* LICENSE.md */,
