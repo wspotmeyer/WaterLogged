@@ -63,6 +63,13 @@ struct FullScreenPhotoView: View {
 									.resizable()
 									.scaledToFit()
 									.containerRelativeFrame([.horizontal, .vertical])
+									// Named by caption, or by position when there isn't one, so a
+									// VoiceOver user swiping through knows which photo they're on.
+									.accessibilityLabel(
+										photos[index].caption.isEmpty
+										? Text("Photo \(index + 1) of \(photos.count)")
+										: Text(photos[index].caption)
+									)
 							}
 						}
 					}
@@ -182,5 +189,8 @@ struct PageDotsView: View {
 					.frame(width: 7, height: 7)
 			}
 		}
+		// The dots are drawn shapes, so VoiceOver gets the position they show in words.
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(Text("Photo \(current + 1) of \(count)"))
 	}
 }

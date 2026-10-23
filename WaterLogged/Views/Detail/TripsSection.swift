@@ -73,6 +73,7 @@ struct TripsSection: View {
 				HStack {
 					Text("Trips")
 						.font(.title2.bold())
+						.accessibilityAddTraits(.isHeader)
 					Spacer()
 					TripCount(count: trips.count, font: .headline)
 					DisclosureToggleButton(isExpanded: $isExpanded, subject: "Trips")

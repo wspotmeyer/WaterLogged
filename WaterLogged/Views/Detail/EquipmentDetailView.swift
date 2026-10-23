@@ -42,6 +42,7 @@ struct EquipmentDetailView: View {
 						if !equipment.name.isEmpty {
 							Text(equipment.name)
 								.font(.title.bold())
+								.accessibilityAddTraits(.isHeader)
 						}
 						EquipmentTypeLabel(type: equipment.resolvedType)
 							.font(.subheadline)
@@ -227,6 +228,9 @@ private struct EquipmentPhotoThumbnail: View {
 					.clipShape(.rect(cornerRadius: 8))
 			}
 			.buttonStyle(.plain)
+			// The button shows only the photo, so VoiceOver would otherwise say just "button".
+			.accessibilityLabel("Equipment photo")
+			.accessibilityHint("Shows the photo full screen")
 		} else {
 			// Photo data that no longer decodes gets the same stand-in as no photo at all.
 			EquipmentTypePlaceholder(type: type)
@@ -275,6 +279,7 @@ private struct EquipmentFullScreenPhoto: View {
 					image
 						.resizable()
 						.scaledToFit()
+						.accessibilityLabel(Text("Photo of \(equipmentName)"))
 				} else {
 					ContentUnavailableView("No Image", systemImage: "photo")
 				}

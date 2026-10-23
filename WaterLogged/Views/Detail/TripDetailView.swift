@@ -41,6 +41,7 @@ struct TripDetailView: View {
 						VStack(alignment: .leading, spacing: 6) {
 							Text(LocalizedStringKey(trip.name))
 								.font(.title.bold())
+								.accessibilityAddTraits(.isHeader)
 							if !trip.location.isEmpty {
 								Label(trip.location, systemImage: "map")
 									.font(.subheadline)
@@ -79,6 +80,7 @@ struct TripDetailView: View {
 							HStack {
 								Text("Photos")
 									.font(.title2.bold())
+									.accessibilityAddTraits(.isHeader)
 								Spacer()
 								Button("Edit Photos", systemImage: "pencil") {
 									showingPhotoEditor = true

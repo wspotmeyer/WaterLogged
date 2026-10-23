@@ -40,6 +40,7 @@ struct DiveSiteDetailView: View {
 						VStack(alignment: .leading, spacing: 6) {
 							Text(LocalizedStringKey(site.name))
 								.font(.title.bold())
+								.accessibilityAddTraits(.isHeader)
 
 							if !site.region.isEmpty || !site.country.isEmpty {
 								HStack(spacing: 12) {
@@ -69,6 +70,7 @@ struct DiveSiteDetailView: View {
 							HStack {
 								Text("Photos")
 									.font(.title2.bold())
+									.accessibilityAddTraits(.isHeader)
 								Spacer()
 								Button("Edit Photos", systemImage: "pencil") {
 									showingPhotoEditor = true

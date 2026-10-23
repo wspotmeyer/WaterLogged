@@ -38,6 +38,7 @@ struct CertificationDetailView: View {
 					// Header
 					Text(LocalizedStringKey(certification.name))
 						.font(.title.bold())
+						.accessibilityAddTraits(.isHeader)
 
 					if !certification.certificationNumber.isEmpty {
 						DetailSection(title: "Certification Details") {
@@ -84,6 +85,10 @@ struct CertificationDetailView: View {
 										.scaledToFit()
 										.clipShape(.rect(cornerRadius: 8))
 								}
+								// The caption and the scan read as one image, "Card front".
+								.accessibilityElement(children: .ignore)
+								.accessibilityLabel("Card front")
+								.accessibilityAddTraits(.isImage)
 							}
 							if let backData = certification.backImageData,
 							   let backImage = makeDisplayImage(from: backData) {
@@ -95,6 +100,9 @@ struct CertificationDetailView: View {
 										.scaledToFit()
 										.clipShape(.rect(cornerRadius: 8))
 								}
+								.accessibilityElement(children: .ignore)
+								.accessibilityLabel("Card back")
+								.accessibilityAddTraits(.isImage)
 							}
 						}
 					}

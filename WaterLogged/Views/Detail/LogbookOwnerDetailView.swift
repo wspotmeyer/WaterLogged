@@ -122,6 +122,7 @@ private struct OwnerInfoHeader: View {
 		if !owner.formattedName.isEmpty {
 			Text(owner.formattedName)
 				.font(.title.bold())
+				.accessibilityAddTraits(.isHeader)
 		}
 	}
 }
@@ -220,6 +221,7 @@ private struct OwnerCertificationsSection: View {
 				HStack {
 					Text("Certifications")
 						.font(.title2.bold())
+						.accessibilityAddTraits(.isHeader)
 					Spacer()
 					CountCapsule(text: "\(certifications.count)", color: .gray, font: .headline)
 				}

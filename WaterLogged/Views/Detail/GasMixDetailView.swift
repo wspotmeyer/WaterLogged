@@ -66,6 +66,9 @@ struct GasMixDetailView: View {
 							)
 							.foregroundStyle(color(for: component.kind))
 							.cornerRadius(2)
+							// VoiceOver would otherwise read the raw fraction, such as "0.32".
+							.accessibilityLabel(component.name)
+							.accessibilityValue(Text(component.fraction, format: .percent.precision(.fractionLength(0))))
 							.annotation(position: .overlay) {
 								Text(component.fraction, format: .percent.precision(.fractionLength(0)))
 									.font(.caption.bold())

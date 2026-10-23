@@ -384,6 +384,8 @@ private struct DiveHeaderTitle: View {
 				Text(LocalizedStringKey(dive.displayTitle))
 					.font(.title.bold())
 			}
+			.accessibilityElement(children: .combine)
+			.accessibilityAddTraits(.isHeader)
 		} else {
 			HStack {
 				DiveNumberBadge(diveNumber: dive.diveNumber, textStyle: .title)
@@ -391,6 +393,9 @@ private struct DiveHeaderTitle: View {
 					.font(.title.bold())
 					.lineLimit(1)
 			}
+			// The page's heading, read as "Dive 560, Santa Rosa Wall".
+			.accessibilityElement(children: .combine)
+			.accessibilityAddTraits(.isHeader)
 		}
 	}
 }
@@ -876,6 +881,7 @@ private struct LogbookImageViewer: View {
 					image
 						.resizable()
 						.scaledToFit()
+						.accessibilityLabel("Log book page")
 				} else {
 					ContentUnavailableView("No Image", systemImage: "photo")
 				}

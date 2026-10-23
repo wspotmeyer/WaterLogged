@@ -49,6 +49,7 @@ struct DivesSection: View {
 				HStack {
 					Text("Dives")
 						.font(.title2.bold())
+						.accessibilityAddTraits(.isHeader)
 					Spacer()
 					TimeCount(seconds: Self.totalDiveTimeSeconds(for: dives), font: .headline)
 					DiveCount(count: dives.count, font: .headline)
