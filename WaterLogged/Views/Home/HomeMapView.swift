@@ -68,6 +68,13 @@ struct HomeMapView: View {
 		// is the primary navigation chrome.
 #if !os(macOS)
 			.toolbar(isMinimized ? .hidden : .automatic, for: .tabBar)
+#else
+			// The map runs under the window toolbar, so the toolbar's
+			// background blur shows as a band across its top edge — and in
+			// full screen the revealed toolbar stretches that blur over the
+			// entire display. The tab strip carries its own glass capsule, so
+			// the background isn't needed for legibility.
+			.toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
 #endif
 			.animation(.default, value: isMinimized)
 	}
