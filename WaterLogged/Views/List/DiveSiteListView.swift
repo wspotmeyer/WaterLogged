@@ -182,18 +182,25 @@ private struct DiveSiteListContent: View {
 
 	var body: some View {
 		Group {
-			if sites.isEmpty && searchText.isEmpty {
-				ContentUnavailableView(
-					"No Dive Sites Yet",
-					systemImage: "mappin.slash",
-					description: Text("Tap + to add your first dive site.")
-				)
-			} else if sites.isEmpty {
-				ContentUnavailableView(
-					"No Results for \"\(searchText)\"",
-					systemImage: "magnifyingglass",
-					description: Text("No dive site name, region, country, or notes contains the given text.")
-				)
+			if sites.isEmpty {
+				// This replaces the `List`, which is what normally paints the gradient, so paint it here too.
+				Group {
+					if searchText.isEmpty {
+						ContentUnavailableView(
+							"No Dive Sites Yet",
+							systemImage: "mappin.slash",
+							description: Text("Tap + to add your first dive site.")
+						)
+					} else {
+						ContentUnavailableView(
+							"No Results for \"\(searchText)\"",
+							systemImage: "magnifyingglass",
+							description: Text("No dive site name, region, country, or notes contains the given text.")
+						)
+					}
+				}
+				.frame(maxWidth: .infinity, maxHeight: .infinity)
+				.appGradient()
 			} else {
 				List(selection: $selectedSite) {
 					ForEach(sortedSites) { site in

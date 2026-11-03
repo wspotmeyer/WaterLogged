@@ -93,18 +93,25 @@ private struct GasMixListContent: View {
 
 	var body: some View {
 		Group {
-			if gasMixes.isEmpty && searchText.isEmpty {
-				ContentUnavailableView(
-					"No Gas Mixes Yet",
-					systemImage: "aqi.medium",
-					description: Text("Tap + to add your first gas mix.")
-				)
-			} else if gasMixes.isEmpty {
-				ContentUnavailableView(
-					"No Results for \"\(searchText)\"",
-					systemImage: "magnifyingglass",
-					description: Text("No gas mix name contains the given text.")
-				)
+			if gasMixes.isEmpty {
+				// This replaces the `List`, which is what normally paints the gradient, so paint it here too.
+				Group {
+					if searchText.isEmpty {
+						ContentUnavailableView(
+							"No Gas Mixes Yet",
+							systemImage: "aqi.medium",
+							description: Text("Tap + to add your first gas mix.")
+						)
+					} else {
+						ContentUnavailableView(
+							"No Results for \"\(searchText)\"",
+							systemImage: "magnifyingglass",
+							description: Text("No gas mix name contains the given text.")
+						)
+					}
+				}
+				.frame(maxWidth: .infinity, maxHeight: .infinity)
+				.appGradient()
 			} else {
 				List(selection: $selectedGasMix) {
 					ForEach(sortedGasMixes) { mix in

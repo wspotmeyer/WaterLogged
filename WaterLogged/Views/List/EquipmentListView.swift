@@ -147,18 +147,25 @@ private struct EquipmentListContent: View {
 
 	var body: some View {
 		Group {
-			if equipment.isEmpty && searchText.isEmpty {
-				ContentUnavailableView(
-					"No Equipment Yet",
-					systemImage: "briefcase",
-					description: Text("Tap + to add your first piece of equipment.")
-				)
-			} else if equipment.isEmpty {
-				ContentUnavailableView(
-					"No Results for \"\(searchText)\"",
-					systemImage: "magnifyingglass",
-					description: Text("No equipment name, model, or manufacturer contains the given text.")
-				)
+			if equipment.isEmpty {
+				// This replaces the `List`, which is what normally paints the gradient, so paint it here too.
+				Group {
+					if searchText.isEmpty {
+						ContentUnavailableView(
+							"No Equipment Yet",
+							systemImage: "briefcase",
+							description: Text("Tap + to add your first piece of equipment.")
+						)
+					} else {
+						ContentUnavailableView(
+							"No Results for \"\(searchText)\"",
+							systemImage: "magnifyingglass",
+							description: Text("No equipment name, model, or manufacturer contains the given text.")
+						)
+					}
+				}
+				.frame(maxWidth: .infinity, maxHeight: .infinity)
+				.appGradient()
 			} else {
 				List(selection: $selectedEquipment) {
 					ForEach(sortedEquipment) { item in

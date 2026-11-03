@@ -149,18 +149,25 @@ private struct TripListContent: View {
 
 	var body: some View {
 		Group {
-			if trips.isEmpty && searchText.isEmpty {
-				ContentUnavailableView(
-					"No Trips Yet",
-					systemImage: "airplane.path.dotted",
-					description: Text("Tap + to add your first trip.")
-				)
-			} else if trips.isEmpty {
-				ContentUnavailableView(
-					"No Results for \"\(searchText)\"",
-					systemImage: "magnifyingglass",
-					description: Text("No trip name, address, location, or notes contains the given text.")
-				)
+			if trips.isEmpty {
+				// This replaces the `List`, which is what normally paints the gradient, so paint it here too.
+				Group {
+					if searchText.isEmpty {
+						ContentUnavailableView(
+							"No Trips Yet",
+							systemImage: "airplane.path.dotted",
+							description: Text("Tap + to add your first trip.")
+						)
+					} else {
+						ContentUnavailableView(
+							"No Results for \"\(searchText)\"",
+							systemImage: "magnifyingglass",
+							description: Text("No trip name, address, location, or notes contains the given text.")
+						)
+					}
+				}
+				.frame(maxWidth: .infinity, maxHeight: .infinity)
+				.appGradient()
 			} else {
 				List(selection: $selectedTrip) {
 					ForEach(trips) { trip in

@@ -136,18 +136,25 @@ private struct BuddyListContent: View {
 
 	var body: some View {
 		Group {
-			if buddies.isEmpty && searchText.isEmpty {
-				ContentUnavailableView(
-					"No Buddies Yet",
-					systemImage: "person.2",
-					description: Text("Tap + to add your first dive buddy.")
-				)
-			} else if buddies.isEmpty {
-				ContentUnavailableView(
-					"No Results for \"\(searchText)\"",
-					systemImage: "magnifyingglass",
-					description: Text("No buddy name contains the given text.")
-				)
+			if buddies.isEmpty {
+				// This replaces the `List`, which is what normally paints the gradient, so paint it here too.
+				Group {
+					if searchText.isEmpty {
+						ContentUnavailableView(
+							"No Buddies Yet",
+							systemImage: "person.2",
+							description: Text("Tap + to add your first dive buddy.")
+						)
+					} else {
+						ContentUnavailableView(
+							"No Results for \"\(searchText)\"",
+							systemImage: "magnifyingglass",
+							description: Text("No buddy name contains the given text.")
+						)
+					}
+				}
+				.frame(maxWidth: .infinity, maxHeight: .infinity)
+				.appGradient()
 			} else {
 				List(selection: $selectedBuddy) {
 					ForEach(sortedBuddies) { buddy in
