@@ -73,14 +73,38 @@ struct AdaptiveRootView: View {
 		}
 	}
 
+	/// The tab revealed in the current render. Derived from `selection` first
+	/// so the selected tab is never hidden: a size-class change re-renders
+	/// with the new width BEFORE `onChange(of: isCompact)` can update
+	/// `revealedTab`, and a hidden selection in that render crashes.
+	private var effectiveRevealedTab: RootTab? {
+		switch selection {
+			case .trips: nil
+			case let tab where fitsCompactBarOnlyViaBrowse(tab): tab
+			default: revealedTab
+		}
+	}
+
 	private func isHidden(_ tab: RootTab) -> Bool {
 		guard isCompact else { return false }
-		// A revealed tab takes Dive Stats' slot so the compact bar stays at
+		// A revealed tab takes Trips' slot so the compact bar stays at
 		// five items; a sixth would push Browse into a UIKit "More" tab.
 		if tab == .trips {
-			return revealedTab != nil
+			return effectiveRevealedTab != nil
 		}
-		return revealedTab != tab
+		return effectiveRevealedTab != tab
+	}
+
+	/// The selection handed to the `TabView`. Browse only exists in compact
+	/// width, so when the width turns regular (e.g. rotating a Pro Max to
+	/// landscape) the render that hides Browse must already select another
+	/// tab; waiting for `onChange(of: isCompact)` is one update too late.
+	private var tabSelection: Binding<RootTab> {
+		Binding {
+			selection == .browse && !isCompact ? .home : selection
+		} set: { newValue in
+			selection = newValue
+		}
 	}
 
 	/// Switches to `tab`, first revealing it if it's hidden in the current
@@ -94,7 +118,7 @@ struct AdaptiveRootView: View {
 	}
 
 	var body: some View {
-		TabView(selection: $selection) {
+		TabView(selection: tabSelection) {
 			Tab("Map", systemImage: "globe.desk.fill", value: RootTab.home) {
 				HomeMapView()
 			}
@@ -189,10 +213,12 @@ struct AdaptiveRootView: View {
 			}
 		}
 		.onChange(of: isCompact, initial: true) { _, isCompact in
-			// Keep the selection valid across width changes (Apple's
+			// Keep the stored state in step with width changes (Apple's
 			// BrowseTabExample pattern): entering compact while on a tab that
 			// doesn't fit the compact bar keeps it revealed; leaving compact
 			// while on Browse (which only exists in compact) moves off it.
+			// This runs after the first render at the new width, which
+			// `effectiveRevealedTab` and `tabSelection` already keep valid.
 			if isCompact {
 				revealedTab = fitsCompactBarOnlyViaBrowse(selection) ? selection : nil
 			} else if selection == .browse {
