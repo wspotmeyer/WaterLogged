@@ -30,16 +30,16 @@ import SwiftData
 /// (see the `#if !os(macOS)` note on the style modifier below). Record-type
 /// tabs host two-column `NavigationSplitView` list views, so with the
 /// sidebar visible the app reads as three panes: sections, list, detail.
-/// Sections with no list/detail (Home map, Stats, Tools, Settings, About)
+/// Sections with no list/detail (Map, Stats, Tools, Settings, About)
 /// simply fill the content area.
 ///
 /// Sidebar order follows the builder for `TabSection`s, but tabs declared
 /// outside a section are collected into one implicit group at the top of the
-/// sidebar regardless of where they appear in the builder. Only Home and
+/// sidebar regardless of where they appear in the builder. Only Map and
 /// Browse are meant to sit there, so the utility destinations are wrapped in
 /// a "More" `TabSection` to keep them below Log Book, Gear, and People.
 ///
-/// In compact width only Home, Dives, Dive Sites, Stats, and Browse fit the
+/// In compact width only Map, Dives, Dive Sites, Stats, and Browse fit the
 /// tab bar; the remaining destinations are hidden tabs reachable through
 /// `BrowseView`. Selecting a hidden tab programmatically crashes (UIKit's tab
 /// model only contains visible tabs), so `open(_:)` first REVEALS the target
@@ -95,7 +95,7 @@ struct AdaptiveRootView: View {
 
 	var body: some View {
 		TabView(selection: $selection) {
-			Tab("Home", systemImage: "house", value: RootTab.home) {
+			Tab("Map", systemImage: "globe.desk.fill", value: RootTab.home) {
 				HomeMapView()
 			}
 

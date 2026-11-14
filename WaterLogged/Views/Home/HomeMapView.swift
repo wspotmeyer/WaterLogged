@@ -22,7 +22,7 @@
 import SwiftUI
 import SwiftData
 
-/// The Home tab: the all-sites map with the mini statistics (or welcome)
+/// The Map tab: the all-sites map with the mini statistics (or welcome)
 /// overlay. The tab bar or sidebar provides navigation, so the map fills
 /// the screen.
 struct HomeMapView: View {

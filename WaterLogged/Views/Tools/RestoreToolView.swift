@@ -27,8 +27,8 @@ import AppKit
 #endif
 
 struct RestoreToolView: View {
-	/// How `RestoreToolView` is being presented. Drives whether it shows a
-	/// Home button (embedded in the Tools tab) or a Cancel button (sheet).
+	/// How `RestoreToolView` is being presented. Only a sheet shows a Cancel
+	/// button; embedded in the Tools tab, the tab bar or sidebar navigates.
 	enum Presentation {
 		case embedded
 		case sheet

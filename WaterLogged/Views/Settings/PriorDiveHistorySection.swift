@@ -78,7 +78,7 @@ struct PriorDiveHistorySection: View {
 		} header: {
 			Text("Prior Dive History")
 		} footer: {
-			Text("Dives and bottom time from before your first logged dive. These are added to the totals shown in Statistics, on the Home map, and in widgets.")
+			Text("Dives and bottom time from before your first logged dive. These are added to the totals shown in Statistics, on the Map, and in widgets.")
 		}
 		// Keep the home-screen widget's totals in step with the new values.
 		.onChange(of: priorDiveCount) {

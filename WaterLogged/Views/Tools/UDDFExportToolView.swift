@@ -38,8 +38,8 @@ struct ShareableUDDFExport: Transferable {
 /// equipment and so on — to a UDDF file, then lets the user save it to a
 /// folder they choose (confirming once it's there) or, on iOS/iPadOS, share it.
 struct UDDFExportToolView: View {
-	/// How this view is being presented. Drives whether it shows a Home button
-	/// (embedded in the Tools tab) or a Cancel button (sheet).
+	/// How this view is being presented. Only a sheet shows a Cancel button;
+	/// embedded in the Tools tab, the tab bar or sidebar navigates.
 	enum Presentation {
 		case embedded
 		case sheet
