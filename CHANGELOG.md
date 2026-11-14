@@ -4,6 +4,7 @@ Notable changes to WaterLogged, by release.
 
 ## Unreleased
 
+- On iPhone in landscape, the tab bar keeps the same five tabs as in portrait, with Browse for everything else. Large iPhones used to show every tab in landscape and push the rest into a system "More" tab.
 - Fixed a crash when rotating a large iPhone to landscape while on the Browse tab. Changing the window width on iPad can no longer leave a hidden tab selected either.
 - Backup and Export to UDDF now confirm when the file has been saved. On iPhone and iPad, Save to Files… replaces the share sheet as the main way to save (Share… is still there for AirDrop and Mail), and the tool shows and announces where the file was saved. On Mac, the save panel shows the same confirmation.
 - The Dive Sites, Trips, Buddies, Gas Mixes, and Equipment lists show the app's background gradient when they are empty or a search finds nothing. Previously they fell back to a plain background.

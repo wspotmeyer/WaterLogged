@@ -39,12 +39,12 @@ import SwiftData
 /// Browse are meant to sit there, so the utility destinations are wrapped in
 /// a "More" `TabSection` to keep them below Log Book, Gear, and People.
 ///
-/// In compact width only Map, Dives, Dive Sites, Stats, and Browse fit the
-/// tab bar; the remaining destinations are hidden tabs reachable through
-/// `BrowseView`. Selecting a hidden tab programmatically crashes (UIKit's tab
-/// model only contains visible tabs), so `open(_:)` first REVEALS the target
-/// tab — via `revealedTab` feeding each tab's `hidden(_:)` condition — and
-/// then selects it in the same update.
+/// In compact width (or iPhone landscape; see `isCompact`) only Map, Dives,
+/// Dive Sites, Trips, and Browse fit the tab bar; the remaining destinations
+/// are hidden tabs reachable through `BrowseView`. Selecting a hidden tab
+/// programmatically crashes (UIKit's tab model only contains visible tabs),
+/// so `open(_:)` first REVEALS the target tab — via `revealedTab` feeding
+/// each tab's `hidden(_:)` condition — and then selects it in the same update.
 struct AdaptiveRootView: View {
 	@State private var selection: RootTab = .home
 
@@ -54,13 +54,19 @@ struct AdaptiveRootView: View {
 	@State private var revealedTab: RootTab?
 #if !os(macOS)
 	@Environment(\.horizontalSizeClass) private var horizontalSizeClass
+	@Environment(\.verticalSizeClass) private var verticalSizeClass
 #endif
 
+	/// Whether the tab bar is limited to the five-item compact layout.
+	/// Vertically compact counts too: a large iPhone in landscape is
+	/// horizontally regular, but `.sidebarAdaptable` still shows iPhone's
+	/// bottom tab bar there (no sidebar), so showing every tab would overflow
+	/// it into UIKit's "More" tab.
 	private var isCompact: Bool {
 #if os(macOS)
 		false
 #else
-		horizontalSizeClass == .compact
+		horizontalSizeClass == .compact || verticalSizeClass == .compact
 #endif
 	}
 
@@ -96,8 +102,8 @@ struct AdaptiveRootView: View {
 	}
 
 	/// The selection handed to the `TabView`. Browse only exists in compact
-	/// width, so when the width turns regular (e.g. rotating a Pro Max to
-	/// landscape) the render that hides Browse must already select another
+	/// width, so when the width turns regular (e.g. widening an iPad window)
+	/// the render that hides Browse must already select another
 	/// tab; waiting for `onChange(of: isCompact)` is one update too late.
 	private var tabSelection: Binding<RootTab> {
 		Binding {
